@@ -9,7 +9,7 @@ part of 'PrivateData.dart';
 JPrivateData _$JPrivateDataFromJson(Map<String, dynamic> json) {
   return JPrivateData(
     comment: json['comment'] as String,
-    arch: json['arch'] as bool,
+    arch: json['arch'] as bool ?? true,
     tel: (json['tel'] as List)
         ?.map((e) =>
             e == null ? null : JTelephone.fromJson(e as Map<String, dynamic>))

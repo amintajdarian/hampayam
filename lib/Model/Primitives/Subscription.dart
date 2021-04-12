@@ -12,7 +12,9 @@ class Subscription {
   String topic;
   @JsonKey(name: "limit", includeIfNull: false)
   String limit;
-  Subscription({this.ims, this.user, this.topic, this.limit});
+  @JsonKey(name: "mode", includeIfNull: false)
+  String mode;
+  Subscription({this.ims, this.user, this.topic, this.mode, this.limit});
   factory Subscription.fromJson(Map<String, dynamic> json) => _$SubscriptionFromJson(json);
   Map<String, dynamic> toJson() => _$SubscriptionToJson(this);
 }

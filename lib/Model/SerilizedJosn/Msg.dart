@@ -1,60 +1,24 @@
 import 'package:hampayam_chat/Model/Primitives/PubContent.dart';
 import 'package:hampayam_chat/Model/Primitives/PubHead.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'Msg.g.dart';
 
+@JsonSerializable(explicitToJson: true)
 class JRcvMsg {
   // data prop
+  @JsonKey(name: 'topic', nullable: false)
   String topic;
+  @JsonKey(name: 'from', nullable: false)
   String from;
-  JPubHead head = new JPubHead();
+  @JsonKey(name: 'head')
+  JPubHead head;
+  @JsonKey(name: 'ts', nullable: false)
   String ts;
+  @JsonKey(name: 'seq', nullable: false)
   int seq;
+  @JsonKey(name: 'content')
   dynamic content;
-  bool hasRead = false;
+
   // controll prop
-  bool hasHead;
-  bool hasContent;
-  bool readFile = false;
-  bool isFile = false;
-  JRcvMsg() {
-    hasContent = false;
-    hasHead = false;
-    readFile = false;
-  }
-
-  void DecodeFromMap(dynamic data) {
-    topic = data['topic'];
-    from = data['from'];
-
-    if (data['head'] != null) {
-      hasHead = true;
-      head = JPubHead();
-      head.DecodeFromMap(data['head']);
-
-      // if there is head, content is drafty
-      if (data['content'] != null) {
-        hasContent = true;
-        content = JPubContent();
-        content.DecodeFromMap(data['content']);
-      }
-    } else {
-      content = data['content'];
-    }
-
-    ts = data['ts'];
-    seq = data['seq'];
-  }
-
-  JPubHead GetMsgHead() {
-    return head;
-  }
-
-  JPubContent GetPubContent() {
-    return content;
-  }
-
-  JPubContent SetPubContent(content) {
-    hasContent = true;
-    content = JPubContent();
-    this.content = content;
-  }
+  JRcvMsg({this.topic, this.from, this.head, this.ts, this.seq, this.content});
 }

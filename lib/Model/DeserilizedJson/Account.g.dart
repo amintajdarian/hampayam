@@ -14,7 +14,7 @@ JSndAcc _$JSndAccFromJson(Map<String, dynamic> json) {
     status: json['status'] as String,
     scheme: json['scheme'] as String,
     secret: json['secret'] as String,
-    login: json['login'] as bool,
+    login: json['login'] as bool ?? true,
     tags: (json['tags'] as List)?.map((e) => e as String)?.toList(),
     cred: (json['cred'] as List)
         ?.map((e) => e == null
@@ -27,15 +27,24 @@ JSndAcc _$JSndAccFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$JSndAccToJson(JSndAcc instance) => <String, dynamic>{
-      'id': instance.id,
-      'user': instance.user,
-      'token': instance.token,
-      'status': instance.status,
-      'scheme': instance.scheme,
-      'secret': instance.secret,
-      'login': instance.login,
-      'tags': instance.tags,
-      'cred': instance.cred?.map((e) => e?.toJson())?.toList(),
-      'desc': instance.desc?.toJson(),
-    };
+Map<String, dynamic> _$JSndAccToJson(JSndAcc instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('id', instance.id);
+  writeNotNull('user', instance.user);
+  writeNotNull('token', instance.token);
+  writeNotNull('status', instance.status);
+  writeNotNull('scheme', instance.scheme);
+  writeNotNull('secret', instance.secret);
+  writeNotNull('login', instance.login);
+  writeNotNull('tags', instance.tags);
+  writeNotNull('cred', instance.cred?.map((e) => e?.toJson())?.toList());
+  writeNotNull('desc', instance.desc?.toJson());
+  return val;
+}

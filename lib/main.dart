@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hampayam_chat/Model/Primitives/Subscription.dart';
+import 'package:hampayam_chat/Model/SerilizedJosn/MsgsServer.dart';
 import 'Model/DeserilizedJson/MsgClient.dart';
 import 'Model/DeserilizedJson/Note.dart';
 import 'Model/DeserilizedJson/Get.dart';
@@ -112,13 +113,12 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Subscription sub = Subscription(ims: DateTime.now(), limit: "24", topic: "fnd", user: "me");
-          JSndGet jSndGet = JSndGet(id: "123456", what: "sub", sub: sub, topic: "me");
-          JSndHi hi = JSndHi(id: "123456", dev: "win", lang: "en", plat: "and", ua: "win", ver: "1");
-          MsgClient msgClient = MsgClient(jSndHi: hi);
-          msgClient.toJson();
+          String jsons =
+              '{"ctrl":{"id":"104535","params":{"build":"rethinkdb:undef","maxFileUploadSize":8388608,"maxMessageSize":262144,"maxSubscriberCount":128,"maxTagCount":16,"maxTagLength":96,"minTagLength":2,"ver":"0.16"},"code":201,"text":"created","ts":"2021-04-12T13:54:52.144Z"}} ';
 
-          print(jsonEncode(msgClient.toJson()));
+          Map<String, dynamic> mapJson = jsonDecode(jsons);
+          MsgSever msgSever = MsgSever.fromJson(mapJson);
+          print(msgSever.ctrl.params);
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),

@@ -1,3 +1,4 @@
+import 'package:hampayam_chat/Model/Primitives/Params.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'UserCredential.g.dart';
 
@@ -10,9 +11,11 @@ class JUserCredential {
   String val;
   @JsonKey(name: "resp")
   String resp;
-  @JsonKey(name: "done", includeIfNull: false)
+  @JsonKey(name: "done", includeIfNull: false, defaultValue: true)
   bool done;
-  JUserCredential({this.meth, this.val, this.resp, this.done});
+  @JsonKey(name: "params", includeIfNull: false)
+  Params params;
+  JUserCredential({this.meth, this.val, this.resp, this.done, this.params});
   Map<String, dynamic> toJson() => _$JUserCredentialToJson(this);
   factory JUserCredential.fromJson(Map<String, dynamic> json) => _$JUserCredentialFromJson(json);
 }

@@ -11,6 +11,7 @@ Subscription _$SubscriptionFromJson(Map<String, dynamic> json) {
     ims: json['ims'] == null ? null : DateTime.parse(json['ims'] as String),
     user: json['user'] as String,
     topic: json['topic'] as String,
+    mode: json['mode'] as String,
     limit: json['limit'] as String,
   );
 }
@@ -28,5 +29,6 @@ Map<String, dynamic> _$SubscriptionToJson(Subscription instance) {
   writeNotNull('user', instance.user);
   writeNotNull('topic', instance.topic);
   writeNotNull('limit', instance.limit);
+  writeNotNull('mode', instance.mode);
   return val;
 }

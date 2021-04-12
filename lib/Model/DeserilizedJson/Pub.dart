@@ -1,56 +1,22 @@
-import 'package:hampayam_chat/Model/Primitives/PubContent.dart';
 import 'package:hampayam_chat/Model/Primitives/PubHead.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'Pub.g.dart';
 
+@JsonSerializable()
 class JSndPub {
+  @JsonKey(name: 'id', includeIfNull: false)
   String id;
+  @JsonKey(name: 'topic', nullable: false)
   String topic;
+  @JsonKey(name: 'noecho', includeIfNull: false, defaultValue: false)
   bool noecho;
-  JPubHead _head;
-  JPubContent _content;
-  String content;
+  @JsonKey(name: 'head', includeIfNull: false)
+  JPubHead head;
+  @JsonKey(name: 'content', includeIfNull: false)
+  dynamic content;
 
-  // controll prop
-  bool hasHead;
-  bool hasContent;
+  JSndPub({this.id, this.topic, this.noecho, this.head, this.content});
+  Map<String, dynamic> toJson() => _$JSndPubToJson(this);
 
-  JRcvMsg() {
-    hasContent = false;
-    hasHead = false;
-  }
-
-  void DecodeFromMap(dynamic data) {
-    id = data['id'];
-    topic = data['topic'];
-    noecho = data['noecho'];
-
-    if (data['head'] != null) {
-      hasHead = true;
-      _head = JPubHead();
-      _head.DecodeFromMap(data['head']);
-
-      if (data['content'] != null) {
-        hasContent = true;
-        _content = JPubContent();
-        _content.DecodeFromMap(data['content']);
-      }
-    } else {
-      content = data['content'];
-    }
-  }
-
-  Map<String, dynamic> EncodeToMap() {
-    //
-  }
-
-  JPubHead GetMsgHead() {
-    return _head;
-  }
-
-  void SetPubHead(JPubHead head) {
-    _head = head;
-  }
-
-  /* JPubContent GetPubContent() {
-    return _content;
-  } */
+  factory JSndPub.fromJson(Map<String, dynamic> json) => _$JSndPubFromJson(json);
 }

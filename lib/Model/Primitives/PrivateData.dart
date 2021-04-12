@@ -7,7 +7,7 @@ part 'PrivateData.g.dart';
 class JPrivateData {
   @JsonKey(name: "comment", includeIfNull: false)
   String comment;
-  @JsonKey(name: "arch", includeIfNull: false)
+  @JsonKey(name: "arch", includeIfNull: false, defaultValue: true)
   bool arch;
   @JsonKey(name: "tel")
   List<JTelephone> tel;
@@ -16,5 +16,5 @@ class JPrivateData {
   JPrivateData({this.comment, this.arch, this.tel, this.accepted});
   Map<String, dynamic> toJson() => _$JPrivateDataToJson(this);
 
-  factory JPhoto.fromJson(Map<String, dynamic> json) => _$JPrivateDataFromJson(json);
+  factory JPrivateData.fromJson(Map<String, dynamic> json) => _$JPrivateDataFromJson(json);
 }

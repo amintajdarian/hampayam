@@ -5,25 +5,25 @@ part 'Account.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class JSndAcc {
-  @JsonKey(name: "id")
+  @JsonKey(name: "id", includeIfNull: false)
   String id;
-  @JsonKey(name: 'user')
+  @JsonKey(name: 'user', includeIfNull: false)
   String user;
-  @JsonKey(name: 'token')
+  @JsonKey(name: 'token', includeIfNull: false)
   String token;
-  @JsonKey(name: 'status')
+  @JsonKey(name: 'status', includeIfNull: false)
   String status;
-  @JsonKey(name: 'scheme')
+  @JsonKey(name: 'scheme', includeIfNull: false)
   String scheme;
-  @JsonKey(name: 'secret')
+  @JsonKey(name: 'secret', includeIfNull: false)
   String secret;
-  @JsonKey(name: 'login')
+  @JsonKey(name: 'login', defaultValue: true, includeIfNull: false)
   bool login;
-  @JsonKey(name: 'tags')
+  @JsonKey(name: 'tags', includeIfNull: false)
   List<String> tags;
-  @JsonKey(name: 'cred')
+  @JsonKey(name: 'cred', includeIfNull: false)
   List<JUserCredential> cred;
-  @JsonKey(name: 'desc')
+  @JsonKey(name: 'desc', includeIfNull: false)
   Description desc;
   JSndAcc({this.id, this.user, this.token, this.status, this.scheme, this.secret, this.login, this.tags, this.cred, this.desc});
   factory JSndAcc.fromJson(Map<String, dynamic> json) => _$JSndAccFromJson(json);

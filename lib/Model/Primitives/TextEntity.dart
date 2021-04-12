@@ -1,32 +1,21 @@
-import 'TextEntityData.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+import 'TextEntityData.dart';
+part 'TextEntity.g.dart';
+
+@JsonSerializable(explicitToJson: true)
 class JTextEntity {
   // data prop
+  @JsonKey(name: 'tp', includeIfNull: false)
   String tp;
+  @JsonKey(name: 'data', includeIfNull: false)
   JTextEntityData data;
+  JTextEntity({this.tp, this.data});
 
-  // cobtroll prop
-  bool hasData;
-
-  JTextEntity() {
-    hasData = false;
-  }
-
-  void DecodeFromMap(entInfo) {
-    tp = entInfo['tp'];
-
-    if (entInfo['data'] != null) {
-      hasData = true;
-      data = JTextEntityData();
-      data.DecodeFromMap(entInfo['data']);
-    }
-  }
+  Map<String, dynamic> toJson() => _$JTextEntityToJson(this);
+  factory JTextEntity.fromJson(Map<String, dynamic> json) => _$JTextEntityFromJson(json);
 
   JTextEntityData GetTextEntityData() {
     return data;
-  }
-
-  void setTextEntityData(JTextEntityData data) {
-    this.data = data;
   }
 }
