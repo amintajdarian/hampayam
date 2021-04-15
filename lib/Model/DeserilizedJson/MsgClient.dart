@@ -38,4 +38,5 @@ class MsgClient {
   JSndNote jSndNote;
   MsgClient({this.jSndHi, this.jSndAcc, this.jSndLogin, this.jSndSub, this.jSndLeave, this.jSndPub, this.jSndGet, this.jSndSet, this.jSndDel, this.jSndNote});
   Map<String, dynamic> toJson() => _$MsgClientToJson(this);
+  factory MsgClient.fromJson(Map<String, dynamic> json) => _$MsgClientFromJson(json);
 }

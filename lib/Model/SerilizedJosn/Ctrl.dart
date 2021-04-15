@@ -7,7 +7,7 @@ class JRcvCtrl {
   // data props
   @JsonKey(name: 'id', includeIfNull: false)
   String id;
-  @JsonKey(name: 'topic', includeIfNull: false)
+  @JsonKey(name: 'topic', nullable: false)
   String topic;
   @JsonKey(name: 'code', includeIfNull: false)
   int code;
@@ -25,5 +25,13 @@ class JRcvCtrl {
 
   Params GetCtrlParamsData() {
     return params;
+  }
+
+  bool hasParams() {
+    if (params != null) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

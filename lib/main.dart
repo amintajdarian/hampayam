@@ -113,12 +113,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          String jsons =
-              '{"ctrl":{"id":"104535","params":{"build":"rethinkdb:undef","maxFileUploadSize":8388608,"maxMessageSize":262144,"maxSubscriberCount":128,"maxTagCount":16,"maxTagLength":96,"minTagLength":2,"ver":"0.16"},"code":201,"text":"created","ts":"2021-04-12T13:54:52.144Z"}} ';
+          String jsons = ' {"set":{"id":"102047","topic":"grp-dD1Z-5ePmA","desc":{"defacs":{"auth":"AJPRW"}}}}  ';
 
           Map<String, dynamic> mapJson = jsonDecode(jsons);
-          MsgSever msgSever = MsgSever.fromJson(mapJson);
-          print(msgSever.ctrl.params);
+          MsgClient msgSever = MsgClient.fromJson(mapJson);
+          print(msgSever.jSndSet.desc.defacs.auth.isDelete);
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),

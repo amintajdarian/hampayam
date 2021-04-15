@@ -4,13 +4,14 @@ import 'package:hampayam_chat/Model/Primitives/UserCredential.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'MetaDelete.dart';
+part 'Meta.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class JRcvMeta {
   // data props
   @JsonKey(name: 'id')
   String id;
-  @JsonKey(name: 'id', nullable: false)
+  @JsonKey(name: 'topic', nullable: false)
   String topic;
   @JsonKey(name: 'ts', nullable: false)
   String ts;
@@ -27,19 +28,18 @@ class JRcvMeta {
 
   JRcvMeta({this.id, this.topic, this.ts, this.desc, this.sub, this.tags, this.cred, this.del});
 
+  factory JRcvMeta.fromJson(Map<String, dynamic> json) => _$JRcvMetaFromJson(json);
+  Map<String, dynamic> toJson() => _$JRcvMetaToJson(this);
+
   void removeSubscriptionData(item) {
     sub.remove(item);
   }
 
-  Map<String, dynamic> GetDBMap() {
-    return null;
-  }
-
-  JDescriptionData GetDescription() {
+  JDescriptionData getDescription() {
     return desc;
   }
 
-  JSubscriptionData GetSubscription(int index) {
+  JSubscriptionData getSubscription(int index) {
     try {
       return sub[index];
     } catch (e) {
@@ -47,7 +47,7 @@ class JRcvMeta {
     }
   }
 
-  String GetTag(int index) {
+  String getTag(int index) {
     try {
       return tags.elementAt(index);
     } catch (e) {
@@ -55,7 +55,7 @@ class JRcvMeta {
     }
   }
 
-  JUserCredential GetCredential(int index) {
+  JUserCredential getCredential(int index) {
     try {
       return cred.elementAt(index);
     } catch (e) {
@@ -63,39 +63,15 @@ class JRcvMeta {
     }
   }
 
-  JMetaDelete GetDelete() {
+  JMetaDelete getDelete() {
     return del;
   }
 
-  void SetDescription(JDescriptionData description) {
-    desc = JDescriptionData();
-    desc = description;
-  }
-
-  List<JSubscriptionData> GetSubscriptionList() {
-    return sub;
-  }
-
-  void SetSubscriptionList(List<JSubscriptionData> subscriptionList) {
-    sub = List<JSubscriptionData>();
-    sub = subscriptionList;
-  }
-
-  List<String> GetTagList() {
+  List<String> getTagList() {
     return tags;
   }
 
-  void SetTagList(List<String> tagList) {
-    tags = List<String>();
-    tags = tagList;
-  }
-
-  List<JUserCredential> GetCredentialList() {
+  List<JUserCredential> getCredentialList() {
     return cred;
-  }
-
-  void SetCredentialList(List<JUserCredential> credentialList) {
-    cred = List<JUserCredential>();
-    cred = credentialList;
   }
 }

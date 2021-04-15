@@ -1,31 +1,18 @@
-import 'PubContent.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'LastMessage.g.dart';
+
+@JsonSerializable()
 class LastMessage {
   // data prop
+  @JsonKey(name: 'fn')
   String fn;
+  @JsonKey(name: 'from')
   String from;
-  dynamic message;
+  @JsonKey(name: 'message')
+  Object message;
 
-  // controll prop
-  bool isFmt;
-  bool isEntity;
-
-  LastMessage() {
-    isFmt = false;
-    isEntity = false;
-  }
-
-  void DecodeFromDynamic(dynamic info) {
-    fn = info['fn'];
-
-    from = info['from'];
-    if (info['message'].runtimeType != String) {
-      message = JPubContent();
-      message.DecodeFromMap(info);
-      isFmt = info['message']['fmt'] != null;
-      isEntity = info['message']['ent'] != null;
-    } else {
-      message = info['message'];
-    }
-  }
+  LastMessage({this.fn, this.from, this.message});
+  Map<String, dynamic> toJson() => _$LastMessageToJson(this);
+  factory LastMessage.fromJson(Map<String, dynamic> json) => _$LastMessageFromJson(json);
 }

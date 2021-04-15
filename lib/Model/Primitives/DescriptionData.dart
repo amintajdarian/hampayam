@@ -1,77 +1,89 @@
+import 'package:json_annotation/json_annotation.dart';
+
 import 'AccessLevelData.dart';
 import 'DefAccessLevelData.dart';
 
 import 'PrivateData.dart';
 import 'PublicData.dart';
+part 'DescriptionData.g.dart';
 
+@JsonSerializable(explicitToJson: true)
 class JDescriptionData {
   // data props
+  @JsonKey(name: 'created', includeIfNull: false)
   String created;
+  @JsonKey(name: 'updated', includeIfNull: false)
   String updated;
+  @JsonKey(name: 'status', includeIfNull: false)
   String status;
-  JDefAccessLevelData _defacs;
-  JAccessLevelData _acs;
+  @JsonKey(name: 'defacs', includeIfNull: false)
+  JDefAccessLevelData defacs;
+  @JsonKey(name: 'acs', includeIfNull: false)
+  JAccessLevelData acs;
+  @JsonKey(name: 'seq', includeIfNull: false)
   int seq;
+  @JsonKey(name: 'read', includeIfNull: false)
   int read;
+  @JsonKey(name: 'recv', includeIfNull: false)
   int recv;
+  @JsonKey(name: 'clear', includeIfNull: false)
   int clear;
-  JPublicData _public;
-  JPrivateData _private;
+  @JsonKey(name: 'public', includeIfNull: false)
+  JPublicData public;
+  @JsonKey(name: 'private', includeIfNull: false)
+  JPrivateData private;
+
+  JDescriptionData({this.created, this.updated, this.status, this.defacs, this.acs, this.seq, this.read, this.recv, this.clear, this.public, this.private});
+
+  factory JDescriptionData.fromJson(Map<String, dynamic> json) => _$JDescriptionDataFromJson(json);
+  Map<String, dynamic> toJson() => _$JDescriptionDataToJson(this);
 
   // controll props
-  bool hasDefAcs;
-  bool hasAcs;
-  bool hasPublic;
-  bool hasPrivate;
-
-  JDescriptionData() {
-    hasAcs = false;
-    hasDefAcs = false;
-    hasPrivate = false;
-    hasPublic = false;
-  }
-
-  void DecodeFromMap(Map<String, dynamic> desc) {
-    created = desc['created'];
-    updated = desc['updated'];
-    status = desc['status'];
-
-    if (desc['defacs'] != null) {
-      _defacs = JDefAccessLevelData.fromJson(desc['defacs']);
-    }
-
-    if (desc['acs'] != null) {
-      _acs = new JAccessLevelData();
-      _acs.DecodeFromMap(desc['acs']);
-    }
-
-    seq = desc['seq'];
-    read = desc['read'];
-    recv = desc['recv'];
-    clear = desc['clear'];
-
-    if (desc['public'] != null) {
-      _public = new JPublicData.fromJson(desc['public']);
-    }
-
-    if (desc['private'] != null) {
-      _private = JPrivateData.fromJson(desc['private']);
+  bool hasDefAcs() {
+    if (defacs != null) {
+      return true;
+    } else {
+      return false;
     }
   }
 
-  JDefAccessLevelData GetDefAcs() {
-    return _defacs;
+  bool hasAcs() {
+    if (acs != null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  JAccessLevelData GetAcs() {
-    return _acs;
+  bool hasPublic() {
+    if (public != null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  JPublicData GetPublic() {
-    return _public;
+  bool hasPrivate() {
+    if (private != null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  JPrivateData GetPrivate() {
-    return _private;
+  JDefAccessLevelData getDefAcs() {
+    return defacs;
+  }
+
+  JAccessLevelData getAcs() {
+    return acs;
+  }
+
+  JPublicData getPublic() {
+    return public;
+  }
+
+  JPrivateData getPrivate() {
+    return private;
   }
 }

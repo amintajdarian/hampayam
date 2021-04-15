@@ -8,8 +8,8 @@ part of 'DefAccessLevelData.dart';
 
 JDefAccessLevelData _$JDefAccessLevelDataFromJson(Map<String, dynamic> json) {
   return JDefAccessLevelData(
-    json['auth'] as String,
-    json['anon'] as String,
+    json['auth'] == null ? null : Permissons.fromJson(json['auth'] as String),
+    json['anon'] == null ? null : Permissons.fromJson(json['anon'] as String),
   );
 }
 

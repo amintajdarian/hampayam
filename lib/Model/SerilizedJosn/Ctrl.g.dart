@@ -29,7 +29,7 @@ Map<String, dynamic> _$JRcvCtrlToJson(JRcvCtrl instance) {
   }
 
   writeNotNull('id', instance.id);
-  writeNotNull('topic', instance.topic);
+  val['topic'] = instance.topic;
   writeNotNull('code', instance.code);
   writeNotNull('text', instance.text);
   writeNotNull('ts', instance.ts);

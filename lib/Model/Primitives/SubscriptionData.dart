@@ -1,100 +1,78 @@
+import 'package:json_annotation/json_annotation.dart';
+
 import 'AccessLevelData.dart';
 import 'LastMessage.dart';
 import 'PrivateData.dart';
 import 'PublicData.dart';
 import 'SubSeen.dart';
+part 'SubscriptionData.g.dart';
 
+@JsonSerializable(explicitToJson: true)
 class JSubscriptionData {
   // data props
+  @JsonKey(name: 'user', includeIfNull: false)
   String user;
+  @JsonKey(name: 'updated', includeIfNull: false)
   DateTime updated;
+  @JsonKey(name: 'touched', includeIfNull: false)
   DateTime touched;
-  JAccessLevelData _acs;
+  @JsonKey(name: 'acs', includeIfNull: false)
+  JAccessLevelData acs;
+  @JsonKey(name: 'read', includeIfNull: false)
   int read;
+  @JsonKey(name: 'recv', includeIfNull: false)
   int recv;
+  @JsonKey(name: 'clear', includeIfNull: false)
   int clear;
-  JPublicData _public;
-  JPrivateData _private;
+  @JsonKey(name: 'public', includeIfNull: false)
+  JPublicData public;
+  @JsonKey(name: 'private', includeIfNull: false)
+  JPrivateData private;
+  @JsonKey(name: 'online', includeIfNull: false)
   bool online;
+  @JsonKey(name: 'topic', includeIfNull: false)
   String topic;
+  @JsonKey(name: 'seq', includeIfNull: false)
   int seq;
-  JSubSeen _seen;
+  @JsonKey(name: 'seen', includeIfNull: false)
+  JSubSeen seen;
+  @JsonKey(name: 'lastmsg', includeIfNull: false)
   LastMessage lastMessage;
 
-  // controll peops
-  bool hasAcs = false;
-  bool hasPublic = false;
-  bool hasPrivate = false;
-  bool hasSeen = false;
+  JSubscriptionData({this.user, this.updated, this.touched, this.acs, this.read, this.recv, this.clear, this.public, this.private, this.online, this.topic, this.seq, this.seen, this.lastMessage});
 
-  JSubscriptionData() {
-    hasAcs = false;
-    hasPrivate = false;
-    hasPublic = false;
-    hasSeen = false;
-  }
+  factory JSubscriptionData.fromJson(Map<String, dynamic> json) => _$JSubscriptionDataFromJson(json);
+  Map<String, dynamic> toJson() => _$JSubscriptionDataToJson(this);
 
-  void DecodeFromMap(Map<String, dynamic> subInfo) {
-    user = subInfo['user'];
-
-    if (subInfo['updated'] != null) {
-      updated = DateTime.parse(subInfo['updated']);
-    }
-
-    if (subInfo['touched'] != null) {
-      touched = DateTime.parse(subInfo['touched']);
-    }
-
-    if (subInfo['acs'] != null) {
-      hasAcs = true;
-      _acs = JAccessLevelData();
-      _acs.DecodeFromMap(subInfo['acs']);
-    }
-
-    if (subInfo['lastmsg'] != null) {
-      lastMessage = LastMessage();
-      lastMessage.DecodeFromDynamic(subInfo['lastmsg']);
-    }
-
-    read = subInfo['read'];
-    recv = subInfo['recv'];
-    clear = subInfo['clear'];
-
-    if (subInfo['public'] != null) {
-      hasPublic = true;
-      _public = JPublicData.fromJson(subInfo['public']);
-    }
-
-    if (subInfo['private'] != null) {
-      hasPrivate = true;
-      _private = JPrivateData();
-      //  _private.DecodeFromMap(subInfo['private']);
-    }
-
-    online = subInfo['online'];
-    topic = subInfo['topic'];
-    seq = subInfo['seq'];
-
-    if (subInfo['seen'] != null) {
-      hasSeen = true;
-      _seen = JSubSeen();
-      _seen.DecodeFromMap(subInfo['seen']);
+  hasAcs() {
+    if (acs != null) {
+      return true;
+    } else {
+      return false;
     }
   }
 
-  JAccessLevelData GetAccessLevelData() {
-    return _acs;
+  hasPrivate() {
+    if (private != null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  JPublicData GetPublicData() {
-    return _public;
+  hasPublic() {
+    if (public != null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  JPublicData SetPublicData(JPublicData publicData) {
-    this._public = publicData;
-  }
-
-  JPrivateData GetPrivateData() {
-    return _private;
+  hasSeen() {
+    if (seen != null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
