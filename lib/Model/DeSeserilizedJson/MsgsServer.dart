@@ -1,10 +1,12 @@
 import 'package:hampayam_chat/Model/Primitives/Params.dart';
-import 'package:hampayam_chat/Model/SerilizedJosn/Ctrl.dart';
-import 'package:hampayam_chat/Model/SerilizedJosn/Info.dart';
-import 'package:hampayam_chat/Model/SerilizedJosn/Meta.dart';
-import 'package:hampayam_chat/Model/SerilizedJosn/MsgData.dart';
-import 'package:hampayam_chat/Model/SerilizedJosn/Pres.dart';
+
 import 'package:json_annotation/json_annotation.dart';
+
+import 'Ctrl.dart';
+import 'Info.dart';
+import 'Meta.dart';
+import 'MsgData.dart';
+import 'Pres.dart';
 part 'MsgsServer.g.dart';
 
 @JsonSerializable(explicitToJson: true)
