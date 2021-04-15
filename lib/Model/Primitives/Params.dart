@@ -1,4 +1,3 @@
-import 'package:hampayam_chat/Model/SerilizedJosn/Ctrl.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'Params.g.dart';
 

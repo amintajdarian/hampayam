@@ -1,7 +1,7 @@
-import 'package:hampayam_chat/Model/DeserilizedJson/Get.dart';
-import 'package:hampayam_chat/Model/DeserilizedJson/Set.dart';
-import 'package:hampayam_chat/Model/Primitives/Subscription.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import 'Get.dart';
+import 'Set.dart';
 part 'SendSub.g.dart';
 
 @JsonSerializable(explicitToJson: true)
