@@ -13,12 +13,14 @@ class Permissons {
   bool isShare = false;
   bool isOwner = false;
   bool isNull = false;
-  Permissons({this.isJoin, this.isRead, this.isWrite, this.isGetNotified, this.isApprove, this.isDelete, this.isShare, this.isOwner, this.isNull, this.permisson});
+  Permissons({this.permisson});
 
   Permissons.fromJson(String type) {
     permisson = type;
+    permissondncode(permisson);
   }
-  String permissonEncode() {
+
+  String permissonEncode(String permissons) {
     String newPer = '';
     if (isJoin) newPer += 'J';
     if (isRead) newPer += 'R';
@@ -102,8 +104,8 @@ class Permissons {
     }
   }
 
-  void permissonCange() {
-    this.permisson = permissonEncode();
+  void permissonCange(String permissons) {
+    this.permisson = permissonEncode(permissons);
   }
 
   void permissonCangeWithStrl(String newPer) {

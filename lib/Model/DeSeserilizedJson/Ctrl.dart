@@ -29,9 +29,9 @@ class JRcvCtrl {
 
   bool hasParams() {
     if (params != null) {
-      return false;
-    } else {
       return true;
+    } else {
+      return false;
     }
   }
 }

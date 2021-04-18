@@ -31,6 +31,38 @@ class JRcvMeta {
   factory JRcvMeta.fromJson(Map<String, dynamic> json) => _$JRcvMetaFromJson(json);
   Map<String, dynamic> toJson() => _$JRcvMetaToJson(this);
 
+  bool hasDesc() {
+    if (desc != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool hasSub() {
+    if (sub != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool hasCred() {
+    if (cred != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool hasDel() {
+    if (del != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   void removeSubscriptionData(item) {
     sub.remove(item);
   }

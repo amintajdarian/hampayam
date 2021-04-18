@@ -1,8 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-
-import 'Model/SeserilizedJson/MsgClient.dart';
+import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
+import 'package:hampayam_chat/Messenging/HampayamClient.dart';
+import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
 
 void main() {
   runApp(MyApp());
@@ -64,6 +63,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void dispose() {
+    print('a');
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
@@ -109,11 +114,20 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          String jsons = ' {"set":{"id":"102047","topic":"grp-dD1Z-5ePmA","desc":{"defacs":{"auth":"AJPRW"}}}}  ';
-
-          Map<String, dynamic> mapJson = jsonDecode(jsons);
-          MsgClient msgSever = MsgClient.fromJson(mapJson);
-          print(msgSever.jSndSet.desc.defacs.auth.isDelete);
+          HampayamClient.loginChat('185.110.189.242:6060', 'AQAAAAABAADDVmFA9-EU5FyoZh4MWgMT', 'TinodeWeb/0.16.7 (Chrome/90.0; Win32); tinodejs/0.16.7', 'en-GB', '0.16.7', 'amin', '123456');
+          IORouter.chatChannel.stream.listen((event) {
+            switch (event.type) {
+              case 'm':
+                JRcvMeta meta = JRcvMeta.fromJson(event.msg);
+                if (meta.hasDesc()) {
+                  if (meta.desc.hasAcs()) {
+                    print(meta.desc.defacs.auth.permisson);
+                  }
+                }
+                break;
+              default:
+            }
+          });
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),

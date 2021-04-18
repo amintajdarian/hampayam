@@ -10,7 +10,9 @@ JRcvMsg _$JRcvMsgFromJson(Map<String, dynamic> json) {
   return JRcvMsg(
     topic: json['topic'] as String,
     from: json['from'] as String,
-    head: json['head'] == null ? null : JPubHead.fromJson(json['head'] as Map<String, dynamic>),
+    head: json['head'] == null
+        ? null
+        : JPubHead.fromJson(json['head'] as Map<String, dynamic>),
     ts: json['ts'] as String,
     seq: json['seq'] as int,
     content: json['content'],

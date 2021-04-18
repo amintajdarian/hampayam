@@ -1,4 +1,4 @@
-import 'package:hampayam_chat/Model/Primitives/permisson.dart';
+import 'package:hampayam_chat/Model/Primitives/Permisson.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'AccessLevelData.g.dart';
 

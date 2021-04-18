@@ -8,14 +8,14 @@ part of 'Description.dart';
 
 Description _$DescriptionFromJson(Map<String, dynamic> json) {
   return Description(
-    json['ims'] == null ? null : DateTime.parse(json['ims'] as String),
-    json['defacs'] == null
+    ims: json['ims'] == null ? null : DateTime.parse(json['ims'] as String),
+    defacs: json['defacs'] == null
         ? null
         : JDefAccessLevelData.fromJson(json['defacs'] as Map<String, dynamic>),
-    json['public'] == null
+    publicData: json['public'] == null
         ? null
         : JPublicData.fromJson(json['public'] as Map<String, dynamic>),
-    json['private'] == null
+    privateData: json['private'] == null
         ? null
         : JPrivateData.fromJson(json['private'] as Map<String, dynamic>),
   );

@@ -16,7 +16,7 @@ class Description {
   JPublicData publicData;
   @JsonKey(name: "private", includeIfNull: true)
   JPrivateData privateData;
-  Description(this.ims, this.defacs, this.publicData, this.privateData);
+  Description({this.ims, this.defacs, this.publicData, this.privateData});
   Map<String, dynamic> toJson() => _$DescriptionToJson(this);
   factory Description.fromJson(Map<String, dynamic> json) => _$DescriptionFromJson(json);
 }

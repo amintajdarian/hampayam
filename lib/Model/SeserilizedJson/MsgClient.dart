@@ -1,17 +1,14 @@
-import 'dart:convert';
-
-import 'package:hampayam_chat/Model/DeserilizedJson/Account.dart';
-import 'package:hampayam_chat/Model/DeserilizedJson/Get.dart';
-import 'package:hampayam_chat/Model/DeserilizedJson/Hi.dart';
-import 'package:hampayam_chat/Model/DeserilizedJson/Leave.dart';
-import 'package:hampayam_chat/Model/DeserilizedJson/Login.dart';
-import 'package:hampayam_chat/Model/DeserilizedJson/Pub.dart';
-import 'package:hampayam_chat/Model/DeserilizedJson/SendDel.dart';
-import 'package:hampayam_chat/Model/DeserilizedJson/SendSub.dart';
-import 'package:hampayam_chat/Model/DeserilizedJson/Set.dart';
 import 'package:json_annotation/json_annotation.dart';
-
+import 'Account.dart';
+import 'Get.dart';
+import 'Hi.dart';
+import 'Leave.dart';
+import 'Login.dart';
 import 'Note.dart';
+import 'Pub.dart';
+import 'SendDel.dart';
+import 'SendSub.dart';
+import 'Set.dart';
 part 'MsgClient.g.dart';
 
 @JsonSerializable(explicitToJson: true)
@@ -38,5 +35,4 @@ class MsgClient {
   JSndNote jSndNote;
   MsgClient({this.jSndHi, this.jSndAcc, this.jSndLogin, this.jSndSub, this.jSndLeave, this.jSndPub, this.jSndGet, this.jSndSet, this.jSndDel, this.jSndNote});
   Map<String, dynamic> toJson() => _$MsgClientToJson(this);
-  factory MsgClient.fromJson(Map<String, dynamic> json) => _$MsgClientFromJson(json);
 }
