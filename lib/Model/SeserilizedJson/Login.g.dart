@@ -19,9 +19,19 @@ JSndLogin _$JSndLoginFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$JSndLoginToJson(JSndLogin instance) => <String, dynamic>{
-      'id': instance.id,
-      'scheme': instance.scheme,
-      'secret': instance.secret,
-      'cred': instance.cred,
-    };
+Map<String, dynamic> _$JSndLoginToJson(JSndLogin instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'scheme': instance.scheme,
+    'secret': instance.secret,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('cred', instance.cred);
+  return val;
+}

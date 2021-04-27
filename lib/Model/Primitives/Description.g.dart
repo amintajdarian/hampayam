@@ -21,10 +21,19 @@ Description _$DescriptionFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$DescriptionToJson(Description instance) =>
-    <String, dynamic>{
-      'ims': instance.ims?.toIso8601String(),
-      'defacs': instance.defacs?.toJson(),
-      'public': instance.publicData?.toJson(),
-      'private': instance.privateData?.toJson(),
-    };
+Map<String, dynamic> _$DescriptionToJson(Description instance) {
+  final val = <String, dynamic>{
+    'ims': instance.ims?.toIso8601String(),
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('defacs', instance.defacs?.toJson());
+  writeNotNull('public', instance.publicData?.toJson());
+  writeNotNull('private', instance.privateData?.toJson());
+  return val;
+}

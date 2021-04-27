@@ -17,7 +17,7 @@ class JRcvMeta {
   String ts;
   @JsonKey(name: 'desc', includeIfNull: false)
   JDescriptionData desc;
-  @JsonKey(name: 'sub', includeIfNull: false)
+  @JsonKey(name: 'sub', includeIfNull: false, disallowNullValue: true)
   List<JSubscriptionData> sub;
   @JsonKey(name: 'tags', includeIfNull: false)
   List<String> tags;

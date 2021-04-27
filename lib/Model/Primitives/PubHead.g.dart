@@ -8,19 +8,20 @@ part of 'PubHead.dart';
 
 JPubHead _$JPubHeadFromJson(Map<String, dynamic> json) {
   return JPubHead(
-    (json['attachments'] as List)?.map((e) => e as String)?.toList(),
-    json['auto'] as bool ?? true,
-    json['forwarded'] as String,
-    (json['hashtags'] as List)?.map((e) => e as String)?.toList(),
-    (json['mentions'] as List)?.map((e) => e as String)?.toList(),
-    json['mime'] as String,
-    json['priority'] == null
+    attachments:
+        (json['attachments'] as List)?.map((e) => e as String)?.toList(),
+    auto: json['auto'] as bool ?? true,
+    forwarded: json['forwarded'] as String,
+    hashtags: (json['hashtags'] as List)?.map((e) => e as String)?.toList(),
+    mentions: (json['mentions'] as List)?.map((e) => e as String)?.toList(),
+    mime: json['mime'] as String,
+    priority: json['priority'] == null
         ? null
         : JPubHeadPriority.fromJson(json['priority'] as Map<String, dynamic>),
-    json['replace'] as String,
-    json['reply'] as String,
-    json['sender'] as String,
-    json['thread'] as String,
+    replace: json['replace'] as String,
+    reply: json['reply'] as String,
+    sender: json['sender'] as String,
+    thread: json['thread'] as String,
   );
 }
 

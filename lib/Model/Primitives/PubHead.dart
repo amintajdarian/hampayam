@@ -29,7 +29,7 @@ class JPubHead {
   @JsonKey(name: "thread", includeIfNull: false)
   String thread; // an indicator that the message is a part of a conversation thread, a topic-unique ID of the first message in the thread, ":123".
 
-  JPubHead(this.attachments, this.auto, this.forwarded, this.hashtags, this.mentions, this.mime, this.priority, this.replace, this.reply, this.sender, this.thread);
+  JPubHead({this.attachments, this.auto, this.forwarded, this.hashtags, this.mentions, this.mime, this.priority, this.replace, this.reply, this.sender, this.thread});
   Map<String, dynamic> toJson() => _$JPubHeadToJson(this);
   factory JPubHead.fromJson(Map<String, dynamic> json) => _$JPubHeadFromJson(json);
 

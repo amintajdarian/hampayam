@@ -3,12 +3,12 @@ part 'DataWhat.g.dart';
 
 @JsonSerializable()
 class DataWhat {
-  @JsonKey(name: 'since')
+  @JsonKey(name: 'since', includeIfNull: false)
   String since;
-  @JsonKey(name: 'before')
+  @JsonKey(name: 'before', includeIfNull: false)
   String before;
-  @JsonKey(name: 'limit')
-  String limit;
+  @JsonKey(name: 'limit', includeIfNull: false)
+  int limit;
   DataWhat({this.since, this.before, this.limit});
 
   Map<String, dynamic> toJson() => _$DataWhatToJson(this);

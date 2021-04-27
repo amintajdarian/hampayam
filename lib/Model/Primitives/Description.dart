@@ -10,11 +10,11 @@ part 'Description.g.dart';
 class Description {
   @JsonKey(name: "ims")
   DateTime ims;
-  @JsonKey(name: "defacs")
+  @JsonKey(name: "defacs", includeIfNull: false)
   JDefAccessLevelData defacs;
-  @JsonKey(name: "public", includeIfNull: true)
+  @JsonKey(name: "public", includeIfNull: false)
   JPublicData publicData;
-  @JsonKey(name: "private", includeIfNull: true)
+  @JsonKey(name: "private", includeIfNull: false)
   JPrivateData privateData;
   Description({this.ims, this.defacs, this.publicData, this.privateData});
   Map<String, dynamic> toJson() => _$DescriptionToJson(this);

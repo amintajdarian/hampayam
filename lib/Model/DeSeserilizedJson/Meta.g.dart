@@ -7,6 +7,7 @@ part of 'Meta.dart';
 // **************************************************************************
 
 JRcvMeta _$JRcvMetaFromJson(Map<String, dynamic> json) {
+  $checkKeys(json, disallowNullValues: const ['sub']);
   return JRcvMeta(
     id: json['id'] as String,
     topic: json['topic'] as String,

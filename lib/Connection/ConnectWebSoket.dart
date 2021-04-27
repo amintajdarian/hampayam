@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgsServer.dart';
-import 'package:web_socket_channel/io.dart';
+import 'package:websocket_manager/websocket_manager.dart';
 
 class MsgType {
   Map<String, dynamic> msg;
@@ -15,19 +15,25 @@ class MsgType {
 }
 
 class IORouter {
-  static IOWebSocketChannel wsChannel;
+  static WebsocketManager wsChannel;
   static int msgID = 9999;
   static String connectionStatus;
   static final chatChannel = StreamController<MsgType>.broadcast();
+  static final String ipAddress = '185.110.189.242:6060';
+  static final String apiKey = 'AQAAAAABAADDVmFA9-EU5FyoZh4MWgMT';
 
-  static void connect(String address) {
+  static Future<void> connect(String address) async {
+    wsChannel = WebsocketManager(address);
+
+    // wsChannel = IOWebSocketChannel.connect(address);
     try {
-      wsChannel = IOWebSocketChannel.connect(address);
-      connectionStatus = 'Connect Successfull';
+      print('ok');
     } catch (e) {
       connectionStatus = 'Connection Lost';
+      print('disconected');
+      await Future.delayed(Duration(minutes: 15)).then((value) => connect(address));
     }
-    wsChannel.stream.listen((event) {
+    wsChannel.onMessage((event) {
       var serverMsgMap = jsonDecode(event.toString());
       MsgSever msgSever = MsgSever.fromJson(serverMsgMap);
       if (msgSever.msg != null) {
@@ -42,6 +48,11 @@ class IORouter {
         chatChannel.sink.add(MsgType(serverMsgMap['info'], 'i'));
       }
     });
+    wsChannel.connect();
+  }
+
+  static void closeConnection() {
+    wsChannel.close();
   }
 
   static String generateRandomKey() {
@@ -49,11 +60,12 @@ class IORouter {
   }
 
   static void sendMap(Map<String, dynamic> msg) {
-    wsChannel.sink.add(jsonEncode(msg));
+    print(msg);
+    wsChannel.send(jsonEncode(msg));
   }
 
   static void sendString(String msg) {
-    wsChannel.sink.add(msg);
+    wsChannel.send(msg);
   }
 
   static String base4dEncod(String input) {

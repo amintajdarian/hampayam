@@ -2,9 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Messenging/HampayamClient.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
+import 'package:provider/provider.dart';
+
+import 'StateManagement/ChatListProvider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ChatList()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -36,12 +46,10 @@ class MyHomePage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
-
   // This class is the configuration for the state. It holds the values (in this
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
-
   final String title;
 
   @override
@@ -49,19 +57,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   void dispose() {
     print('a');
@@ -70,6 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    ChatList chatList = Provider.of<ChatList>(context);
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -105,25 +102,41 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               'You have pushed the button this many times:',
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            Consumer<ChatList>(builder: (context, cart, child) {
+              return Expanded(
+                child: ListView.builder(
+                  itemCount: chatList.subList.length,
+                  itemBuilder: (context, index) {
+                    return Text(chatList.subList.length.toString());
+                  },
+                ),
+              );
+            })
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          HampayamClient.loginChat('185.110.189.242:6060', 'AQAAAAABAADDVmFA9-EU5FyoZh4MWgMT', 'TinodeWeb/0.16.7 (Chrome/90.0; Win32); tinodejs/0.16.7', 'en-GB', '0.16.7', 'amin', '123456');
+          HampayamClient.loginChat(IORouter.ipAddress, IORouter.apiKey, 'TinodeWeb/0.16.7 (Chrome/90.0; Win32); tinodejs/0.16.7', 'en-GB', '0.16.7', 'amin', '123456');
+          HampayamClient.subToMessanger();
+
+          // IORouter.closeConnection();
+
           IORouter.chatChannel.stream.listen((event) {
+            // print(event.msg);
             switch (event.type) {
               case 'm':
                 JRcvMeta meta = JRcvMeta.fromJson(event.msg);
-                if (meta.hasDesc()) {
-                  if (meta.desc.hasAcs()) {
-                    print(meta.desc.defacs.auth.permisson);
+                print(meta.hasSub());
+                if (meta.hasSub()) {
+                  if (meta.topic == 'me') {
+                    chatList.listSpliter(meta.sub);
+                    //   HampayamClient.subToChatFirst(meta.sub[1].topic);
                   }
                 }
+                break;
+              case 'c':
+                print(event.msg);
                 break;
               default:
             }

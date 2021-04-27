@@ -23,5 +23,8 @@ Map<String, dynamic> _$JAccessLevelDataToJson(JAccessLevelData instance) {
     }
   }
 
+  /*  writeNotNull('mode', instance.mode?.toJson());
+  writeNotNull('given', instance.given?.toJson());
+  writeNotNull('want', instance.want?.toJson()); */
   return val;
 }

@@ -10,7 +10,7 @@ class JSndLogin {
   String scheme;
   @JsonKey(name: 'secret')
   String secret;
-  @JsonKey(name: 'cred')
+  @JsonKey(name: 'cred', includeIfNull: false)
   List<JUserCredential> cred;
   JSndLogin({this.id, this.scheme, this.secret, this.cred});
   factory JSndLogin.fromJson(Map<String, dynamic> json) => _$JSndLoginFromJson(json);
