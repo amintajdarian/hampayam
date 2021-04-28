@@ -14,6 +14,7 @@ import 'package:hampayam_chat/Model/SeserilizedJson/Login.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/MsgClient.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/SendSub.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Set.dart';
+import 'package:hampayam_chat/StateManagement/ProfileProvider.dart';
 
 class HampayamClient {
   static void loginChat(String address, String apiKey, String userAgent, String language, String verssion, String username, String password) {
@@ -148,7 +149,7 @@ class HampayamClient {
     IORouter.sendMap(sendSub.toJson());
   }
 
-  static void chnageProfileName(String fn, {String surname}) {
+  static void chnageProfileName(String fn, {String surname, Profile profileName}) {
     String newId = IORouter.generateRandomKey();
     JName name = JName(surname: surname);
     JPublicData publicData = JPublicData(fn: fn, n: name);
@@ -156,5 +157,6 @@ class HampayamClient {
     JSndSet jSndSet = JSndSet(id: newId, topic: 'me', desc: description);
     MsgClient sendSet = MsgClient(jSndSet: jSndSet);
     IORouter.sendMap(sendSet.toJson());
+    profileName.setUerName(fn);
   }
 }

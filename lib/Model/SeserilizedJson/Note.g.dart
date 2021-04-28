@@ -10,7 +10,7 @@ JSndNote _$JSndNoteFromJson(Map<String, dynamic> json) {
   return JSndNote(
     topic: json['topic'] as String,
     what: json['what'] as String,
-    seq: json['seq'] as String,
+    seq: json['seq'] as int,
     unread: json['unread'] as String,
   );
 }

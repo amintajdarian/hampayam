@@ -7,7 +7,7 @@ import 'Photo.dart';
 import 'Telephone.dart';
 part 'PublicData.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class JPublicData {
   // data props
   @JsonKey(name: "fn")

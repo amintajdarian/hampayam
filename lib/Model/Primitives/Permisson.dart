@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 @JsonSerializable()
 class Permissons {
@@ -19,8 +20,11 @@ class Permissons {
     permisson = type;
     permissondncode(permisson);
   }
+  String toJson() {
+    return permisson;
+  }
 
-  String permissonEncode(String permissons) {
+  String permissonEncode() {
     String newPer = '';
     if (isJoin) newPer += 'J';
     if (isRead) newPer += 'R';
@@ -104,8 +108,8 @@ class Permissons {
     }
   }
 
-  void permissonCange(String permissons) {
-    this.permisson = permissonEncode(permissons);
+  void permissonChange() {
+    this.permisson = permissonEncode();
   }
 
   void permissonCangeWithStrl(String newPer) {

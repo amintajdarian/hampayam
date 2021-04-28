@@ -8,9 +8,15 @@ part of 'AccessLevelData.dart';
 
 JAccessLevelData _$JAccessLevelDataFromJson(Map<String, dynamic> json) {
   return JAccessLevelData(
-    mode: json['mode'] == null ? null : Permissons.fromJson(json['mode'] as String),
-    given: json['given'] == null ? null : Permissons.fromJson(json['given'] as String),
-    want: json['want'] == null ? null : Permissons.fromJson(json['want'] as String),
+    mode: json['mode'] == null
+        ? null
+        : Permissons.fromJson(json['mode'] as String),
+    given: json['given'] == null
+        ? null
+        : Permissons.fromJson(json['given'] as String),
+    want: json['want'] == null
+        ? null
+        : Permissons.fromJson(json['want'] as String),
   );
 }
 
@@ -23,8 +29,8 @@ Map<String, dynamic> _$JAccessLevelDataToJson(JAccessLevelData instance) {
     }
   }
 
-  /*  writeNotNull('mode', instance.mode?.toJson());
+  writeNotNull('mode', instance.mode?.toJson());
   writeNotNull('given', instance.given?.toJson());
-  writeNotNull('want', instance.want?.toJson()); */
+  writeNotNull('want', instance.want?.toJson());
   return val;
 }

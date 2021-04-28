@@ -131,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (meta.hasSub()) {
                   if (meta.topic == 'me') {
                     chatList.listSpliter(meta.sub);
-                    //   HampayamClient.subToChatFirst(meta.sub[1].topic);
+                    HampayamClient.chnageProfileName('amiin', surname: 'taj');
                   }
                 }
                 break;

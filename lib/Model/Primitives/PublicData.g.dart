@@ -43,12 +43,12 @@ Map<String, dynamic> _$JPublicDataToJson(JPublicData instance) {
     }
   }
 
-  writeNotNull('n', instance.n);
+  writeNotNull('n', instance.n?.toJson());
   writeNotNull('org', instance.org);
   writeNotNull('title', instance.title);
-  writeNotNull('tel', instance.tel);
-  writeNotNull('email', instance.email);
-  writeNotNull('impp', instance.impp);
-  writeNotNull('photo', instance.photo);
+  writeNotNull('tel', instance.tel?.map((e) => e?.toJson())?.toList());
+  writeNotNull('email', instance.email?.map((e) => e?.toJson())?.toList());
+  writeNotNull('impp', instance.impp?.map((e) => e?.toJson())?.toList());
+  writeNotNull('photo', instance.photo?.toJson());
   return val;
 }
