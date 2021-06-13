@@ -1,0 +1,23 @@
+{
+    "Accounts": "حساب کاربری",
+    "Register": "ثبت نام",
+    "UserName": "نام کاربری",
+    "Password": "رمز عبور",
+    "Login": "ورود",
+    "Forgotpassword": "فراموشی رمز عبور؟",
+    "Or": "یا",
+    "name": "نام",
+    "Phone": "شماره تلفن",
+    "ConfirmPass": "تکرار رمز عبور",
+    "Messanger": "همپیام",
+    "NavMessage": "پیام ها",
+    "NavP2PChat": "شخصی",
+    "NavGroups": "گروه",
+    "NavChannels": "کانال",
+    "NavBots": "بات",
+    "DrawerCreatGrp": "گروه جدید",
+    "DrawerCreatChl": "کانال جدید",
+    "DrawerContacts": "مخاطبین",
+    "DrawerSocialPnel": "پنل سازمانی",
+    "Logout": "خروج"
+}

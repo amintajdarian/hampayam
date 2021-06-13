@@ -1,0 +1,23 @@
+{
+    "Accounts": "login",
+    "Register": "ُSignUp",
+    "UserName": "Username",
+    "Password": "Password",
+    "Login": "login",
+    "Forgotpassword": "Forgot Password?",
+    "Or": "Or",
+    "name": "name",
+    "Phone": "Phone number",
+    "ConfirmPass": "Confirm Password",
+    "Messanger": "Hampayam",
+    "NavMessage": "Messages",
+    "NavP2PChat": "Private",
+    "NavGroups": "Groups",
+    "NavChannels": "Channels",
+    "NavBots": "Bots",
+    "DrawerCreatGrp": "Creat Group",
+    "DrawerCreatChl": "Creat Channel",
+    "DrawerContacts": "Contacts",
+    "DrawerSocialPnel": "Social Panel",
+    "Logout": "Logout"
+}
