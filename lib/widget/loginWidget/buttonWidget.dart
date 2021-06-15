@@ -5,10 +5,11 @@ import 'package:hexcolor/hexcolor.dart';
 
 class ButtonWidget extends StatelessWidget {
   final String hintText;
-  final Future pressFunction;
+  final Function pressFunction;
   final bool hasPadding;
   final double mergin;
-  ButtonWidget({this.mergin, this.hintText, this.pressFunction, this.hasPadding});
+  final bool enableProgress;
+  ButtonWidget({this.mergin, this.hintText, this.pressFunction, this.hasPadding, this.enableProgress});
   @override
   Widget build(Object context) {
     var _size = MediaQuery.of(context).size.width;
@@ -38,23 +39,29 @@ class ButtonWidget extends StatelessWidget {
           child: Container(
             width: _size / 3,
             height: _size / 10,
-            child: hasPadding
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 42.0),
-                    child: Text(
-                      hintText,
-                      style: TextStyle(color: Colors.white, fontSize: _size / 20, fontFamily: "WorkSansBold"),
+            child: enableProgress
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
                     ),
                   )
-                : Center(
-                    child: Text(
-                      hintText,
-                      style: TextStyle(color: Colors.white, fontSize: _size / 20, fontFamily: "WorkSansBold"),
-                    ),
-                  ),
+                : hasPadding
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 42.0),
+                        child: Text(
+                          hintText,
+                          style: TextStyle(color: Colors.white, fontSize: _size / 20, fontFamily: "WorkSansBold"),
+                        ),
+                      )
+                    : Center(
+                        child: Text(
+                          hintText,
+                          style: TextStyle(color: Colors.white, fontSize: _size / 20, fontFamily: "WorkSansBold"),
+                        ),
+                      ),
           ),
           onPressed: () async {
-            await pressFunction;
+            await pressFunction();
           },
         ),
       ),

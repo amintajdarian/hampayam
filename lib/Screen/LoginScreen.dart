@@ -6,15 +6,30 @@ import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/mfg_labs_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
-import 'package:hampayam_chat/widget/TabIndication.dart';
+import 'package:hampayam_chat/Connection/HttpConnection.dart';
+import 'package:hampayam_chat/Messenging/HampayamClient.dart';
+import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
+import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
+import 'package:hampayam_chat/Screen/HomeScreen.dart';
+import 'package:hampayam_chat/StateManagement/ChatListProvider.dart';
+import 'package:hampayam_chat/StateManagement/ProfileProvider.dart';
+import 'package:hampayam_chat/StateManagement/loginStateManagement/loginPageProvider.dart';
 import 'package:hampayam_chat/widget/loginWidget/buttomIcon.dart';
 import 'package:hampayam_chat/widget/loginWidget/buttonWidget.dart';
-import 'package:hampayam_chat/widget/menuBar.dart';
-import 'package:hampayam_chat/widget/textFileBuilder.dart';
+import 'package:hampayam_chat/widget/loginWidget/menuBar.dart';
+import 'package:hampayam_chat/widget/loginWidget/textFileBuilder.dart';
+
 import 'package:hexcolor/hexcolor.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:provider/provider.dart';
 import '../translations/locale_keys.g.dart';
 import 'dart:ui' as ui;
+
+const String LAGUAGE_CODE = 'languageCode';
+
+//languages code
+const String ENGLISH = 'en';
+const String FARSI = 'fa';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -23,50 +38,30 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-const String LAGUAGE_CODE = 'languageCode';
-
-//languages code
-const String ENGLISH = 'en';
-const String FARSI = 'fa';
-
-class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
-  String userInfo;
-  String email;
-  String password;
-  bool loggingin = false;
-
+class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   TextEditingController loginUserNameController = new TextEditingController();
+
   TextEditingController loginPasswordController = new TextEditingController();
 
-  bool _obscureTextLogin = true;
-  bool _obscureTextSignup = true;
-  bool _obscureTextSignupConfirm = true;
-
   TextEditingController signupPhoneController = new TextEditingController();
+
   TextEditingController signupNameController = new TextEditingController();
+
   TextEditingController signupUserNameController = new TextEditingController();
+
   TextEditingController signupPasswordController = new TextEditingController();
+
   TextEditingController signupConfirmPasswordController = new TextEditingController();
 
-  PageController _pageController;
+  PageController _pageController = PageController();
 
   Color left = Colors.black;
-  Color right = Colors.white;
-  bool isValidEmail(String input) {
-    final RegExp regex = new RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$");
-    return regex.hasMatch(input);
-  }
 
-  String secret;
-  String logineUser = "";
-  String loginpPassword = "";
-  String signUpFname = "";
-  String signUpUserName = "";
-  String signUpEmail = "";
-  String signUpPassword = "";
-  String signUpConfirmPass = "";
+  Color right = Colors.white;
+
+  bool loginSuccess = false;
 
   Widget spacebetween(var size) {
     return Container(
@@ -76,176 +71,155 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    _showPopupMenu(BuildContext context) {
-      showMenu<String>(
-        context: context,
-        position: RelativeRect.fromLTRB(25.0, 65.0, 24.0, 0.0), //position where you want to show the menu on screen
-        items: [
-          PopupMenuItem<String>(
-              child: Directionality(
-                textDirection: ui.TextDirection.ltr,
-                child: Row(
-                  children: [
-                    Text(
-                      "🇮🇷 Persian",
-                      style: TextStyle(
-                        color: HexColor("#694AE3"),
-                        fontSize: 17,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              value: '1'),
-          PopupMenuItem<String>(
-              child: Directionality(
-                textDirection: ui.TextDirection.ltr,
-                child: Row(
-                  children: [
-                    Text(
-                      "🇺🇸 English",
-                      style: TextStyle(
-                        color: HexColor("#694AE3"),
-                        fontSize: 17,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              value: '2'),
-        ],
-        elevation: 8.0,
-      ).then<void>((String itemSelected) async {
-        if (itemSelected == null) return;
-
-        if (itemSelected == "1") {
-          await context.setLocale(Locale('en'));
-          //code here
-        } else if (itemSelected == "2") {
-          await context.setLocale(Locale('fa')); //code here
-        } else {
-          //code here
-        }
-      });
-    }
-
-    var _size = MediaQuery.of(context).size.width;
-    return Directionality(
-      textDirection: ui.TextDirection.ltr,
-      child: Scaffold(
-        key: _scaffoldKey,
-        body: SingleChildScrollView(
-          child: NotificationListener<OverscrollIndicatorNotification>(
-            onNotification: (overscroll) {
-              overscroll.disallowGlow();
-            },
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              //>= 775.0 ? MediaQuery.of(context).size.height : 900,
-              decoration: new BoxDecoration(
-                gradient: new LinearGradient(
-                    colors: [HexColor('#CCFF90'), HexColor('#00E5FF')], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
-              ),
-              child: Column(
-                //mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(
-                    height: _size / 25,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: _size / 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                            icon: Icon(Icons.language),
-                            onPressed: () {
-                              _showPopupMenu(context);
-                            }),
-                      ],
-                    ),
-                  ),
-                  Flexible(
-                    flex: 2,
-                    child: Image(
-
-                        //width: 200.0,
-                        //height: 140.0,
-                        fit: BoxFit.fill,
-                        image: new AssetImage('assets/images/logo-asli.png')),
-                  ),
-                  MenuBar(
-                    tapLeft: _onSignInButtonPress,
-                    tapRight: _onSignUpButtonPress,
-                    pageController: _pageController,
-                  ),
-                  Expanded(
-                    flex: _size < 1200 ? 5 : 1,
-                    //flex: 5,
-                    child: PageView(
-                      controller: _pageController,
-                      onPageChanged: (i) {
-                        if (i == 0) {
-                          if (!mounted) return;
-                          setState(() {
-                            right = Colors.white;
-                            left = Colors.black;
-                          });
-                        } else if (i == 1) {
-                          if (!mounted) return;
-                          setState(() {
-                            right = Colors.black;
-                            left = Colors.white;
-                          });
-                        }
-                      },
-                      children: <Widget>[
-                        new ConstrainedBox(
-                          constraints: const BoxConstraints.expand(),
-                          child: _buildSignIn(context),
-                        ),
-                        new ConstrainedBox(
-                          constraints: const BoxConstraints.expand(),
-                          child: _buildSignUp(context),
-                        ),
-                      ],
+  _showPopupMenu(BuildContext context) {
+    showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(25.0, 65.0, 24.0, 0.0), //position where you want to show the menu on screen
+      items: [
+        PopupMenuItem<String>(
+            child: Directionality(
+              textDirection: ui.TextDirection.ltr,
+              child: Row(
+                children: [
+                  Text(
+                    "🇮🇷 Persian",
+                    style: TextStyle(
+                      color: HexColor("#694AE3"),
+                      fontSize: 17,
                     ),
                   ),
                 ],
               ),
             ),
+            value: '1'),
+        PopupMenuItem<String>(
+            child: Directionality(
+              textDirection: ui.TextDirection.ltr,
+              child: Row(
+                children: [
+                  Text(
+                    "🇺🇸 English",
+                    style: TextStyle(
+                      color: HexColor("#694AE3"),
+                      fontSize: 17,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            value: '2'),
+      ],
+      elevation: 8.0,
+    ).then<void>((String itemSelected) async {
+      if (itemSelected == null) return;
+      //code here
+      if (itemSelected == "1") {
+        await context.setLocale(Locale('fa')); //code here
+        //code here
+      } else if (itemSelected == "2") {
+        await context.setLocale(Locale('en'));
+      } else {
+        //code here
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    LoginPageProvider loginPageProvider = Provider.of<LoginPageProvider>(context);
+    var _size = MediaQuery.of(context).size.width;
+    return Consumer<LoginPageProvider>(builder: (context, value, child) {
+      return Directionality(
+        textDirection: ui.TextDirection.ltr,
+        child: Scaffold(
+          key: _scaffoldKey,
+          body: SingleChildScrollView(
+            child: NotificationListener<OverscrollIndicatorNotification>(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                //>= 775.0 ? MediaQuery.of(context).size.height : 900,
+                decoration: new BoxDecoration(
+                  gradient: new LinearGradient(
+                      colors: [HexColor('#CCFF90'), HexColor('#00E5FF')], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                ),
+                child: Column(
+                  //mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                      height: _size / 25,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: _size / 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                              icon: Icon(Icons.language),
+                              onPressed: () {
+                                _showPopupMenu(context);
+                              }),
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      flex: 2,
+                      child: Image(
+
+                          //width: 200.0,
+                          //height: 140.0,
+                          fit: BoxFit.fill,
+                          image: new AssetImage('assets/images/logo-asli.png')),
+                    ),
+                    MenuBar(
+                      tapLeft: _onSignInButtonPress,
+                      tapRight: _onSignUpButtonPress,
+                      pageController: _pageController,
+                    ),
+                    Expanded(
+                      flex: _size < 1200 ? 5 : 1,
+                      //flex: 5,
+                      child: PageView(
+                        controller: _pageController,
+                        onPageChanged: (i) {
+                          if (i == 0) {
+                            loginPageProvider.changeColorRight(Colors.white);
+                            loginPageProvider.changeColorLeft(Colors.black);
+                          } else if (i == 1) {
+                            loginPageProvider.changeColorRight(Colors.black);
+                            loginPageProvider.changeColorLeft(Colors.white);
+                          }
+                        },
+                        children: <Widget>[
+                          new ConstrainedBox(
+                            constraints: const BoxConstraints.expand(),
+                            child: _buildSignIn(context),
+                          ),
+                          new ConstrainedBox(
+                            constraints: const BoxConstraints.expand(),
+                            child: _buildSignUp(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _pageController?.dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-
-    _pageController = PageController();
+      );
+    });
   }
 
   Widget _buildSignIn(BuildContext context) {
     var _size = MediaQuery.of(context).size.width;
-
+    LoginPageProvider loginPageProvider = Provider.of<LoginPageProvider>(context);
+    ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
+    ChatListProvider chatListProvider = Provider.of<ChatListProvider>(context);
+    HttpConnection httpConnection = HttpConnection();
     return Container(
       //padding: EdgeInsets.only(top: 23.0),
       child: Padding(
@@ -272,16 +246,24 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           hintText: LocaleKeys.UserName.tr(),
                           obscureText: false,
                           suffixIconShow: false,
+                          validateEmpty: loginPageProvider.getTextUserNameEmpty,
+                          validateValue: loginPageProvider.getIsValidate,
+                          errorValidate: loginPageProvider.getValidateText,
                         ),
                         spacebetween(_size),
                         TextFieldBuilder(
                           textEditingController: loginPasswordController,
                           hintText: LocaleKeys.Password.tr(),
                           iconData: MfgLabs.lock_alt,
-                          obscureText: _obscureTextLogin,
+                          obscureText: loginPageProvider.getObscureTextLogin,
                           suffixIconShow: true,
-                          sufixIconData: _obscureTextLogin ? Elusive.eye_off : Elusive.eye,
-                          pressFunction: _toggleLogin,
+                          sufixIconData: loginPageProvider.getObscureTextLogin ? Elusive.eye_off : Elusive.eye,
+                          pressFunction: () {
+                            loginPageProvider.changeObscureTextLogin();
+                          },
+                          validateEmpty: loginPageProvider.getTextPasswordEmpty,
+                          validateValue: loginPageProvider.getIsValidate,
+                          errorValidate: loginPageProvider.getValidateText,
                         ),
                         SizedBox(
                           height: _size / 11,
@@ -291,9 +273,75 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   ),
                 ),
                 ButtonWidget(
+                  enableProgress: loginPageProvider.getprogressEnable,
                   mergin: .3,
                   hintText: LocaleKeys.Login.tr(),
-                  pressFunction: SignIn(),
+                  pressFunction: () {
+                    if (loginUserNameController.text.isNotEmpty && loginPasswordController.text.isNotEmpty) {
+                      loginPageProvider.changeProgress(true);
+                      signIn(context, loginUserNameController.text, loginPasswordController.text).then((value) {
+                        IORouter.chatChannel.stream.listen((event) async {
+                          switch (event.type) {
+                            case 'm':
+                              JRcvMeta meta = JRcvMeta.fromJson(event.msg);
+                              print(event.msg);
+                              if (meta.hasSub()) {
+                                if (meta.topic == 'me') {
+                                  chatListProvider.listSpliter(meta.sub);
+                                }
+                              }
+                              if (meta.hasDesc()) {
+                                profileProvider.setUerName(loginUserNameController.text);
+                                profileProvider.fname(meta.getDescription().getPublic().fn);
+                                if (meta.getDescription().getPublic().photo != null) {
+                                  if (meta.getDescription().getPublic().photo != null) {
+                                    profileProvider.setPhoto(meta.getDescription().getPublic().photo.data);
+                                  }
+                                }
+                                if (meta.desc.getPublic().n != null) {
+                                  profileProvider.sname(meta.getDescription().getPublic().n.surname);
+                                }
+                              }
+                              if (meta.hasCred()) {
+                                profileProvider.setPhone(meta.getCredential(0).val);
+                                Navigator.pushReplacement<void, void>(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) => HomeScreen(),
+                                  ),
+                                );
+                              }
+
+                              break;
+                            case 'c':
+                              JRcvCtrl ctrl = JRcvCtrl.fromJson(event.msg);
+
+                              if (ctrl.code == 200 && ctrl.params != null) {
+                                if (ctrl.params.token != null) {
+                                  profileProvider.setToken(ctrl.params.token);
+                                  HampayamClient.saveToken(ctrl.params.token);
+                                  HampayamClient.subToMessanger();
+                                }
+                              } else if (ctrl.code == 401) {
+                                loginPageProvider.changeIsVAlidate(true);
+                                loginPageProvider.changeValidateText(ctrl.text);
+                                loginPageProvider.changeProgress(false);
+                              }
+                              break;
+                            default:
+                          }
+                        });
+                      });
+                      loginPageProvider.changeTextUserNameEmpty(loginUserNameController.text);
+                      loginPageProvider.changeTextPasswordEmpty(loginPasswordController.text);
+                    } else {
+                      loginPageProvider.changeTextUserNameEmpty(loginUserNameController.text);
+                      loginPageProvider.changeTextPasswordEmpty(loginPasswordController.text);
+                      loginPageProvider.changeIsVAlidate(false);
+                      loginPageProvider.changeValidateText('');
+                      loginPageProvider.changeProgress(false);
+                    }
+                  },
                   hasPadding: false,
                 ),
               ],
@@ -369,7 +417,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
   Widget _buildSignUp(BuildContext context) {
     var _size = MediaQuery.of(context).size.width;
-    var _sizeheight = MediaQuery.of(context).size.height;
+    LoginPageProvider loginPageProvider = Provider.of<LoginPageProvider>(context);
+
     return Container(
       //padding: EdgeInsets.only(top: 15.0),
       child: Padding(
@@ -387,7 +436,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       elevation: 10.0,
                       color: Colors.white,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -398,6 +447,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                             suffixIconShow: false,
                             iconData: Icons.person,
                           ),
+                          spacebetween(_size),
                           TextFieldBuilder(
                             textEditingController: signupUserNameController,
                             hintText: LocaleKeys.UserName.tr(),
@@ -420,9 +470,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                             hintText: LocaleKeys.Password.tr(),
                             iconData: MfgLabs.lock_alt,
                             suffixIconShow: true,
-                            obscureText: _obscureTextSignup,
-                            sufixIconData: _obscureTextSignup ? Elusive.eye_off : Elusive.eye,
-                            pressFunction: _toggleSignup,
+                            obscureText: loginPageProvider.getobscureTextSignup,
+                            sufixIconData: loginPageProvider.getobscureTextSignup ? Elusive.eye_off : Elusive.eye,
+                            pressFunction: () {
+                              loginPageProvider.changeObscureTextSignup();
+                            },
                           ),
                           spacebetween(_size),
                           TextFieldBuilder(
@@ -430,9 +482,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                             hintText: LocaleKeys.ConfirmPass.tr(),
                             iconData: MfgLabs.lock_alt,
                             suffixIconShow: true,
-                            obscureText: _obscureTextSignupConfirm,
-                            sufixIconData: _obscureTextSignup ? Elusive.eye_off : Elusive.eye,
-                            pressFunction: _toggleSignupConfirm,
+                            obscureText: loginPageProvider.getobscureTextSignupConfirm,
+                            sufixIconData: loginPageProvider.getobscureTextSignupConfirm ? Elusive.eye_off : Elusive.eye,
+                            pressFunction: () => {loginPageProvider.changeObscureTextSignupConfirm()},
                           ),
                           SizedBox(
                             height: _size / 11,
@@ -445,7 +497,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 ButtonWidget(
                   mergin: .75,
                   hintText: LocaleKeys.Register.tr(),
-                  pressFunction: SignUp(),
+                  pressFunction: () {
+                    SignUp();
+                  },
                   hasPadding: true,
                 ),
               ],
@@ -464,29 +518,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     _pageController?.animateToPage(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
   }
 
-  void _toggleLogin() {
-    if (!mounted) return;
-    setState(() {
-      _obscureTextLogin = !_obscureTextLogin;
-    });
-  }
-
-  void _toggleSignup() {
-    if (!mounted) return;
-    setState(() {
-      _obscureTextSignup = !_obscureTextSignup;
-    });
-  }
-
-  void _toggleSignupConfirm() {
-    if (!mounted) return;
-    setState(() {
-      _obscureTextSignupConfirm = !_obscureTextSignupConfirm;
-    });
-  }
-
   String lJsonId;
-  SignIn() async {}
+
+  Future<void> signIn(BuildContext context, String username, String password) async {
+    await HampayamClient.loginChat(IORouter.ipAddress, IORouter.apiKey, context.locale.toLanguageTag(), username, password);
+  }
 
   Future<void> OnChatScreenEvent(MsgType msgType) async {}
 

@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
@@ -19,6 +20,7 @@ import 'package:hampayam_chat/StateManagement/ProfileProvider.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
 import 'package:dio/dio.dart';
+import 'package:provider/provider.dart';
 
 class HttpConnection {
   static String setUrl(String address) {
@@ -26,11 +28,15 @@ class HttpConnection {
     return url;
   }
 
+  static String fileUrl(String address, String fileUrl) {
+    String url = 'http://$address$fileUrl';
+    return url;
+  }
+
   static Map<String, String> setHeader(String apiKey, String token) {
     var headers = {
-      'apikey': apiKey,
-      'auth': 'token',
-      'secret': token,
+      'X-Tinode-APIKey': apiKey,
+      'X-Tinode-Auth': 'token $token ',
     };
     return headers;
   }
@@ -40,8 +46,15 @@ class HttpConnection {
     return compressedFile;
   }
 
-  static sendRequest(String url, Map<String, String> headers, String topic, File file, Function run(File file, String topic, JRcvCtrl ctrl),
-      {Function onSendProgress, Function onResievedProgress}) async {
+  showFile(String uri, dynamic header, String data) async {
+    Dio dio = Dio();
+    await dio.get(fileUrl(IORouter.apiKey, data), queryParameters: header).then((value) {
+      print(value);
+    });
+  }
+
+  static sendRequest(String url, Map<String, String> headers, String topic, File file, BuildContext context, {Function onSendProgress, Function onResievedProgress}) async {
+    ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
     Dio dio = Dio();
     FormData formData = FormData.fromMap({"file": await MultipartFile.fromFile(file.path)});
     await dio
@@ -54,33 +67,25 @@ class HttpConnection {
         .then((value) {
       if (value.statusCode == 200) {
         MsgSever msgSever = MsgSever.fromJson(value.data);
-        run(file, topic, msgSever.ctrl);
+        profileProvider.setPhoto(msgSever.ctrl.GetCtrlParamsData().url);
       }
     });
   }
 
-  setImageProfile(String address, String apiKey, String token, File file, Profile profile) async {
+  setImageProfile(String address, String apiKey, String token, File file, BuildContext context) async {
     var url = setUrl(address);
     var headers = setHeader(apiKey, token);
 
     await compressFile(file).then((value) async {
-      await sendRequest(url, headers, 'me', value, (file, topic, ctrl) => setImage(file, topic, ctrl));
-      profile.setPhoto(file);
+      await sendRequest(url, headers, 'me', value, context);
     });
   }
 
-  Future<File> showImage(String address, String apiKey, String token) async {
-    var url = setUrl(address);
-    var headers = setHeader(apiKey, token);
-    var file = await DefaultCacheManager().getSingleFile(url, headers: headers);
-    return file;
-  }
-
-  sendFileToChat(String address, String apiKey, String token, File file, String topic, Function onprogress, {String text}) async {
+  /* sendFileToChat(String address, String apiKey, String token, File file, String topic, Function onprogress, {String text}) async {
     String url = setUrl(address);
     var headers = setHeader(apiKey, token);
-    await sendRequest(url, headers, topic, file, (file, topic, ctrl) => sendFile(file, topic, ctrl));
-  }
+    await sendRequest(url, headers, topic, file,context);
+  } */
 
   setImage(File file, String topic, JRcvCtrl ctrl) {
     String newId = IORouter.generateRandomKey();

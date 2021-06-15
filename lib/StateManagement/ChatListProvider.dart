@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
 
-class ChatList extends ChangeNotifier {
+class ChatListProvider extends ChangeNotifier {
   List<JSubscriptionData> subList = List();
   List<JSubscriptionData> blockList = List();
   List<JSubscriptionData> userList = List();
@@ -9,8 +9,8 @@ class ChatList extends ChangeNotifier {
   List<JSubscriptionData> channelList = List();
   List<JSubscriptionData> botList = List();
 
-  List get setSubList => subList;
-  List get setBlocklIST => blockList;
+  List<JSubscriptionData> get getSubList => subList;
+  List<JSubscriptionData> get getBlockList => blockList;
   void listSpliter(List<JSubscriptionData> dataSub) {
     subList = (dataSub);
     for (var item in dataSub) {
@@ -24,6 +24,10 @@ class ChatList extends ChangeNotifier {
         botList.add(item);
       }
     }
+    notifyListeners();
+  }
+
+  void aaaa() {
     notifyListeners();
   }
 

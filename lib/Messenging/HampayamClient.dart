@@ -15,13 +15,16 @@ import 'package:hampayam_chat/Model/SeserilizedJson/MsgClient.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/SendSub.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Set.dart';
 import 'package:hampayam_chat/StateManagement/ProfileProvider.dart';
+import 'package:device_info/device_info.dart';
 
 class HampayamClient {
-  static void loginChat(String address, String apiKey, String userAgent, String language, String verssion, String username, String password) {
+  static Future<void> loginChat(String address, String apiKey, String language, String username, String password) async {
     IORouter.connect('ws://$address/v0/channels?apikey=$apiKey');
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
 
     String newId = IORouter.generateRandomKey();
-    JSndHi hi = JSndHi(id: newId, lang: language, ua: userAgent, ver: verssion);
+    JSndHi hi = JSndHi(id: newId, lang: language, ua: androidInfo.version.release, ver: '1.0.0');
     MsgClient sendHi = MsgClient(jSndHi: hi);
     IORouter.sendMap(sendHi.toJson());
     String secret = IORouter.base4dEncod(username + ':' + password);
@@ -30,11 +33,12 @@ class HampayamClient {
     IORouter.sendMap(sendLogin.toJson());
   }
 
-  static void signUpChatWithPhone(String address, String apiKey, String userAgent, String language, String verssion, String name, String phone, String username, String password) {
+  static Future<void> signUpChatWithPhone(String address, String apiKey, String language, String name, String phone, String username, String password) async {
     IORouter.connect(' ws://$address/v0/channels?apikey=$apiKey');
-
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     String newId = IORouter.generateRandomKey();
-    JSndHi hi = JSndHi(id: newId, lang: language, ua: userAgent, ver: verssion);
+    JSndHi hi = JSndHi(id: newId, lang: language, ua: androidInfo.version.release, ver: '1.0.0');
     MsgClient sendHi = MsgClient(jSndHi: hi);
     IORouter.sendMap(sendHi.toJson());
     String secret = IORouter.base4dEncod(username + ':' + password);
@@ -149,7 +153,7 @@ class HampayamClient {
     IORouter.sendMap(sendSub.toJson());
   }
 
-  static void chnageProfileName(String fn, {String surname, Profile profileName}) {
+  static void chnageProfileName(String fn, {String surname, ProfileProvider profileName}) {
     String newId = IORouter.generateRandomKey();
     JName name = JName(surname: surname);
     JPublicData publicData = JPublicData(fn: fn, n: name);
