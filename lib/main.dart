@@ -1,11 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:hampayam_chat/StateManagement/HomeStateManagement/pageChangeProvider.dart';
 
-import 'package:hampayam_chat/StateManagement/ProfileProvider.dart';
 import 'package:provider/provider.dart';
 
 import 'Screen/LoginScreen.dart';
-import 'StateManagement/ChatListProvider.dart';
+import 'StateManagement/HomeStateManagement/ChatListProvider.dart';
+import 'StateManagement/HomeStateManagement/ProfileProvider.dart';
 import 'StateManagement/loginStateManagement/loginPageProvider.dart';
 
 void main() async {
@@ -17,6 +18,7 @@ void main() async {
       ChangeNotifierProvider(create: (context) => ChatListProvider()),
       ChangeNotifierProvider(create: (context) => LoginPageProvider()),
       ChangeNotifierProvider(create: (context) => ProfileProvider()),
+      ChangeNotifierProvider(create: (context) => PageChangeProvider()),
     ],
     child: EasyLocalization(
         supportedLocales: [Locale('en'), Locale('fa')],

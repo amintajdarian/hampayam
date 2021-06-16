@@ -1,11 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
+import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Model/Primitives/DataWhat.dart';
 import 'package:hampayam_chat/Model/Primitives/Delete.dart';
 import 'package:hampayam_chat/Model/Primitives/Description.dart';
 import 'package:hampayam_chat/Model/Primitives/Name.dart';
 import 'package:hampayam_chat/Model/Primitives/PublicData.dart';
 import 'package:hampayam_chat/Model/Primitives/Subscription.dart';
+import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
 import 'package:hampayam_chat/Model/Primitives/UserCredential.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Account.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Get.dart';
@@ -14,8 +18,8 @@ import 'package:hampayam_chat/Model/SeserilizedJson/Login.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/MsgClient.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/SendSub.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Set.dart';
-import 'package:hampayam_chat/StateManagement/ProfileProvider.dart';
 import 'package:device_info/device_info.dart';
+import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
 
 class HampayamClient {
   static Future<void> loginChat(String address, String apiKey, String language, String username, String password) async {
@@ -49,6 +53,79 @@ class HampayamClient {
     JSndAcc acc = JSndAcc(id: newId, user: 'new', scheme: 'basic', secret: secret, login: true, desc: description, cred: credential as List);
     MsgClient sendAcc = MsgClient(jSndAcc: acc);
     IORouter.sendMap(sendAcc.toJson());
+  }
+
+  static Widget showImage(String item, String token, Widget dataAvatar, double size) {
+    if (item != null) {
+      return CachedNetworkImage(
+        imageUrl: HttpConnection.fileUrl(IORouter.ipAddress, item),
+        httpHeaders: HttpConnection.setHeader(IORouter.apiKey, token),
+        progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
+        imageBuilder: (context, imageProvider) => Container(
+          width: size / 20,
+          height: size / 20,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+          ),
+        ),
+      );
+    } else {
+      return CircleAvatar(
+        radius: 35,
+        child: dataAvatar,
+      );
+    }
+  }
+
+  static List<Widget> chatList(List<JSubscriptionData> subList, String token, double size) {
+    List<Widget> subChats = [];
+    for (var item in subList) {
+      String subName = item.public.fn.substring(0, 3);
+      subChats.add(Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: ListTile(
+              title: Text(
+                item.public.fn,
+              ),
+              subtitle: item.lastMessage != null
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        item.lastMessage.fn + ' :' + (item.lastMessage.message.runtimeType == String ? item.lastMessage.message.toString() : 'data'),
+                      ),
+                    )
+                  : null,
+              leading: item.public.photo != null
+                  ? CachedNetworkImage(
+                      imageUrl: HttpConnection.fileUrl(IORouter.ipAddress, item.public.photo.data),
+                      httpHeaders: HttpConnection.setHeader(IORouter.apiKey, token),
+                      progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
+                      imageBuilder: (context, imageProvider) => Container(
+                        width: size / 20,
+                        height: size / 20,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                        ),
+                      ),
+                    )
+                  : CircleAvatar(
+                      radius: 35,
+                      child: Text(
+                        subName,
+                      ),
+                    ),
+              trailing: Icon(Icons.star),
+            ),
+          ),
+        ),
+      ));
+    }
+    return subChats;
   }
 
   static void signUpChatWithEmail(String address, String apiKey, String userAgent, String language, String verssion, String name, String email, String username, String password) {

@@ -11,7 +11,7 @@
     "ConfirmPass": "Confirm Password",
     "Messanger": "Hampayam",
     "NavMessage": "Messages",
-    "NavP2PChat": "Private",
+    "NavP2PChat": "Private Message",
     "NavGroups": "Groups",
     "NavChannels": "Channels",
     "NavBots": "Bots",
@@ -19,6 +19,15 @@
     "DrawerCreatChl": "Creat Channel",
     "DrawerContacts": "Contacts",
     "DrawerSocialPnel": "Social Panel",
+    "Setting": "Setting",
     "Logout": "Logout",
-    "Fill": "please fill out this field"
+    "Fill": "please fill out this field",
+    "Wallet": "Wallet",
+    "Hello":"Hello",
+    "Qr":"QrCode",
+    "Pay":"Pay",
+    "Up":"Increase credit",
+    "credit":"credit",
+    "Toman":"Toman"
+    
 }

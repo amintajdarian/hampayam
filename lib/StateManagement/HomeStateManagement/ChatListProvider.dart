@@ -11,6 +11,9 @@ class ChatListProvider extends ChangeNotifier {
 
   List<JSubscriptionData> get getSubList => subList;
   List<JSubscriptionData> get getBlockList => blockList;
+  List<JSubscriptionData> get getGroupList => groupList;
+  List<JSubscriptionData> get getChanelList => channelList;
+  List<JSubscriptionData> get getUSerList => userList;
   void listSpliter(List<JSubscriptionData> dataSub) {
     subList = (dataSub);
     for (var item in dataSub) {

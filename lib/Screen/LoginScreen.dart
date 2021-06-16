@@ -11,8 +11,8 @@ import 'package:hampayam_chat/Messenging/HampayamClient.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
 import 'package:hampayam_chat/Screen/HomeScreen.dart';
-import 'package:hampayam_chat/StateManagement/ChatListProvider.dart';
-import 'package:hampayam_chat/StateManagement/ProfileProvider.dart';
+import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
+import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
 import 'package:hampayam_chat/StateManagement/loginStateManagement/loginPageProvider.dart';
 import 'package:hampayam_chat/widget/loginWidget/buttomIcon.dart';
 import 'package:hampayam_chat/widget/loginWidget/buttonWidget.dart';
@@ -219,7 +219,6 @@ class _LoginScreenState extends State<LoginScreen> {
     LoginPageProvider loginPageProvider = Provider.of<LoginPageProvider>(context);
     ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
     ChatListProvider chatListProvider = Provider.of<ChatListProvider>(context);
-    HttpConnection httpConnection = HttpConnection();
     return Container(
       //padding: EdgeInsets.only(top: 23.0),
       child: Padding(
@@ -228,7 +227,6 @@ class _LoginScreenState extends State<LoginScreen> {
           children: <Widget>[
             Stack(
               alignment: Alignment.topCenter,
-              overflow: Overflow.visible,
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.only(right: _size / 10, left: _size / 10),

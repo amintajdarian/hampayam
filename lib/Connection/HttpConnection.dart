@@ -16,7 +16,7 @@ import 'package:hampayam_chat/Model/Primitives/TextFormat.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/MsgClient.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Pub.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Set.dart';
-import 'package:hampayam_chat/StateManagement/ProfileProvider.dart';
+import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
 import 'package:dio/dio.dart';

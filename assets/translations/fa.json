@@ -11,7 +11,7 @@
     "ConfirmPass": "تکرار رمز عبور",
     "Messanger": "همپیام",
     "NavMessage": "پیام ها",
-    "NavP2PChat": "شخصی",
+    "NavP2PChat": "پیام شخصی",
     "NavGroups": "گروه",
     "NavChannels": "کانال",
     "NavBots": "بات",
@@ -19,6 +19,16 @@
     "DrawerCreatChl": "کانال جدید",
     "DrawerContacts": "مخاطبین",
     "DrawerSocialPnel": "پنل سازمانی",
+    "Setting":"تنظیمات",
     "Logout": "خروج",
-    "Fill":"لطفا این قسمت رو پر کنید"
+    "Fill":"لطفا این قسمت رو پر کنید",
+    "Wallet": "کیف پول",
+    "Hello":"سلام",
+    "Qr":"اسکن بارکد",
+    "Pay":"پرداخت",
+    "Up":"افزایش اعتبار",
+    "credit":"اعتبار",
+    "Toman":"تومان"
+    
+
 }
