@@ -6,7 +6,6 @@ import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/mfg_labs_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
-import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Messenging/HampayamClient.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
@@ -278,18 +277,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (loginUserNameController.text.isNotEmpty && loginPasswordController.text.isNotEmpty) {
                       loginPageProvider.changeProgress(true);
                       signIn(context, loginUserNameController.text, loginPasswordController.text).then((value) {
-                        IORouter.chatChannel.stream.listen((event) async {
+                        IORouter.loginScreenChannel.stream.listen((event) async {
                           switch (event.type) {
                             case 'm':
                               JRcvMeta meta = JRcvMeta.fromJson(event.msg);
                               print(event.msg);
                               if (meta.hasSub()) {
                                 if (meta.topic == 'me') {
+                                  chatListProvider.clearData();
                                   chatListProvider.listSpliter(meta.sub);
                                 }
                               }
                               if (meta.hasDesc()) {
-                                profileProvider.setUerName(loginUserNameController.text);
                                 profileProvider.fname(meta.getDescription().getPublic().fn);
                                 if (meta.getDescription().getPublic().photo != null) {
                                   if (meta.getDescription().getPublic().photo != null) {
@@ -318,6 +317,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 if (ctrl.params.token != null) {
                                   profileProvider.setToken(ctrl.params.token);
                                   HampayamClient.saveToken(ctrl.params.token);
+                                  profileProvider.setUerName(ctrl.params.user);
                                   HampayamClient.subToMessanger();
                                 }
                               } else if (ctrl.code == 401) {

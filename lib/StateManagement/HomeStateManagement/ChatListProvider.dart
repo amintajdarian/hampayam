@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
+import 'package:rxdart/rxdart.dart';
 
 class ChatListProvider extends ChangeNotifier {
-  List<JSubscriptionData> subList = List();
-  List<JSubscriptionData> blockList = List();
-  List<JSubscriptionData> userList = List();
-  List<JSubscriptionData> groupList = List();
-  List<JSubscriptionData> channelList = List();
-  List<JSubscriptionData> botList = List();
+  List<JSubscriptionData> subList = [];
+  List<JSubscriptionData> blockList = [];
+  List<JSubscriptionData> userList = [];
+  List<JSubscriptionData> groupList = [];
+  List<JSubscriptionData> channelList = [];
+  List<JSubscriptionData> botList = [];
 
   List<JSubscriptionData> get getSubList => subList;
   List<JSubscriptionData> get getBlockList => blockList;
@@ -16,6 +17,7 @@ class ChatListProvider extends ChangeNotifier {
   List<JSubscriptionData> get getUSerList => userList;
   void listSpliter(List<JSubscriptionData> dataSub) {
     subList = (dataSub);
+
     for (var item in dataSub) {
       if (item.topic.startsWith('usr')) {
         userList.add(item);
@@ -30,7 +32,119 @@ class ChatListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void aaaa() {
+  void changUnreadMessage(int seq, String topic) {
+    for (var item in subList) {
+      if (item.topic == topic) {
+        item.seq = seq;
+      }
+    }
+    if (topic.startsWith('usr')) {
+      for (var item in userList) {
+        if (item.topic == topic) {
+          item.seq = seq;
+        }
+      }
+    }
+    if (topic.startsWith('grp')) {
+      for (var item in groupList) {
+        if (item.topic == topic) {
+          item.seq = seq;
+        }
+      }
+    }
+    if (topic.startsWith('chl')) {
+      for (var item in channelList) {
+        if (item.topic == topic) {
+          item.seq = seq;
+        }
+      }
+    }
+    if (topic.startsWith('bot')) {
+      for (var item in botList) {
+        if (item.topic == topic) {
+          item.seq = seq;
+        }
+      }
+    }
+    notifyListeners();
+  }
+
+  void changreadMessage(int seq, String topic) {
+    for (var item in subList) {
+      if (item.topic == topic) {
+        item.read = seq;
+      }
+    }
+    if (topic.startsWith('usr')) {
+      for (var item in userList) {
+        if (item.topic == topic) {
+          item.read = seq;
+        }
+      }
+    }
+    if (topic.startsWith('grp')) {
+      for (var item in groupList) {
+        if (item.topic == topic) {
+          item.read = seq;
+        }
+      }
+    }
+    if (topic.startsWith('chl')) {
+      for (var item in channelList) {
+        if (item.topic == topic) {
+          item.read = seq;
+        }
+      }
+    }
+    if (topic.startsWith('bot')) {
+      for (var item in botList) {
+        if (item.topic == topic) {
+          item.read = seq;
+        }
+      }
+    }
+    notifyListeners();
+  }
+
+  void changLastMessage(String message, String fn, String topic) {
+    for (var item in subList) {
+      if (item.topic == topic) {
+        item.lastMessage.message = message;
+        item.lastMessage.fn = fn;
+      }
+    }
+    if (topic.startsWith('usr')) {
+      for (var item in userList) {
+        if (item.topic == topic) {
+          item.lastMessage.message = message;
+          item.lastMessage.fn = fn;
+        }
+      }
+    }
+    if (topic.startsWith('grp')) {
+      for (var item in groupList) {
+        if (item.topic == topic) {
+          item.lastMessage.message = message;
+          item.lastMessage.fn = fn;
+        }
+      }
+    }
+    if (topic.startsWith('chl')) {
+      for (var item in channelList) {
+        if (item.topic == topic) {
+          item.lastMessage.message = message;
+          item.lastMessage.fn = fn;
+        }
+      }
+    }
+    if (topic.startsWith('bot')) {
+      for (var item in botList) {
+        if (item.topic == topic) {
+          item.lastMessage.message = message;
+          item.lastMessage.fn = fn;
+        }
+      }
+    }
     notifyListeners();
   }
 
@@ -45,7 +159,17 @@ class ChatListProvider extends ChangeNotifier {
     } else if (topic.startsWith('bot')) {
       botList.elementAt(botList.indexWhere((element) => element.topic == topic)).topic = topic;
     }
+    groupList.toSet().toList();
+
     notifyListeners();
+  }
+
+  void clearData() {
+    userList.clear();
+    botList.clear();
+    groupList.clear();
+    subList.clear();
+    channelList.clear();
   }
 
   void deleteItem(String topic) {

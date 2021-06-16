@@ -15,12 +15,17 @@ class MsgType {
 }
 
 class IORouter {
+  static String activePage = 'login';
   static WebsocketManager wsChannel;
   static int msgID = 9999;
   static String connectionStatus;
-  static final chatChannel = StreamController<MsgType>.broadcast();
+  static final loginScreenChannel = StreamController<MsgType>.broadcast();
+  static final homeScreenChannel = StreamController<MsgType>.broadcast();
+  static final chatScreenChannel = StreamController<MsgType>.broadcast();
+  static final signUpScreenChannel = StreamController<MsgType>.broadcast();
   static final String ipAddress = '185.110.189.242:6060';
   static final String apiKey = 'AQAAAAABAADDVmFA9-EU5FyoZh4MWgMT';
+  static final String version = '1.0.0';
 
   static Future<void> connect(String address) async {
     wsChannel = WebsocketManager(address);
@@ -37,17 +42,18 @@ class IORouter {
       var serverMsgMap = jsonDecode(event.toString());
       MsgSever msgSever = MsgSever.fromJson(serverMsgMap);
       if (msgSever.msg != null) {
-        chatChannel.sink.add(MsgType(serverMsgMap['data'], 'd'));
+        chatScreenChannel.sink.add(MsgType(serverMsgMap['data'], 'd'));
       } else if (msgSever.ctrl != null) {
-        chatChannel.sink.add(MsgType(serverMsgMap['ctrl'], 'c'));
+        loginScreenChannel.sink.add(MsgType(serverMsgMap['ctrl'], 'c'));
       } else if (msgSever.meta != null) {
-        chatChannel.sink.add(MsgType(serverMsgMap['meta'], 'm'));
+        loginScreenChannel.sink.add(MsgType(serverMsgMap['meta'], 'm'));
       } else if (msgSever.pres != null) {
-        chatChannel.sink.add(MsgType(serverMsgMap['pres'], 'p'));
+        loginScreenChannel.sink.add(MsgType(serverMsgMap['pres'], 'p'));
       } else if (msgSever.info != null) {
-        chatChannel.sink.add(MsgType(serverMsgMap['info'], 'i'));
+        loginScreenChannel.sink.add(MsgType(serverMsgMap['info'], 'i'));
       }
     });
+
     wsChannel.connect();
   }
 

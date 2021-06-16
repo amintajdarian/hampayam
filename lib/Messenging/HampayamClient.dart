@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
+import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
+import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
+import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgsServer.dart';
+import 'package:hampayam_chat/Model/DeSeserilizedJson/Pres.dart';
 import 'package:hampayam_chat/Model/Primitives/DataWhat.dart';
 import 'package:hampayam_chat/Model/Primitives/Delete.dart';
 import 'package:hampayam_chat/Model/Primitives/Description.dart';
@@ -19,7 +23,13 @@ import 'package:hampayam_chat/Model/SeserilizedJson/MsgClient.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/SendSub.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Set.dart';
 import 'package:device_info/device_info.dart';
+import 'package:hampayam_chat/Screen/HomeScreen.dart';
+import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
+import 'package:hampayam_chat/StateManagement/HomeStateManagement/statusUserProvider.dart';
+import 'package:hampayam_chat/StateManagement/loginStateManagement/loginPageProvider.dart';
+
+import 'package:provider/provider.dart';
 
 class HampayamClient {
   static Future<void> loginChat(String address, String apiKey, String language, String username, String password) async {
@@ -28,7 +38,7 @@ class HampayamClient {
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
 
     String newId = IORouter.generateRandomKey();
-    JSndHi hi = JSndHi(id: newId, lang: language, ua: androidInfo.version.release, ver: '1.0.0');
+    JSndHi hi = JSndHi(id: newId, lang: language, ua: androidInfo.version.release, ver: IORouter.version);
     MsgClient sendHi = MsgClient(jSndHi: hi);
     IORouter.sendMap(sendHi.toJson());
     String secret = IORouter.base4dEncod(username + ':' + password);
@@ -42,7 +52,7 @@ class HampayamClient {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     String newId = IORouter.generateRandomKey();
-    JSndHi hi = JSndHi(id: newId, lang: language, ua: androidInfo.version.release, ver: '1.0.0');
+    JSndHi hi = JSndHi(id: newId, lang: language, ua: androidInfo.version.release, ver: IORouter.version);
     MsgClient sendHi = MsgClient(jSndHi: hi);
     IORouter.sendMap(sendHi.toJson());
     String secret = IORouter.base4dEncod(username + ':' + password);
@@ -78,7 +88,7 @@ class HampayamClient {
     }
   }
 
-  static List<Widget> chatList(List<JSubscriptionData> subList, String token, double size) {
+  static List<Widget> chatList(List<JSubscriptionData> subList, String token, double size, List online) {
     List<Widget> subChats = [];
     for (var item in subList) {
       String subName = item.public.fn.substring(0, 3);
@@ -100,26 +110,54 @@ class HampayamClient {
                     )
                   : null,
               leading: item.public.photo != null
-                  ? CachedNetworkImage(
-                      imageUrl: HttpConnection.fileUrl(IORouter.ipAddress, item.public.photo.data),
-                      httpHeaders: HttpConnection.setHeader(IORouter.apiKey, token),
-                      progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
-                      imageBuilder: (context, imageProvider) => Container(
-                        width: size / 20,
-                        height: size / 20,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                  ? Stack(children: [
+                      CachedNetworkImage(
+                        imageUrl: HttpConnection.fileUrl(IORouter.ipAddress, item.public.photo.data),
+                        httpHeaders: HttpConnection.setHeader(IORouter.apiKey, token),
+                        progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
+                        imageBuilder: (context, imageProvider) => Container(
+                          width: size / 20,
+                          height: size / 20,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                          ),
                         ),
                       ),
-                    )
-                  : CircleAvatar(
-                      radius: 35,
-                      child: Text(
-                        subName,
-                      ),
+                      Visibility(
+                        visible: online.contains(item.topic) ? true : false,
+                        child: new Positioned(
+                          bottom: 1,
+                          left: 1,
+                          child: new Icon(Icons.brightness_1, size: 20, color: Colors.green),
+                        ),
+                      )
+                    ])
+                  : Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 35,
+                          child: Text(
+                            subName,
+                          ),
+                        ),
+                        Visibility(
+                          visible: online.contains(item.topic) ? true : false,
+                          child: new Positioned(
+                            bottom: 1,
+                            left: 1,
+                            child: new Icon(Icons.brightness_1, size: 20, color: Colors.green),
+                          ),
+                        )
+                      ],
                     ),
-              trailing: Icon(Icons.star),
+              trailing: Text(item.seq != null
+                  ? item.read != null
+                      ? (item.seq - item.read) != 0
+                          ? (item.seq - item.read).toString()
+                          : ''
+                      : ''
+                  : ''),
             ),
           ),
         ),
@@ -171,13 +209,14 @@ class HampayamClient {
     await storage.write(key: 'token', value: token);
   }
 
-  static Future<void> autoLogin(String address, String apiKey, String userAgent, String language, String verssion) async {
-    final storage = new FlutterSecureStorage();
-    String value = await storage.read(key: 'token') ?? 'null';
-    if (value != 'null') {
-      IORouter.connect(' ws://$address/v0/channels?apikey=$apiKey');
+  static Future<void> autoLogin(String address, String apiKey, String language, String value) async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    IORouter.connect('ws://$address/v0/channels?apikey=$apiKey');
+
+    if (value != null) {
       String newId = IORouter.generateRandomKey();
-      JSndHi hi = JSndHi(id: newId, lang: language, ua: userAgent, ver: verssion);
+      JSndHi hi = JSndHi(id: newId, lang: language, ua: androidInfo.version.release, ver: IORouter.version);
       MsgClient sendHi = MsgClient(jSndHi: hi);
       IORouter.sendMap(sendHi.toJson());
       JSndLogin login = JSndLogin(id: newId, scheme: 'token', secret: value);
@@ -239,5 +278,70 @@ class HampayamClient {
     MsgClient sendSet = MsgClient(jSndSet: jSndSet);
     IORouter.sendMap(sendSet.toJson());
     profileName.setUerName(fn);
+  }
+
+  static Future<void> getDataAutoLogin(BuildContext context, String language) async {
+    ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
+    LoginPageProvider loginPageProvider = Provider.of<LoginPageProvider>(context);
+    ChatListProvider chatListProvider = Provider.of<ChatListProvider>(context);
+
+    final storage = new FlutterSecureStorage();
+    String value = await storage.read(key: 'token') ?? null;
+    if (profileProvider.token == null) {
+      await HampayamClient.autoLogin(IORouter.ipAddress, IORouter.apiKey, language, value);
+      IORouter.loginScreenChannel.stream.listen((event) async {
+        switch (event.type) {
+          case 'm':
+            JRcvMeta meta = JRcvMeta.fromJson(event.msg);
+            print(event.msg);
+            if (meta.hasSub()) {
+              if (meta.topic == 'me') {
+                chatListProvider.clearData();
+                chatListProvider.listSpliter(meta.sub);
+              }
+            }
+            if (meta.hasDesc()) {
+              profileProvider.fname(meta.getDescription().getPublic().fn);
+              if (meta.getDescription().getPublic().photo != null) {
+                if (meta.getDescription().getPublic().photo != null) {
+                  profileProvider.setPhoto(meta.getDescription().getPublic().photo.data);
+                }
+              }
+              if (meta.desc.getPublic().n != null) {
+                profileProvider.sname(meta.getDescription().getPublic().n.surname);
+              }
+            }
+            if (meta.hasCred()) {
+              profileProvider.setPhone(meta.getCredential(0).val);
+
+              Navigator.pushReplacement<void, void>(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => HomeScreen(),
+                ),
+              );
+            }
+
+            break;
+          case 'c':
+            JRcvCtrl ctrl = JRcvCtrl.fromJson(event.msg);
+
+            if (ctrl.code == 200 && ctrl.params != null) {
+              if (ctrl.params.token != null) {
+                profileProvider.setToken(ctrl.params.token);
+                HampayamClient.saveToken(ctrl.params.token);
+                HampayamClient.subToMessanger();
+                profileProvider.setUerName(ctrl.params.user);
+              }
+            } else if (ctrl.code == 401) {
+              loginPageProvider.changeIsVAlidate(true);
+              loginPageProvider.changeValidateText(ctrl.text);
+              loginPageProvider.changeProgress(false);
+            }
+            break;
+          default:
+        }
+      });
+    }
   }
 }

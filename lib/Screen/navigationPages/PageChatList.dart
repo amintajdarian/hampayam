@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/widget/homeWidget/LIstView.dart';
 import 'package:provider/provider.dart';
 
 class PageChatList extends StatelessWidget {
   final double size;
+
   PageChatList(this.size);
 
   @override
