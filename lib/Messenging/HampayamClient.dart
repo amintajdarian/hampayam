@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
@@ -26,7 +27,6 @@ import 'package:device_info/device_info.dart';
 import 'package:hampayam_chat/Screen/HomeScreen.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
-import 'package:hampayam_chat/StateManagement/HomeStateManagement/statusUserProvider.dart';
 import 'package:hampayam_chat/StateManagement/loginStateManagement/loginPageProvider.dart';
 
 import 'package:provider/provider.dart';
@@ -91,12 +91,12 @@ class HampayamClient {
   static List<Widget> chatList(List<JSubscriptionData> subList, String token, double size, List online) {
     List<Widget> subChats = [];
     for (var item in subList) {
-      String subName = item.public.fn.substring(0, 3);
+      String subName = item.public.fn.substring(0, 2);
       subChats.add(Padding(
         padding: const EdgeInsets.all(5.0),
         child: Card(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(size / 200),
             child: ListTile(
               title: Text(
                 item.public.fn,
@@ -116,8 +116,8 @@ class HampayamClient {
                         httpHeaders: HttpConnection.setHeader(IORouter.apiKey, token),
                         progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
                         imageBuilder: (context, imageProvider) => Container(
-                          width: size / 20,
-                          height: size / 20,
+                          width: size / 15,
+                          height: size / 15,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
@@ -136,7 +136,7 @@ class HampayamClient {
                   : Stack(
                       children: [
                         CircleAvatar(
-                          radius: 35,
+                          radius: size / 30,
                           child: Text(
                             subName,
                           ),
@@ -269,6 +269,55 @@ class HampayamClient {
     IORouter.sendMap(sendSub.toJson());
   }
 
+  static void contactSearch(String contactList) {
+    if (contactList.length > 0) {
+      /*   JPublicData publicData = JPublicData(tel: contactList);
+      Description description = Description(publicData: publicData);
+      JSndSet jSndSet = JSndSet(desc: description, topic: 'fnd', id: IORouter.generateRandomKey());
+      MsgClient sendSet = MsgClient(jSndSet: jSndSet);
+      IORouter.sendMap(sendSet.toJson()); */
+      IORouter.sendString('{"set":{"id":"95589","topic":"fnd","desc":{"public":"tel:$contactList"}}}');
+      JSndGet jSndGet = JSndGet(id: IORouter.generateRandomKey(), topic: 'fnd', what: 'sub');
+      MsgClient sendGet = MsgClient(jSndGet: jSndGet);
+      IORouter.sendMap(sendGet.toJson());
+    }
+  }
+
+  static void getContatct() async {
+    List<Contact> contacts = (await ContactsService.getContacts(withThumbnails: false)).toList();
+    String contacString = '';
+    int counter = 0;
+    List<String> phone = [];
+    if (contacts != null) {
+      for (var item in contacts) {
+        if (item.phones.toList().length > 0) {
+          if (!phone.contains(item.phones.toList().elementAt(0).value)) {
+            phone.add(item.phones.toList().first.value);
+          }
+        }
+      }
+      for (var item in phone) {
+        if (item.length >= 11) {
+          if (item.startsWith('+')) {
+            if (counter == 0)
+              contacString = '0' + item.substring(item.length - 11) + ',';
+            else
+              contacString += 'tel:' + '0' + item.substring(item.length - 11) + ',';
+          } else if (item.startsWith('0')) {
+            if (counter == 0)
+              contacString = item.substring(item.length - 11) + ',';
+            else
+              contacString += 'tel:' + item.substring(item.length - 11) + ',';
+          }
+          if (contacString.length > 0) {
+            counter++;
+          }
+        }
+      }
+    }
+    HampayamClient.contactSearch(contacString);
+  }
+
   static void chnageProfileName(String fn, {String surname, ProfileProvider profileName}) {
     String newId = IORouter.generateRandomKey();
     JName name = JName(surname: surname);
@@ -281,15 +330,14 @@ class HampayamClient {
   }
 
   static Future<void> getDataAutoLogin(BuildContext context, String language) async {
-    ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
-    LoginPageProvider loginPageProvider = Provider.of<LoginPageProvider>(context);
-    ChatListProvider chatListProvider = Provider.of<ChatListProvider>(context);
+    ProfileProvider profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    ChatListProvider chatListProvider = Provider.of<ChatListProvider>(context, listen: false);
 
     final storage = new FlutterSecureStorage();
     String value = await storage.read(key: 'token') ?? null;
     if (profileProvider.token == null) {
       await HampayamClient.autoLogin(IORouter.ipAddress, IORouter.apiKey, language, value);
-      IORouter.loginScreenChannel.stream.listen((event) async {
+      IORouter.homeScreenChannel.stream.listen((event) async {
         switch (event.type) {
           case 'm':
             JRcvMeta meta = JRcvMeta.fromJson(event.msg);
@@ -331,12 +379,9 @@ class HampayamClient {
                 profileProvider.setToken(ctrl.params.token);
                 HampayamClient.saveToken(ctrl.params.token);
                 HampayamClient.subToMessanger();
+                HampayamClient.subToFnd();
                 profileProvider.setUerName(ctrl.params.user);
               }
-            } else if (ctrl.code == 401) {
-              loginPageProvider.changeIsVAlidate(true);
-              loginPageProvider.changeValidateText(ctrl.text);
-              loginPageProvider.changeProgress(false);
             }
             break;
           default:

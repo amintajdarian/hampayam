@@ -41,7 +41,7 @@ class ProfileProvider extends ChangeNotifier {
   }
 
   void setToken(String token) {
-    this.token = token;
+    if (token != null) this.token = token;
     notifyListeners();
   }
 }

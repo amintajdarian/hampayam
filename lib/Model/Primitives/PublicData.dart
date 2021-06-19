@@ -19,7 +19,7 @@ class JPublicData {
   @JsonKey(name: "title", includeIfNull: false)
   String title; // job title
   @JsonKey(name: "tel", includeIfNull: false)
-  List<JTelephone> tel; // array of objects, list of phone numbers associated with the user
+  String tel; // array of objects, list of phone numbers associated with the user
   @JsonKey(name: "email", includeIfNull: false)
   List<JEmail> email; // array of objects, list of user's email addresses
   @JsonKey(name: "impp", includeIfNull: false)

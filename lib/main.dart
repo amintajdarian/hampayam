@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hampayam_chat/StateManagement/ContactStateManagment/ContactProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/statusUserProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/pageChangeProvider.dart';
 
@@ -24,6 +25,7 @@ void main() async {
       ChangeNotifierProvider(create: (context) => ProfileProvider()),
       ChangeNotifierProvider(create: (context) => PageChangeProvider()),
       ChangeNotifierProvider(create: (context) => StatusUserProvider()),
+      ChangeNotifierProvider(create: (context) => ContactProvide()),
     ],
     child: EasyLocalization(
         supportedLocales: [Locale('en'), Locale('fa')],

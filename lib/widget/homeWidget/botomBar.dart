@@ -17,7 +17,7 @@ class BottomBar extends StatelessWidget {
     PageChangeProvider pageChangeProvider = Provider.of<PageChangeProvider>(context);
 
     return StyleProvider(
-      style: Style(),
+      style: Style(size),
       child: ConvexAppBar(
         gradient: new LinearGradient(
             colors: [
@@ -29,8 +29,8 @@ class BottomBar extends StatelessWidget {
             stops: [0.0, 1.0],
             tileMode: TileMode.clamp),
         controller: TabController(length: 5, initialIndex: pageChangeProvider.getPageIndex, vsync: vsync),
-        height: size / 15,
-        top: -1 * size / 50,
+        height: size / 13,
+        top: -1 * size / 45,
         curveSize: size / 12,
         cornerRadius: size / 30,
         activeColor: Colors.yellow,
@@ -54,17 +54,23 @@ class BottomBar extends StatelessWidget {
 }
 
 class Style extends StyleHook {
+  final double size;
+  Style(this.size);
   @override
-  double get activeIconSize => 40;
+  double get activeIconSize => size / 30;
 
   @override
-  double get activeIconMargin => 20;
+  double get activeIconMargin => size / 20;
 
   @override
-  double get iconSize => 30;
+  double get iconSize => size / 40;
 
   @override
   TextStyle textStyle(Color color) {
-    return TextStyle(fontSize: 25, color: color);
+    return TextStyle(
+      fontSize: size / 53.4,
+      height: size / 600,
+      color: color,
+    );
   }
 }

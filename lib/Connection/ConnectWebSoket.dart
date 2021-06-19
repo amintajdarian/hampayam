@@ -23,6 +23,7 @@ class IORouter {
   static final homeScreenChannel = StreamController<MsgType>.broadcast();
   static final chatScreenChannel = StreamController<MsgType>.broadcast();
   static final signUpScreenChannel = StreamController<MsgType>.broadcast();
+  static final shearchScreenChannel = StreamController<MsgType>.broadcast();
   static final String ipAddress = '185.110.189.242:6060';
   static final String apiKey = 'AQAAAAABAADDVmFA9-EU5FyoZh4MWgMT';
   static final String version = '1.0.0';
@@ -44,13 +45,74 @@ class IORouter {
       if (msgSever.msg != null) {
         chatScreenChannel.sink.add(MsgType(serverMsgMap['data'], 'd'));
       } else if (msgSever.ctrl != null) {
+        switch (activePage) {
+          case 'login':
+            loginScreenChannel.sink.add(MsgType(serverMsgMap['ctrl'], 'c'));
+
+            break;
+          case 'home':
+            homeScreenChannel.sink.add(MsgType(serverMsgMap['ctrl'], 'c'));
+
+            break;
+          case 'caht':
+            chatScreenChannel.sink.add(MsgType(serverMsgMap['ctrl'], 'c'));
+
+            break;
+          case 'signup':
+            signUpScreenChannel.sink.add(MsgType(serverMsgMap['ctrl'], 'c'));
+
+            break;
+          case 'search':
+            shearchScreenChannel.sink.add(MsgType(serverMsgMap['ctrl'], 'c'));
+
+            break;
+        }
         loginScreenChannel.sink.add(MsgType(serverMsgMap['ctrl'], 'c'));
       } else if (msgSever.meta != null) {
-        loginScreenChannel.sink.add(MsgType(serverMsgMap['meta'], 'm'));
+        switch (activePage) {
+          case 'login':
+            loginScreenChannel.sink.add(MsgType(serverMsgMap['meta'], 'm'));
+
+            break;
+          case 'home':
+            homeScreenChannel.sink.add(MsgType(serverMsgMap['meta'], 'm'));
+
+            break;
+          case 'caht':
+            chatScreenChannel.sink.add(MsgType(serverMsgMap['meta'], 'm'));
+
+            break;
+          case 'signup':
+            signUpScreenChannel.sink.add(MsgType(serverMsgMap['meta'], 'm'));
+
+            break;
+          case 'search':
+            shearchScreenChannel.sink.add(MsgType(serverMsgMap['meta'], 'm'));
+
+            break;
+        }
       } else if (msgSever.pres != null) {
-        loginScreenChannel.sink.add(MsgType(serverMsgMap['pres'], 'p'));
+        switch (activePage) {
+          case 'home':
+            homeScreenChannel.sink.add(MsgType(serverMsgMap['pres'], 'p'));
+
+            break;
+          case 'caht':
+            chatScreenChannel.sink.add(MsgType(serverMsgMap['pres'], 'p'));
+
+            break;
+        }
       } else if (msgSever.info != null) {
-        loginScreenChannel.sink.add(MsgType(serverMsgMap['info'], 'i'));
+        switch (activePage) {
+          case 'home':
+            homeScreenChannel.sink.add(MsgType(serverMsgMap['info'], 'i'));
+
+            break;
+          case 'caht':
+            chatScreenChannel.sink.add(MsgType(serverMsgMap['info'], 'i'));
+
+            break;
+        }
       }
     });
 

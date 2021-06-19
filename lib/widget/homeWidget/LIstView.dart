@@ -21,7 +21,7 @@ class ListViewWidget extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Center(
           child: ListView(
-            padding: EdgeInsets.only(top: 60),
+            padding: EdgeInsets.only(top: 20),
             children: HampayamClient.chatList(chatList, profileProvider.token, size, value2.getOnlineUser),
           ),
         ),

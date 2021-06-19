@@ -14,15 +14,15 @@ class MenuBar extends StatelessWidget {
     var _size = MediaQuery.of(context).size.width;
 
     return Container(
-      width: _size * .5,
-      height: _size * .09,
+      width: _size * .6,
+      height: _size * .1,
       decoration: BoxDecoration(
         color: Color(0x552B2B2B),
         borderRadius: BorderRadius.all(Radius.circular(25.0)),
       ),
       child: Center(
         child: CustomPaint(
-          painter: TabIndicationPainter(size: _size * .2, dxEntry: _size / 25, dy: _size / 30, dxTarget: _size * .209, radius: _size / 30, pageController: pageController),
+          painter: TabIndicationPainter(size: _size * .5, dxEntry: _size / 21, dy: _size / 21, dxTarget: _size * .26, radius: _size / 30, pageController: pageController),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
@@ -31,19 +31,17 @@ class MenuBar extends StatelessWidget {
                   onPressed: tapLeft,
                   child: Text(
                     LocaleKeys.Accounts.tr(),
-                    style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: "WorkSansSemiBold"),
+                    style: TextStyle(color: Colors.black, fontSize: _size / 29, fontFamily: "WorkSansSemiBold"),
                   ),
                 ),
               ),
               //Container(height: 33.0, width: 1.0, color: Colors.white),
               Expanded(
-                child: FlatButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
+                child: TextButton(
                   onPressed: tapRight,
                   child: Text(
                     LocaleKeys.Register.tr(),
-                    style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: "WorkSansSemiBold"),
+                    style: TextStyle(color: Colors.black, fontSize: _size / 29, fontFamily: "WorkSansSemiBold"),
                   ),
                 ),
               ),

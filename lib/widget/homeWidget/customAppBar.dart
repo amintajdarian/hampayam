@@ -26,9 +26,7 @@ class CustomAppbar {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(
-                    right: height / 30,
-                  ),
+                  padding: EdgeInsets.only(right: height / 35, left: height / 40),
                   child: Text(
                     barTitle,
                     style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 35, shadows: [BoxShadow(offset: Offset(3, 3), color: Colors.purple, blurRadius: 3.0)]),
@@ -38,17 +36,17 @@ class CustomAppbar {
                   flex: 2,
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(0.0),
                   child: IconButton(
                       onPressed: () {},
                       icon: Icon(
                         Icons.search,
                         color: Colors.white,
-                        size: height / 40,
+                        size: height / 35,
                       )),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(1.0),
                   child: IconButton(
                       onPressed: () {
                         key.currentState.openEndDrawer();
@@ -56,7 +54,7 @@ class CustomAppbar {
                       },
                       icon: Icon(
                         Icons.menu,
-                        size: height / 40,
+                        size: height / 35,
                         color: Colors.white,
                       )),
                 ),
