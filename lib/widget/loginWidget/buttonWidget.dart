@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:hampayam_chat/translations/locale_keys.g.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 class ButtonWidget extends StatelessWidget {

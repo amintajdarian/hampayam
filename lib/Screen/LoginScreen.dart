@@ -285,6 +285,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               if (meta.hasSub()) {
                                 if (meta.topic == 'me') {
                                   chatListProvider.clearData();
+                                  meta.sub.sort((a, b) => b.touched.compareTo(a.touched));
+
                                   chatListProvider.listSpliter(meta.sub);
                                 }
                               }
@@ -315,10 +317,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
                               if (ctrl.code == 200 && ctrl.params != null) {
                                 if (ctrl.params.token != null) {
-                                  profileProvider.setToken(ctrl.params.token);
-                                  HampayamClient.saveToken(ctrl.params.token);
-                                  profileProvider.setUerName(ctrl.params.user);
-                                  HampayamClient.subToMessanger();
+                                  if (loginPageProvider.getConter == 0) {
+                                    profileProvider.setToken(ctrl.params.token);
+                                    HampayamClient.saveToken(ctrl.params.token);
+                                    profileProvider.setUerName(ctrl.params.user);
+                                    HampayamClient.subToMessanger();
+                                    HampayamClient.subToFnd();
+                                    loginPageProvider.increamentCounter();
+                                  }
                                 }
                               } else if (ctrl.code == 401) {
                                 loginPageProvider.changeIsVAlidate(true);

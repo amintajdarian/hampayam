@@ -14,7 +14,7 @@ class LoginPageProvider extends ChangeNotifier {
   String validateText;
   bool isValidate = false;
   bool progressEnable = false;
-
+  int counter = 0;
   Color right;
   Color left;
 
@@ -34,6 +34,7 @@ class LoginPageProvider extends ChangeNotifier {
 
   Color get getColorRight => right;
   Color get getColorLeft => left;
+  int get getConter => counter;
 
   void changeObscureTextLogin() {
     this.obscureTextLogin = !this.getObscureTextLogin;
@@ -82,6 +83,11 @@ class LoginPageProvider extends ChangeNotifier {
       textRegNameEmpty = false;
       notifyListeners();
     }
+  }
+
+  void increamentCounter() {
+    counter++;
+    notifyListeners();
   }
 
   void changeTextRegUserNameEmpty(String textField) {
@@ -148,6 +154,23 @@ class LoginPageProvider extends ChangeNotifier {
 
   void changeColorLeft(Color color) {
     this.left = color;
+    notifyListeners();
+  }
+
+  void reset() {
+    obscureTextLogin = true;
+    obscureTextSignup = true;
+    obscureTextSignupConfirm = true;
+    textUserNameEmpty = false;
+    textPasswordEmpty = false;
+    textRegNameEmpty = false;
+    textRegUserNameEmpty = false;
+    textRegPasswordEmpty = false;
+    textConfirimEmpty = false;
+    textPhoneEmpty = false;
+    isValidate = false;
+    progressEnable = false;
+    counter = 0;
     notifyListeners();
   }
 }

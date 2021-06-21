@@ -1,11 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttericon/typicons_icons.dart';
 import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
+import 'package:hampayam_chat/Screen/CreateGroupScreen.dart';
+import 'package:hampayam_chat/Screen/LoginScreen.dart';
+import 'package:hampayam_chat/Screen/SetImageScreen.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
+import 'package:hampayam_chat/StateManagement/loginStateManagement/loginPageProvider.dart';
 import 'package:hampayam_chat/translations/locale_keys.g.dart';
 import 'dart:ui';
 
@@ -27,6 +32,25 @@ class MyDrawer extends StatelessWidget {
 
   Widget sizeBox(double size) {
     return SizedBox(height: size / 30);
+  }
+
+  void logOut(BuildContext context) {
+    LoginPageProvider loginPageProvider = Provider.of<LoginPageProvider>(context, listen: false);
+
+    IORouter.activePage = 'login';
+    final storage = new FlutterSecureStorage();
+    storage?.delete(key: 'token');
+    IORouter.closeConnection();
+    loginPageProvider.reset();
+    Navigator.pushReplacement<void, void>(
+      context,
+      MaterialPageRoute<void>(
+        builder: (
+          BuildContext context,
+        ) =>
+            LoginScreen(),
+      ),
+    );
   }
 
   @override
@@ -103,22 +127,32 @@ class MyDrawer extends StatelessWidget {
                           onTap: () {},
                           child: Container(
                             margin: EdgeInsets.only(left: _size / 10),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Typicons.users_outline,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(width: _size / 30),
-                                Text(
-                                  LocaleKeys.DrawerCreatGrp.tr(),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: _size / 30,
-                                    fontWeight: FontWeight.w500,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push<void>(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) => SetImageScreen(),
                                   ),
-                                ),
-                              ],
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Typicons.users_outline,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(width: _size / 30),
+                                  Text(
+                                    LocaleKeys.DrawerCreatGrp.tr(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: _size / 30,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -231,22 +265,23 @@ class MyDrawer extends StatelessWidget {
                         ),
                         Container(
                           margin: EdgeInsets.only(right: _size / 8, left: _size / 8),
-                          child: Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(
+                          child: GestureDetector(
+                            onTap: () {
+                              logOut(context);
+                            },
+                            child: Row(
+                              children: [
+                                Icon(
                                   WebSymbols.logout,
                                   color: Colors.white,
                                 ),
-                              ),
-                              Container(
-                                child: Text(
+                                SizedBox(width: _size / 30),
+                                Text(
                                   LocaleKeys.Logout.tr(),
                                   style: TextStyle(color: Colors.white, fontSize: _size / 30, fontWeight: FontWeight.w500),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                         SizedBox(

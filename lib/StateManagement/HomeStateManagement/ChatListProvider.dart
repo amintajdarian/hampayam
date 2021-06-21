@@ -69,12 +69,58 @@ class ChatListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void changreadMessage(int seq, String topic) {
-    for (var item in subList) {
-      if (item.topic == topic) {
-        item.read = seq;
+  void chatListChange(String topic) {
+    if (subList.length > 1) {
+      for (var item in subList) {
+        if (item.topic == topic) {
+          int index = subList.indexOf(item);
+          subList.insert(0, subList.removeAt(index));
+        }
       }
     }
+    if (userList.length > 1) {
+      if (topic.startsWith('usr')) {
+        for (var item in userList) {
+          if (item.topic == topic) {
+            int index = subList.indexOf(item);
+            userList.insert(0, subList.removeAt(index));
+          }
+        }
+      }
+    }
+    if (groupList.length > 1) {
+      if (topic.startsWith('grp')) {
+        for (var item in groupList) {
+          if (item.topic == topic) {
+            int index = subList.indexOf(item);
+            groupList.insert(0, subList.removeAt(index));
+          }
+        }
+      }
+    }
+    if (channelList.length > 1) {
+      if (topic.startsWith('chl')) {
+        for (var item in channelList) {
+          if (item.topic == topic) {
+            int index = subList.indexOf(item);
+            channelList.insert(0, subList.removeAt(index));
+          }
+        }
+      }
+    }
+    if (botList.length > 1) {
+      if (topic.startsWith('bot')) {
+        for (var item in botList) {
+          if (item.topic == topic) {
+            int index = subList.indexOf(item);
+            botList.insert(0, subList.removeAt(index));
+          }
+        }
+      }
+    }
+  }
+
+  void changreadMessage(int seq, String topic) {
     if (topic.startsWith('usr')) {
       for (var item in userList) {
         if (item.topic == topic) {

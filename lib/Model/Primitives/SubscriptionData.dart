@@ -27,7 +27,7 @@ class JSubscriptionData {
   @JsonKey(name: 'public', includeIfNull: false)
   JPublicData public;
   @JsonKey(name: 'private', includeIfNull: false)
-  JPrivateData private;
+  List<String> private;
   @JsonKey(name: 'online', includeIfNull: false)
   bool online;
   @JsonKey(name: 'topic', includeIfNull: false)

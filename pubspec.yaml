@@ -35,11 +35,14 @@ dependencies:
   flutter_secure_storage: ^4.1.0
   fluttericon: ^2.0.0
   hexcolor: ^2.0.4
-  json_annotation: any
+  image_picker: ^0.8.0+3
+  json_annotation: ^3.1.0
   mime: ^1.0.0
+  modal_bottom_sheet: ^2.0.0
   path: ^1.8.0
   permission_handler: ^8.1.1
   provider: ^5.0.0
+  roundcheckbox: ^2.0.1
   rxdart: ^0.27.1
   shared_preferences: ^2.0.6
   websocket_manager: ^0.2.2
@@ -47,9 +50,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: any
+  build_runner: ^1.11.5
   flutter_launcher_icons: any
-  json_serializable: ^4.0.3
+  json_serializable: ^3.4.1
 
 flutter_icons:
   android: "launcher_icon"

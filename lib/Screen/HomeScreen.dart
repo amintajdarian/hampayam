@@ -4,6 +4,7 @@ import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 
 import 'package:hampayam_chat/Messenging/HampayamClient.dart';
 import 'package:hampayam_chat/Messenging/Notification.dart';
+import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Pres.dart';
 import 'package:hampayam_chat/Screen/navigationPages/PageChannel.dart';
 
@@ -12,6 +13,7 @@ import 'package:hampayam_chat/Screen/navigationPages/PageWallet.dart';
 import 'package:hampayam_chat/Screen/navigationPages/pageGroup.dart';
 import 'package:hampayam_chat/Screen/navigationPages/pageUser.dart';
 import 'package:hampayam_chat/StateManagement/ContactStateManagment/ContactProvider.dart';
+import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/statusUserProvider.dart';
@@ -22,7 +24,6 @@ import 'package:hampayam_chat/StateManagement/loginStateManagement/loginPageProv
 import 'package:hampayam_chat/widget/homeWidget/botomBar.dart';
 import 'package:hampayam_chat/widget/homeWidget/customAppBar.dart';
 import 'package:hampayam_chat/widget/homeWidget/endDrawer.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../translations/locale_keys.g.dart';
@@ -37,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   ChatListProvider chatListProvider;
   ProfileProvider profileProvider;
   ContactProvide contactProvide;
+  CreateGrpProvider createGrpProvider;
   LoginPageProvider loginPageProvider;
   String language = '';
 
@@ -48,17 +50,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     IORouter.activePage = 'home';
 
     IORouter.homeScreenChannel.stream.listen(onData);
-    HampayamClient.getDataAutoLogin(context, language).then((value) {
-      notifcation.initializing();
-      getPermissions();
+    Future.delayed(Duration(seconds: 0)).then((value) async {
+      await HampayamClient.getDataAutoLogin(context, language).then((value) {
+        notifcation.initializing();
+        HampayamClient.getPermissions();
+      });
     });
-    super.initState();
-  }
 
-  void getPermissions() async {
-    if (await Permission.contacts.request().isGranted) {
-      HampayamClient.getContatct();
-    }
+    super.initState();
   }
 
   @override
@@ -69,6 +68,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     profileProvider = Provider.of(context);
     contactProvide = Provider.of(context);
     loginPageProvider = Provider.of(context);
+    createGrpProvider = Provider.of(context);
     PageChangeProvider pageChangeProvider = Provider.of<PageChangeProvider>(context);
     var _sizeH = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -110,6 +110,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Future<void> onData(MsgType data) async {
     print(data.msg);
+    print(data.type);
+    if (data.type == 'm') {
+      JRcvMeta meta = JRcvMeta.fromJson(data.msg);
+      if (meta.topic == 'fnd') {
+        if (meta.hasSub()) {
+          print(meta.getSubscription(0).private[0]);
+          meta.sub.sort((a, b) => a.public.fn.compareTo(b.public.fn));
+          contactProvide.setContact(meta.sub);
+          createGrpProvider.setListCheck(meta.sub.length);
+        }
+      }
+    }
     if (data.type == 'p') {
       JRcvPres pres = JRcvPres.fromJson(data.msg);
       if (pres.what == 'off') {
@@ -123,6 +135,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         chatListProvider.changUnreadMessage(pres.seq, pres.src);
         chatListProvider.changLastMessage(pres.extra.message, pres.extra.fn, pres.src);
         notifcation.showNotifications(pres.extra.fn, pres.extra.message);
+        chatListProvider.chatListChange(pres.src);
       }
 
       if (pres.what == 'read') {

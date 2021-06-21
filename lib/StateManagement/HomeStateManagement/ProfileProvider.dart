@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 
 class ProfileProvider extends ChangeNotifier {
-  String fn;
-  String sn;
-  String photoFile;
-  String userName;
-  String phone;
-  String token;
+  String fn = '';
+  String sn = '';
+  String photoFile = '';
+  String userName = '';
+  String phone = '';
+  String token = '';
 
   String get getFname => fn;
   String get getSname => sn;

@@ -41,7 +41,7 @@ class HttpConnection {
     return headers;
   }
 
-  Future<File> compressFile(File file) async {
+  static Future<File> compressFile(File file) async {
     File compressedFile = await FlutterNativeImage.compressImage(file.path, quality: 50, targetWidth: 600, targetHeight: 300);
     return compressedFile;
   }
@@ -70,6 +70,30 @@ class HttpConnection {
         profileProvider.setPhoto(msgSever.ctrl.GetCtrlParamsData().url);
       }
     });
+  }
+
+  static Future<String> sendRequestImageGrp(String address, String apiKey, String token, File file, {Function onSendProgress, Function onResievedProgress}) async {
+    Dio dio = Dio();
+    String imageUrl;
+    var headers = {"apikey": "$apiKey", "auth": 'token', "secret": "$token"};
+    File compressImage;
+    String url = setUrl(address);
+    await compressFile(file).then((value) => compressImage = value);
+    FormData formData = FormData.fromMap({"file": await MultipartFile.fromFile(compressImage.path)});
+    await dio
+        .post(
+      url,
+      data: formData,
+      queryParameters: headers,
+    )
+        .then((value) {
+      if (value.statusCode == 200) {
+        print(value);
+        MsgSever msgSever = MsgSever.fromJson(value.data);
+        imageUrl = (msgSever.ctrl.GetCtrlParamsData().url);
+      }
+    });
+    return imageUrl;
   }
 
   setImageProfile(String address, String apiKey, String token, File file, BuildContext context) async {

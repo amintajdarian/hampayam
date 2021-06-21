@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
@@ -6,15 +8,12 @@ import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
-import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgsServer.dart';
-import 'package:hampayam_chat/Model/DeSeserilizedJson/Pres.dart';
 import 'package:hampayam_chat/Model/Primitives/DataWhat.dart';
 import 'package:hampayam_chat/Model/Primitives/Delete.dart';
 import 'package:hampayam_chat/Model/Primitives/Description.dart';
 import 'package:hampayam_chat/Model/Primitives/Name.dart';
 import 'package:hampayam_chat/Model/Primitives/PublicData.dart';
 import 'package:hampayam_chat/Model/Primitives/Subscription.dart';
-import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
 import 'package:hampayam_chat/Model/Primitives/UserCredential.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Account.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Get.dart';
@@ -24,10 +23,11 @@ import 'package:hampayam_chat/Model/SeserilizedJson/MsgClient.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/SendSub.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Set.dart';
 import 'package:device_info/device_info.dart';
-import 'package:hampayam_chat/Screen/HomeScreen.dart';
+import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
-import 'package:hampayam_chat/StateManagement/loginStateManagement/loginPageProvider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:provider/provider.dart';
 
@@ -86,84 +86,6 @@ class HampayamClient {
         child: dataAvatar,
       );
     }
-  }
-
-  static List<Widget> chatList(List<JSubscriptionData> subList, String token, double size, List online) {
-    List<Widget> subChats = [];
-    for (var item in subList) {
-      String subName = item.public.fn.substring(0, 2);
-      subChats.add(Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: Card(
-          child: Padding(
-            padding: EdgeInsets.all(size / 200),
-            child: ListTile(
-              title: Text(
-                item.public.fn,
-              ),
-              subtitle: item.lastMessage != null
-                  ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        item.lastMessage.fn + ' :' + (item.lastMessage.message.runtimeType == String ? item.lastMessage.message.toString() : 'data'),
-                      ),
-                    )
-                  : null,
-              leading: item.public.photo != null
-                  ? Stack(children: [
-                      CachedNetworkImage(
-                        imageUrl: HttpConnection.fileUrl(IORouter.ipAddress, item.public.photo.data),
-                        httpHeaders: HttpConnection.setHeader(IORouter.apiKey, token),
-                        progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
-                        imageBuilder: (context, imageProvider) => Container(
-                          width: size / 15,
-                          height: size / 15,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
-                          ),
-                        ),
-                      ),
-                      Visibility(
-                        visible: online.contains(item.topic) ? true : false,
-                        child: new Positioned(
-                          bottom: 1,
-                          left: 1,
-                          child: new Icon(Icons.brightness_1, size: 20, color: Colors.green),
-                        ),
-                      )
-                    ])
-                  : Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: size / 30,
-                          child: Text(
-                            subName,
-                          ),
-                        ),
-                        Visibility(
-                          visible: online.contains(item.topic) ? true : false,
-                          child: new Positioned(
-                            bottom: 1,
-                            left: 1,
-                            child: new Icon(Icons.brightness_1, size: 20, color: Colors.green),
-                          ),
-                        )
-                      ],
-                    ),
-              trailing: Text(item.seq != null
-                  ? item.read != null
-                      ? (item.seq - item.read) != 0
-                          ? (item.seq - item.read).toString()
-                          : ''
-                      : ''
-                  : ''),
-            ),
-          ),
-        ),
-      ));
-    }
-    return subChats;
   }
 
   static void signUpChatWithEmail(String address, String apiKey, String userAgent, String language, String verssion, String name, String email, String username, String password) {
@@ -271,11 +193,6 @@ class HampayamClient {
 
   static void contactSearch(String contactList) {
     if (contactList.length > 0) {
-      /*   JPublicData publicData = JPublicData(tel: contactList);
-      Description description = Description(publicData: publicData);
-      JSndSet jSndSet = JSndSet(desc: description, topic: 'fnd', id: IORouter.generateRandomKey());
-      MsgClient sendSet = MsgClient(jSndSet: jSndSet);
-      IORouter.sendMap(sendSet.toJson()); */
       IORouter.sendString('{"set":{"id":"95589","topic":"fnd","desc":{"public":"tel:$contactList"}}}');
       JSndGet jSndGet = JSndGet(id: IORouter.generateRandomKey(), topic: 'fnd', what: 'sub');
       MsgClient sendGet = MsgClient(jSndGet: jSndGet);
@@ -292,30 +209,32 @@ class HampayamClient {
       for (var item in contacts) {
         if (item.phones.toList().length > 0) {
           if (!phone.contains(item.phones.toList().elementAt(0).value)) {
-            phone.add(item.phones.toList().first.value);
+            phone.add(item.phones.toList().first.value.replaceAll(new RegExp(r"\s+"), ""));
           }
         }
       }
+
       for (var item in phone) {
-        if (item.length >= 11) {
+        if (item.length > 10) {
           if (item.startsWith('+')) {
             if (counter == 0)
-              contacString = '0' + item.substring(item.length - 11) + ',';
+              contacString += '0' + item.substring(item.length - 10) + ',';
             else
-              contacString += 'tel:' + '0' + item.substring(item.length - 11) + ',';
+              contacString += 'tel:' + '0' + item.substring(item.length - 10) + ',';
           } else if (item.startsWith('0')) {
             if (counter == 0)
-              contacString = item.substring(item.length - 11) + ',';
+              contacString += item.substring(item.length - 10) + ',';
             else
-              contacString += 'tel:' + item.substring(item.length - 11) + ',';
+              contacString += 'tel:' + '0' + item.substring(item.length - 10) + ',';
           }
           if (contacString.length > 0) {
             counter++;
           }
         }
       }
+
+      HampayamClient.contactSearch(contacString);
     }
-    HampayamClient.contactSearch(contacString);
   }
 
   static void chnageProfileName(String fn, {String surname, ProfileProvider profileName}) {
@@ -329,13 +248,19 @@ class HampayamClient {
     profileName.setUerName(fn);
   }
 
+  static void getPermissions() async {
+    if (await Permission.contacts.request().isGranted) {
+      HampayamClient.getContatct();
+    }
+  }
+
   static Future<void> getDataAutoLogin(BuildContext context, String language) async {
     ProfileProvider profileProvider = Provider.of<ProfileProvider>(context, listen: false);
     ChatListProvider chatListProvider = Provider.of<ChatListProvider>(context, listen: false);
 
     final storage = new FlutterSecureStorage();
     String value = await storage.read(key: 'token') ?? null;
-    if (profileProvider.token == null) {
+    if (profileProvider.token == '') {
       await HampayamClient.autoLogin(IORouter.ipAddress, IORouter.apiKey, language, value);
       IORouter.homeScreenChannel.stream.listen((event) async {
         switch (event.type) {
@@ -345,6 +270,7 @@ class HampayamClient {
             if (meta.hasSub()) {
               if (meta.topic == 'me') {
                 chatListProvider.clearData();
+                meta.sub.sort((a, b) => b.touched.compareTo(a.touched));
                 chatListProvider.listSpliter(meta.sub);
               }
             }
@@ -361,13 +287,6 @@ class HampayamClient {
             }
             if (meta.hasCred()) {
               profileProvider.setPhone(meta.getCredential(0).val);
-
-              Navigator.pushReplacement<void, void>(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) => HomeScreen(),
-                ),
-              );
             }
 
             break;
@@ -379,7 +298,7 @@ class HampayamClient {
                 profileProvider.setToken(ctrl.params.token);
                 HampayamClient.saveToken(ctrl.params.token);
                 HampayamClient.subToMessanger();
-                HampayamClient.subToFnd();
+
                 profileProvider.setUerName(ctrl.params.user);
               }
             }
@@ -387,6 +306,36 @@ class HampayamClient {
           default:
         }
       });
+    }
+  }
+
+  static Future getImagefromcamera(BuildContext context) async {
+    CreateGrpProvider createGrpProvider = Provider.of(context, listen: false);
+    ProfileProvider profileProvider = Provider.of(context, listen: false);
+    var image = await ImagePicker.platform.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      await HttpConnection.sendRequestImageGrp(
+        IORouter.ipAddress,
+        IORouter.apiKey,
+        profileProvider.getToken,
+        File(image.path),
+      ).then((value) => createGrpProvider.setImageFile(value));
+    }
+  }
+
+  static Future getImagefromGallery(BuildContext context) async {
+    CreateGrpProvider createGrpProvider = Provider.of(context, listen: false);
+    ProfileProvider profileProvider = Provider.of(context, listen: false);
+
+    var image = await ImagePicker.platform.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      await HttpConnection.sendRequestImageGrp(
+        IORouter.ipAddress,
+        IORouter.apiKey,
+        profileProvider.getToken,
+        File(image.path),
+      ).then((value) => createGrpProvider.setImageFile(value));
     }
   }
 }
