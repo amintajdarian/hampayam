@@ -8,8 +8,8 @@ part of 'DataWhat.dart';
 
 DataWhat _$DataWhatFromJson(Map<String, dynamic> json) {
   return DataWhat(
-    since: json['since'] as String,
-    before: json['before'] as String,
+    since: json['since'] as int,
+    before: json['before'] as int,
     limit: json['limit'] as int,
   );
 }

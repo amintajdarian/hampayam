@@ -8,16 +8,19 @@ import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
+import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
 import 'package:hampayam_chat/Model/Primitives/DataWhat.dart';
 import 'package:hampayam_chat/Model/Primitives/Delete.dart';
 import 'package:hampayam_chat/Model/Primitives/Description.dart';
 import 'package:hampayam_chat/Model/Primitives/Name.dart';
+import 'package:hampayam_chat/Model/Primitives/Photo.dart';
 import 'package:hampayam_chat/Model/Primitives/PublicData.dart';
 import 'package:hampayam_chat/Model/Primitives/Subscription.dart';
 import 'package:hampayam_chat/Model/Primitives/UserCredential.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Account.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Get.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Hi.dart';
+import 'package:hampayam_chat/Model/SeserilizedJson/Leave.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Login.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/MsgClient.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/SendSub.dart';
@@ -267,26 +270,27 @@ class HampayamClient {
           case 'm':
             JRcvMeta meta = JRcvMeta.fromJson(event.msg);
             print(event.msg);
-            if (meta.hasSub()) {
-              if (meta.topic == 'me') {
+            if (meta.topic == 'me') {
+              if (meta.hasSub()) {
                 chatListProvider.clearData();
                 meta.sub.sort((a, b) => b.touched.compareTo(a.touched));
                 chatListProvider.listSpliter(meta.sub);
               }
-            }
-            if (meta.hasDesc()) {
-              profileProvider.fname(meta.getDescription().getPublic().fn);
-              if (meta.getDescription().getPublic().photo != null) {
+
+              if (meta.hasDesc()) {
+                profileProvider.fname(meta.getDescription().getPublic().fn);
                 if (meta.getDescription().getPublic().photo != null) {
-                  profileProvider.setPhoto(meta.getDescription().getPublic().photo.data);
+                  if (meta.getDescription().getPublic().photo != null) {
+                    profileProvider.setPhoto(meta.getDescription().getPublic().photo.data);
+                  }
+                }
+                if (meta.desc.getPublic().n != null) {
+                  profileProvider.sname(meta.getDescription().getPublic().n.surname);
                 }
               }
-              if (meta.desc.getPublic().n != null) {
-                profileProvider.sname(meta.getDescription().getPublic().n.surname);
+              if (meta.hasCred()) {
+                profileProvider.setPhone(meta.getCredential(0).val);
               }
-            }
-            if (meta.hasCred()) {
-              profileProvider.setPhone(meta.getCredential(0).val);
             }
 
             break;
@@ -314,7 +318,7 @@ class HampayamClient {
     ProfileProvider profileProvider = Provider.of(context, listen: false);
     var image = await ImagePicker.platform.pickImage(source: ImageSource.camera);
     if (image != null) {
-      await HttpConnection.sendRequestImageGrp(
+      await HttpConnection.sendRequestImage(
         IORouter.ipAddress,
         IORouter.apiKey,
         profileProvider.getToken,
@@ -330,12 +334,32 @@ class HampayamClient {
     var image = await ImagePicker.platform.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
-      await HttpConnection.sendRequestImageGrp(
+      await HttpConnection.sendRequestImage(
         IORouter.ipAddress,
         IORouter.apiKey,
         profileProvider.getToken,
         File(image.path),
       ).then((value) => createGrpProvider.setImageFile(value));
+    }
+  }
+
+  static createChannel(String name, int limit, {String photo}) {
+    if (photo.isNotEmpty) {
+      JPhoto jPhoto = JPhoto(data: photo, type: 'jpg');
+      JPublicData publicData = JPublicData(
+        fn: name,
+        photo: jPhoto,
+      );
+      Description description = Description(publicData: publicData);
+      JSndSet jSndSet = JSndSet(desc: description);
+      String newId = IORouter.generateRandomKey();
+
+      DataWhat dataWhat = DataWhat(limit: limit);
+      JSndGet jSndGet = JSndGet(data: dataWhat, what: "data sub desc");
+
+      JSndSub jSndSub = JSndSub(id: newId, topic: 'newchl$newId', jSndSet: jSndSet, jSndGet: jSndGet);
+      MsgClient sendSub = MsgClient(jSndSub: jSndSub);
+      IORouter.sendMap(sendSub.toJson());
     }
   }
 }

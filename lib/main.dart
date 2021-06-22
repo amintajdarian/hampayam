@@ -2,9 +2,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hampayam_chat/StateManagement/ContactStateManagment/ContactProvider.dart';
+import 'package:hampayam_chat/StateManagement/CreateChannelProvider/CreateChannelProvider.dart';
 import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/statusUserProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/pageChangeProvider.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/chatButtonProvide.dart';
 
 import 'package:provider/provider.dart';
 
@@ -28,6 +31,9 @@ void main() async {
       ChangeNotifierProvider(create: (context) => StatusUserProvider()),
       ChangeNotifierProvider(create: (context) => ContactProvide()),
       ChangeNotifierProvider(create: (context) => CreateGrpProvider()),
+      ChangeNotifierProvider(create: (context) => CreateChannelProvider()),
+      ChangeNotifierProvider(create: (context) => P2pProvider()),
+      ChangeNotifierProvider(create: (context) => ChatButtonProvider()),
     ],
     child: EasyLocalization(
         supportedLocales: [Locale('en'), Locale('fa')],

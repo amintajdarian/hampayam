@@ -14,6 +14,9 @@ class JPubContent {
   @JsonKey(name: 'ent', includeIfNull: false)
   List<JTextEntity> ent;
   JPubContent({this.text, this.fmt, this.ent});
+
+  factory JPubContent.fromJson(Map<String, dynamic> json) => _$JPubContentFromJson(json);
+  Map<String, dynamic> toJson() => _$JPubContentToJson(this);
   int fmtLength() {
     try {
       return fmt.length;

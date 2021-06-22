@@ -4,9 +4,9 @@ part 'DataWhat.g.dart';
 @JsonSerializable()
 class DataWhat {
   @JsonKey(name: 'since', includeIfNull: false)
-  String since;
+  int since;
   @JsonKey(name: 'before', includeIfNull: false)
-  String before;
+  int before;
   @JsonKey(name: 'limit', includeIfNull: false)
   int limit;
   DataWhat({this.since, this.before, this.limit});

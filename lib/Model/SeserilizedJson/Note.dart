@@ -8,7 +8,7 @@ class JSndNote {
   String topic;
   @JsonKey(name: 'what')
   String what;
-  @JsonKey(name: 'seq')
+  @JsonKey(name: 'seq', includeIfNull: false)
   int seq;
   @JsonKey(name: 'unread', includeIfNull: false)
   String unread;

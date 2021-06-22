@@ -60,4 +60,12 @@ class CreateGrpProvider extends ChangeNotifier {
     this.imageFile = image;
     notifyListeners();
   }
+
+  clearData() {
+    valueCheck.clear();
+    dataAdded.clear();
+    floatingBtn = false;
+    imageFile = '';
+    notifyListeners();
+  }
 }

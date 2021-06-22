@@ -19,7 +19,7 @@ class ListViewWidget extends StatelessWidget {
         child: Center(
           child: ListView(
             padding: EdgeInsets.only(top: 20),
-            children: ListViewItem.chatList(chatList, value1.token, size, value2.getOnlineUser),
+            children: ListViewItem.chatList(chatList, value1.token, size, value2.getOnlineUser, context),
           ),
         ),
       );

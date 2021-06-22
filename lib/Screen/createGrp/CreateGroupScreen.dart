@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:hampayam_chat/Screen/SetImageScreen.dart';
+import 'package:hampayam_chat/Screen/createGrp/SetImageScreen.dart';
 import 'package:hampayam_chat/StateManagement/ContactStateManagment/ContactProvider.dart';
 import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';

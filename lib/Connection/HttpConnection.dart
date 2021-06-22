@@ -72,7 +72,7 @@ class HttpConnection {
     });
   }
 
-  static Future<String> sendRequestImageGrp(String address, String apiKey, String token, File file, {Function onSendProgress, Function onResievedProgress}) async {
+  static Future<String> sendRequestImage(String address, String apiKey, String token, File file, {Function onSendProgress, Function onResievedProgress}) async {
     Dio dio = Dio();
     String imageUrl;
     var headers = {"apikey": "$apiKey", "auth": 'token', "secret": "$token"};

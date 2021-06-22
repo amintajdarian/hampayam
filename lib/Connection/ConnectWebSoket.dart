@@ -22,6 +22,7 @@ class IORouter {
   static final loginScreenChannel = StreamController<MsgType>.broadcast();
   static final homeScreenChannel = StreamController<MsgType>.broadcast();
   static final chatScreenChannel = StreamController<MsgType>.broadcast();
+  static final createScreenChannel = StreamController<MsgType>.broadcast();
   static final signUpScreenChannel = StreamController<MsgType>.broadcast();
   static final shearchScreenChannel = StreamController<MsgType>.broadcast();
   static final String ipAddress = '185.110.189.242:6060';
@@ -64,6 +65,10 @@ class IORouter {
             break;
           case 'search':
             shearchScreenChannel.sink.add(MsgType(serverMsgMap['ctrl'], 'c'));
+
+            break;
+          case 'create':
+            createScreenChannel.sink.add(MsgType(serverMsgMap['ctrl'], 'c'));
 
             break;
         }

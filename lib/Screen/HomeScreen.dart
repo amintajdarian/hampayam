@@ -44,7 +44,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   final PageController _pageController = PageController(initialPage: 0, keepPage: true);
   MessageNotifcation notifcation = MessageNotifcation();
-  GlobalKey<ScaffoldState> _key = GlobalKey(); // add this
+  GlobalKey<ScaffoldState> _key = GlobalKey();
+
   @override
   void initState() {
     IORouter.activePage = 'home';
@@ -115,7 +116,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       JRcvMeta meta = JRcvMeta.fromJson(data.msg);
       if (meta.topic == 'fnd') {
         if (meta.hasSub()) {
-          print(meta.getSubscription(0).private[0]);
           meta.sub.sort((a, b) => a.public.fn.compareTo(b.public.fn));
           contactProvide.setContact(meta.sub);
           createGrpProvider.setListCheck(meta.sub.length);
@@ -139,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       }
 
       if (pres.what == 'read') {
-        chatListProvider.changreadMessage(pres.seq, pres.src);
+        chatListProvider.changReadMessage(pres.seq, pres.src);
       }
     }
   }

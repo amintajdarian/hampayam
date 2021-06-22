@@ -1,5 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
+import 'package:hampayam_chat/Model/Primitives/DataWhat.dart';
 import 'package:hampayam_chat/Model/Primitives/DelRange.dart';
+import 'package:hampayam_chat/Model/SeserilizedJson/Get.dart';
+import 'package:hampayam_chat/Model/SeserilizedJson/Leave.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/MsgClient.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Pub.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Note.dart';
@@ -8,11 +12,11 @@ import 'package:hampayam_chat/Model/SeserilizedJson/SendDel.dart';
 class ChatContent {
   static List<JDelRange> delSeq = List();
 
-  static void sendTextMessage(String topic, String data) {
+  static void sendTextMessage(String topic, String data, String currentUser, BuildContext context) {
     String newId = IORouter.generateRandomKey();
-
     JSndPub jSndPub = JSndPub(id: newId, topic: topic, noecho: true, content: data);
     MsgClient sendPub = MsgClient(jSndPub: jSndPub);
+
     IORouter.sendMap(sendPub.toJson());
   }
 
@@ -39,5 +43,18 @@ class ChatContent {
     JSndDel del = JSndDel(id: newId, topic: topic, what: 'msg', delSeq: delSeq);
     MsgClient sendDel = MsgClient(jSndDel: del);
     IORouter.sendMap(sendDel.toJson());
+  }
+
+  static leaveChat(String topic) {
+    JSndLeave jSndLeave = JSndLeave(id: IORouter.generateRandomKey(), topic: topic);
+    MsgClient sendLeave = MsgClient(jSndLeave: jSndLeave);
+    IORouter.sendMap(sendLeave.toJson());
+  }
+
+  static loadMoreData(int before, String topic, int limit) {
+    DataWhat dataWhat = DataWhat(before: before, limit: limit);
+    JSndGet jSndGet = JSndGet(data: dataWhat, what: 'data', topic: topic, id: IORouter.generateRandomKey());
+    MsgClient sendGet = MsgClient(jSndGet: jSndGet);
+    IORouter.sendMap(sendGet.toJson());
   }
 }

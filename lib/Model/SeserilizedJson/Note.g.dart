@@ -29,5 +29,6 @@ Map<String, dynamic> _$JSndNoteToJson(JSndNote instance) {
   }
 
   writeNotNull('unread', instance.unread);
+  writeNotNull('seq', instance.seq);
   return val;
 }

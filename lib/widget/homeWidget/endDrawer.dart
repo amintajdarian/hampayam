@@ -6,9 +6,11 @@ import 'package:fluttericon/typicons_icons.dart';
 import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
-import 'package:hampayam_chat/Screen/CreateGroupScreen.dart';
+import 'package:hampayam_chat/Screen/CreateChannelScreen.dart';
+import 'package:hampayam_chat/Screen/chatScreen/P2pChatScreen.dart';
+import 'package:hampayam_chat/Screen/createGrp/CreateGroupScreen.dart';
 import 'package:hampayam_chat/Screen/LoginScreen.dart';
-import 'package:hampayam_chat/Screen/SetImageScreen.dart';
+import 'package:hampayam_chat/Screen/createGrp/SetImageScreen.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
 import 'package:hampayam_chat/StateManagement/loginStateManagement/loginPageProvider.dart';
 import 'package:hampayam_chat/translations/locale_keys.g.dart';
@@ -132,7 +134,7 @@ class MyDrawer extends StatelessWidget {
                                 Navigator.push<void>(
                                   context,
                                   MaterialPageRoute<void>(
-                                    builder: (BuildContext context) => SetImageScreen(),
+                                    builder: (BuildContext context) => CreateGroup(),
                                   ),
                                 );
                               },
@@ -160,7 +162,14 @@ class MyDrawer extends StatelessWidget {
                         divider(_size),
                         sizeBox(_size),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push<void>(
+                              context,
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) => CreateChannel(),
+                              ),
+                            );
+                          },
                           child: Container(
                             margin: EdgeInsets.only(left: _size / 10),
                             child: Row(
@@ -186,7 +195,9 @@ class MyDrawer extends StatelessWidget {
                         divider(_size),
                         sizeBox(_size),
                         GestureDetector(
-                          onTap: () async {},
+                          onTap: () async {
+                            Navigator.pushReplacement<void, void>(context, MaterialPageRoute<void>(builder: (BuildContext context) => P2pChatScreen()));
+                          },
                           child: Container(
                             margin: EdgeInsets.only(left: _size / 10),
                             child: Row(
