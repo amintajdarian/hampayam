@@ -128,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         onlieProvider.deleteOnlineUser(pres.src);
       }
       if (pres.what == 'on') {
-        onlieProvider.addOnlineUser(pres.src);
+        if (pres.src.startsWith('usr')) onlieProvider.addOnlineUser(pres.src);
       }
 
       if (pres.what == 'msg') {

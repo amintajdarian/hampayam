@@ -97,7 +97,7 @@ class _P2pChatScreenState extends State<P2pChatScreen> with TickerProviderStateM
       },
       child: Scaffold(
         key: _key,
-        appBar: p2pProvider.dataSub != null
+        appBar: p2pProvider.dataSub.public != null
             ? PreferredSize(
                 preferredSize: Size.fromHeight(_sizeH / 10),
                 child: ChatAppBar(

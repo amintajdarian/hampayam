@@ -4,7 +4,9 @@ import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
 import 'package:hampayam_chat/Screen/HomeScreen.dart';
+import 'package:hampayam_chat/Screen/chatScreen/ChlChat/ChlChatScreen.dart';
 import 'package:hampayam_chat/Screen/chatScreen/P2pChat/P2pChatScreen.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/ChlProvder.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +14,7 @@ class ListViewItem {
   static List<Widget> chatList(List<JSubscriptionData> subList, String token, double size, List online, BuildContext context) {
     List<Widget> subChats = [];
     P2pProvider p2pProvider = Provider.of(context);
+    ChlProvider chlProvider = Provider.of(context);
     for (var item in subList) {
       String subName = item.public.fn.substring(0, 2);
       subChats.add(Padding(
@@ -19,13 +22,22 @@ class ListViewItem {
         child: InkWell(
           onTap: () {
             IORouter.activePage = 'chat';
-            p2pProvider.addSub(item);
 
             if (item.topic.startsWith('usr')) {
+              p2pProvider.addSub(item);
               Navigator.push<void>(
                 context,
                 MaterialPageRoute<void>(
                   builder: (BuildContext context) => P2pChatScreen(),
+                ),
+              );
+            } else if (item.topic.startsWith('chl')) {
+              chlProvider.addTopicSub(item);
+              chlProvider.changeShowButton(item.acs.mode.isWrite);
+              Navigator.push<void>(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => ChlChatScreen(),
                 ),
               );
             }

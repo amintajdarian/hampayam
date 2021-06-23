@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
 import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
 
-class ChlProvider extends ChangeNotifier {
+class GrpProvider extends ChangeNotifier {
   JSubscriptionData topicData = JSubscriptionData();
   List<JSubscriptionData> dataSub = [];
   List<JRcvMsg> chatList = [];

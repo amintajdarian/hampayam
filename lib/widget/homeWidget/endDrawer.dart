@@ -134,7 +134,7 @@ class MyDrawer extends StatelessWidget {
                                 Navigator.push<void>(
                                   context,
                                   MaterialPageRoute<void>(
-                                    builder: (BuildContext context) => CreateGroup(),
+                                    builder: (BuildContext context) => SetImageScreen(),
                                   ),
                                 );
                               },
@@ -229,7 +229,7 @@ class MyDrawer extends StatelessWidget {
                             child: Row(
                               children: [
                                 Icon(
-                                  Typicons.chat_alt,
+                                  Typicons.cog_outline,
                                   color: Colors.white,
                                 ),
                                 SizedBox(width: _size / 30),

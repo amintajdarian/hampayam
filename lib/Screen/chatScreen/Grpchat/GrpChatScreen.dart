@@ -20,12 +20,12 @@ import 'package:hampayam_chat/widget/chatWidget/ItemChatList.dart';
 import 'package:hampayam_chat/widget/chatWidget/bottomBarWidget.dart';
 import 'package:provider/provider.dart';
 
-class ChlChatScreen extends StatefulWidget {
+class GrpChatScreen extends StatefulWidget {
   @override
-  State<ChlChatScreen> createState() => _ChlChatScreenState();
+  State<GrpChatScreen> createState() => _GrpChatScreenState();
 }
 
-class _ChlChatScreenState extends State<ChlChatScreen> with TickerProviderStateMixin {
+class _GrpChatScreenState extends State<GrpChatScreen> with TickerProviderStateMixin {
   AnimationController _controller;
   Animation _animation;
   TextEditingController textEditingController = TextEditingController();

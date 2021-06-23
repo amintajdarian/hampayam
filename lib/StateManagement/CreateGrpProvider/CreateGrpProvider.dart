@@ -8,11 +8,15 @@ class CreateGrpProvider extends ChangeNotifier {
   List<JSubscriptionData> dataAdded = [];
   bool floatingBtn = false;
   String imageFile;
+  String nameGrp;
+  bool textEmpty = false;
+  bool created = false;
 
   List<bool> get getValue => valueCheck;
   bool get getfloatingBtn => floatingBtn;
   List<JSubscriptionData> get getdataAdded => dataAdded;
   String get getImage => imageFile;
+
   setListCheck(int length) {
     this.valueCheck = List.filled(length, false);
     notifyListeners();
