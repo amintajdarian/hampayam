@@ -16,6 +16,7 @@ import 'package:hampayam_chat/Model/Primitives/TextFormat.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/MsgClient.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Pub.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Set.dart';
+import 'package:hampayam_chat/StateManagement/CreateChannelProvider/CreateChannelProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
@@ -72,8 +73,9 @@ class HttpConnection {
     });
   }
 
-  static Future<String> sendRequestImage(String address, String apiKey, String token, File file, {Function onSendProgress, Function onResievedProgress}) async {
+  static void sendRequestImage(String address, String apiKey, String token, File file, BuildContext context, {Function onSendProgress, Function onResievedProgress}) async {
     Dio dio = Dio();
+    CreateChannelProvider channelProvider = Provider.of(context, listen: false);
     String imageUrl;
     var headers = {"apikey": "$apiKey", "auth": 'token', "secret": "$token"};
     File compressImage;
@@ -91,9 +93,9 @@ class HttpConnection {
         print(value);
         MsgSever msgSever = MsgSever.fromJson(value.data);
         imageUrl = (msgSever.ctrl.GetCtrlParamsData().url);
+        channelProvider.setImageFile(imageUrl);
       }
     });
-    return imageUrl;
   }
 
   setImageProfile(String address, String apiKey, String token, File file, BuildContext context) async {

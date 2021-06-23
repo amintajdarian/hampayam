@@ -16,6 +16,7 @@ import 'package:hampayam_chat/Model/Primitives/Name.dart';
 import 'package:hampayam_chat/Model/Primitives/Photo.dart';
 import 'package:hampayam_chat/Model/Primitives/PublicData.dart';
 import 'package:hampayam_chat/Model/Primitives/Subscription.dart';
+import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
 import 'package:hampayam_chat/Model/Primitives/UserCredential.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Account.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Get.dart';
@@ -26,6 +27,7 @@ import 'package:hampayam_chat/Model/SeserilizedJson/MsgClient.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/SendSub.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Set.dart';
 import 'package:device_info/device_info.dart';
+import 'package:hampayam_chat/StateManagement/CreateChannelProvider/CreateChannelProvider.dart';
 import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
@@ -314,7 +316,6 @@ class HampayamClient {
   }
 
   static Future getImagefromcamera(BuildContext context) async {
-    CreateGrpProvider createGrpProvider = Provider.of(context, listen: false);
     ProfileProvider profileProvider = Provider.of(context, listen: false);
     var image = await ImagePicker.platform.pickImage(source: ImageSource.camera);
     if (image != null) {
@@ -323,12 +324,12 @@ class HampayamClient {
         IORouter.apiKey,
         profileProvider.getToken,
         File(image.path),
-      ).then((value) => createGrpProvider.setImageFile(value));
+        context,
+      );
     }
   }
 
   static Future getImagefromGallery(BuildContext context) async {
-    CreateGrpProvider createGrpProvider = Provider.of(context, listen: false);
     ProfileProvider profileProvider = Provider.of(context, listen: false);
 
     var image = await ImagePicker.platform.pickImage(source: ImageSource.gallery);
@@ -339,27 +340,39 @@ class HampayamClient {
         IORouter.apiKey,
         profileProvider.getToken,
         File(image.path),
-      ).then((value) => createGrpProvider.setImageFile(value));
+        context,
+      );
     }
   }
 
-  static createChannel(String name, int limit, {String photo}) {
-    if (photo.isNotEmpty) {
+  static createChannel(String name, int limit, BuildContext context, {String photo}) {
+    CreateChannelProvider channelProvider = Provider.of(context, listen: false);
+
+    Description description;
+    if (photo != null) {
       JPhoto jPhoto = JPhoto(data: photo, type: 'jpg');
       JPublicData publicData = JPublicData(
         fn: name,
         photo: jPhoto,
       );
-      Description description = Description(publicData: publicData);
-      JSndSet jSndSet = JSndSet(desc: description);
-      String newId = IORouter.generateRandomKey();
-
-      DataWhat dataWhat = DataWhat(limit: limit);
-      JSndGet jSndGet = JSndGet(data: dataWhat, what: "data sub desc");
-
-      JSndSub jSndSub = JSndSub(id: newId, topic: 'newchl$newId', jSndSet: jSndSet, jSndGet: jSndGet);
-      MsgClient sendSub = MsgClient(jSndSub: jSndSub);
-      IORouter.sendMap(sendSub.toJson());
+      channelProvider.addPublic(publicData);
+      description = Description(publicData: publicData);
+    } else {
+      JPublicData publicData = JPublicData(
+        fn: name,
+      );
+      channelProvider.addPublic(publicData);
+      description = Description(publicData: publicData);
     }
+
+    JSndSet jSndSet = JSndSet(desc: description);
+    String newId = IORouter.generateRandomKey();
+
+    DataWhat dataWhat = DataWhat(limit: limit);
+    JSndGet jSndGet = JSndGet(data: dataWhat, what: "data sub desc");
+
+    JSndSub jSndSub = JSndSub(id: newId, topic: 'newchl$newId', jSndSet: jSndSet, jSndGet: jSndGet);
+    MsgClient sendSub = MsgClient(jSndSub: jSndSub);
+    IORouter.sendMap(sendSub.toJson());
   }
 }

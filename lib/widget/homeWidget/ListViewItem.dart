@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
-import 'package:hampayam_chat/Screen/chatScreen/P2pChatScreen.dart';
+import 'package:hampayam_chat/Screen/HomeScreen.dart';
+import 'package:hampayam_chat/Screen/chatScreen/P2pChat/P2pChatScreen.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
 import 'package:provider/provider.dart';
 
@@ -17,10 +18,10 @@ class ListViewItem {
         padding: const EdgeInsets.all(5.0),
         child: InkWell(
           onTap: () {
+            IORouter.activePage = 'chat';
             p2pProvider.addSub(item);
 
             if (item.topic.startsWith('usr')) {
-              IORouter.activePage = 'chat';
               Navigator.push<void>(
                 context,
                 MaterialPageRoute<void>(

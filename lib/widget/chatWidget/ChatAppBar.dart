@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttericon/octicons_icons.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Messenging/ChatContent.dart';
@@ -49,7 +48,7 @@ class ChatAppBar extends StatelessWidget {
                         IORouter.activePage = 'home';
                         ChatContent.leaveChat(data.topic);
                         p2pProvider.leaveSub();
-                        Navigator.popAndPushNamed(context, '+');
+                        Navigator.pop(context, '+');
                       },
                       icon: Icon(
                         Icons.arrow_back,

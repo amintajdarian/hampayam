@@ -7,7 +7,7 @@ import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Screen/CreateChannelScreen.dart';
-import 'package:hampayam_chat/Screen/chatScreen/P2pChatScreen.dart';
+import 'package:hampayam_chat/Screen/chatScreen/P2pChat/P2pChatScreen.dart';
 import 'package:hampayam_chat/Screen/createGrp/CreateGroupScreen.dart';
 import 'package:hampayam_chat/Screen/LoginScreen.dart';
 import 'package:hampayam_chat/Screen/createGrp/SetImageScreen.dart';

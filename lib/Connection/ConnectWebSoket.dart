@@ -55,7 +55,7 @@ class IORouter {
             homeScreenChannel.sink.add(MsgType(serverMsgMap['ctrl'], 'c'));
 
             break;
-          case 'caht':
+          case 'chat':
             chatScreenChannel.sink.add(MsgType(serverMsgMap['ctrl'], 'c'));
 
             break;
@@ -83,7 +83,7 @@ class IORouter {
             homeScreenChannel.sink.add(MsgType(serverMsgMap['meta'], 'm'));
 
             break;
-          case 'caht':
+          case 'chat':
             chatScreenChannel.sink.add(MsgType(serverMsgMap['meta'], 'm'));
 
             break;
@@ -102,7 +102,7 @@ class IORouter {
             homeScreenChannel.sink.add(MsgType(serverMsgMap['pres'], 'p'));
 
             break;
-          case 'caht':
+          case 'chat':
             chatScreenChannel.sink.add(MsgType(serverMsgMap['pres'], 'p'));
 
             break;
@@ -113,7 +113,7 @@ class IORouter {
             homeScreenChannel.sink.add(MsgType(serverMsgMap['info'], 'i'));
 
             break;
-          case 'caht':
+          case 'chat':
             chatScreenChannel.sink.add(MsgType(serverMsgMap['info'], 'i'));
 
             break;

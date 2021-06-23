@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
@@ -31,22 +33,24 @@ class _P2pChatScreenState extends State<P2pChatScreen> with TickerProviderStateM
   ChatListProvider chatListProvider;
   ChatButtonProvider buttonProvider;
   int max = 0;
-
+  StreamSubscription<MsgType> chatlisten;
   @override
   void initState() {
     p2pProvider = Provider.of(context, listen: false);
     profileProvider = Provider.of(context, listen: false);
     chatListProvider = Provider.of(context, listen: false);
     buttonProvider = Provider.of(context, listen: false);
-
-    IORouter.chatScreenChannel.stream.listen(onData);
+    chatlisten = IORouter.chatScreenChannel.stream.listen(onData);
+    if (chatlisten.isPaused) {
+      chatlisten.resume();
+    }
 
     HampayamClient.subToChatFirst(p2pProvider.getDataSub.topic);
 
     _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _animation = Tween(begin: 300.0, end: 50.0).animate(_controller)
       ..addListener(() {
-        if (!mounted) setState(() {});
+        if (mounted) setState(() {});
       });
     _focusNode.addListener(() {
       if (_focusNode.hasFocus) {
@@ -72,6 +76,7 @@ class _P2pChatScreenState extends State<P2pChatScreen> with TickerProviderStateM
     _controller.dispose();
     _focusNode.dispose();
     max = 0;
+    chatlisten.pause();
     super.dispose();
   }
 
@@ -81,54 +86,66 @@ class _P2pChatScreenState extends State<P2pChatScreen> with TickerProviderStateM
 
     // add this
 
-    return Scaffold(
-      key: _key,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(_sizeH / 10),
-        child: ChatAppBar(
-          data: p2pProvider.dataSub,
-          height: _sizeH,
-        ),
-      ),
-      body: Consumer2<P2pProvider, ChatButtonProvider>(builder: (context, value1, value2, child) {
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                    reverse: true,
-                    itemCount: value1.chatList.length,
-                    itemBuilder: (context, index) {
-                      if (index != value1.chatList.length - 1) {
-                        return ItemChatList.chatItem(value1.chatList[index], profileProvider.getUserName, profileProvider.fn + value1.chatList[index].seq.toString(), value1.dataSub.public.fn, _sizeH,
-                            context, profileProvider.getToken);
-                      } else if (value1.chatList.last.seq != 1) {
-                        ChatContent.loadMoreData(value1.chatList[index].seq, value1.dataSub.topic, 24);
-                        return Container(
-                          child: SpinKitCircle(color: Colors.blue),
-                        );
-                      } else {
-                        return ItemChatList.chatItem(value1.chatList[index], profileProvider.getUserName, profileProvider.fn + value1.chatList[index].seq.toString(), value1.dataSub.public.fn, _sizeH,
-                            context, profileProvider.getToken);
-                      }
-                    }),
-                flex: 1,
-              ),
-              BottomBarWidget(
-                size: _sizeH,
-                animation: _animation,
-                controller: _controller,
-                focusNode: _focusNode,
-                textController: textEditingController,
-                buttonProvider: value2,
-                currentUser: profileProvider.getUserName,
-                topic: value1.dataSub.topic,
+    return WillPopScope(
+      onWillPop: () async {
+        IORouter.activePage = 'home';
+        ChatContent.leaveChat(p2pProvider.dataSub.topic);
+
+        p2pProvider.leaveSub();
+
+        return true;
+      },
+      child: Scaffold(
+        key: _key,
+        appBar: p2pProvider.dataSub != null
+            ? PreferredSize(
+                preferredSize: Size.fromHeight(_sizeH / 10),
+                child: ChatAppBar(
+                  data: p2pProvider.dataSub,
+                  height: _sizeH,
+                ),
               )
-            ],
-          ),
-        );
-      }),
+            : null,
+        body: Consumer2<P2pProvider, ChatButtonProvider>(builder: (context, value1, value2, child) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                      reverse: true,
+                      itemCount: value1.chatList.length,
+                      itemBuilder: (context, index) {
+                        if (index != value1.chatList.length - 1) {
+                          return ItemChatList.chatItem(value1.chatList[index], profileProvider.getUserName, profileProvider.fn + value1.chatList[index].seq.toString(), value1.dataSub.public.fn,
+                              _sizeH, context, profileProvider.getToken);
+                        } else if (value1.chatList.last.seq != 1) {
+                          ChatContent.loadMoreData(value1.chatList[index].seq, value1.dataSub.topic, 24);
+                          return Container(
+                            child: SpinKitCircle(color: Colors.blue),
+                          );
+                        } else if (index != 0) {
+                          return ItemChatList.chatItem(value1.chatList[index], profileProvider.getUserName, profileProvider.fn + value1.chatList[index].seq.toString(), value1.dataSub.public.fn,
+                              _sizeH, context, profileProvider.getToken);
+                        }
+                      }),
+                  flex: 1,
+                ),
+                BottomBarWidget(
+                  size: _sizeH,
+                  animation: _animation,
+                  controller: _controller,
+                  focusNode: _focusNode,
+                  textController: textEditingController,
+                  buttonProvider: value2,
+                  currentUser: profileProvider.getUserName,
+                  topic: value1.dataSub.topic,
+                )
+              ],
+            ),
+          );
+        }),
+      ),
     );
   }
 
@@ -142,6 +159,7 @@ class _P2pChatScreenState extends State<P2pChatScreen> with TickerProviderStateM
           ChatContent.readMsg(msg.topic, max);
           chatListProvider.changReadMessage(max, msg.topic);
         }
+
         p2pProvider.addMsg(msg);
 
         break;
@@ -153,8 +171,5 @@ class _P2pChatScreenState extends State<P2pChatScreen> with TickerProviderStateM
         break;
       default:
     }
-    p2pProvider.getchatList.sort((a, b) {
-      return b.seq.compareTo(a.seq);
-    });
   }
 }

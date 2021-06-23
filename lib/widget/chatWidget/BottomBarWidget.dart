@@ -11,6 +11,7 @@ class BottomBarWidget extends StatelessWidget {
   double size;
   ChatButtonProvider buttonProvider;
   String topic;
+
   String currentUser;
   BottomBarWidget({this.size, this.animation, this.focusNode, this.textController, this.controller, this.buttonProvider, this.topic, this.currentUser});
   @override

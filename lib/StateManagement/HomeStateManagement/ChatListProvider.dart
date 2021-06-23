@@ -31,6 +31,20 @@ class ChatListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addSubList(JSubscriptionData data) {
+    if (data.topic.startsWith('usr')) {
+      userList.insert(0, data);
+    } else if (data.topic.startsWith('grp')) {
+      groupList.insert(0, data);
+    } else if (data.topic.startsWith('chl')) {
+      channelList.insert(0, data);
+    } else if (data.topic.startsWith('bot')) {
+      botList.insert(0, data);
+    }
+    subList.insert(0, data);
+    notifyListeners();
+  }
+
   void changUnreadMessage(int seq, String topic) {
     for (var item in subList) {
       if (item.topic == topic) {

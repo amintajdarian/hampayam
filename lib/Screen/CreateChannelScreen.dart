@@ -4,6 +4,8 @@ import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
+import 'package:hampayam_chat/Messenging/HampayamClient.dart';
+import 'package:hampayam_chat/Screen/chatScreen/ChlChat/ChlChatScreen.dart';
 import 'package:hampayam_chat/StateManagement/CreateChannelProvider/CreateChannelProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
 import 'package:hampayam_chat/translations/locale_keys.g.dart';
@@ -16,6 +18,7 @@ import 'package:provider/provider.dart';
 class CreateChannel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    TextEditingController controller = TextEditingController();
     GlobalKey<ScaffoldState> _key = GlobalKey(); // add this
     var _sizeH = MediaQuery.of(context).size.height;
     var _sizeW = MediaQuery.of(context).size.width;
@@ -83,14 +86,19 @@ class CreateChannel extends StatelessWidget {
                         height: _sizeH,
                         width: _sizeW / 1.5,
                         child: TextFormField(
-                          autofocus: true,
-                          maxLength: 20,
-                          style: TextStyle(fontSize: _sizeW / 25),
-                          decoration: new InputDecoration(
-                            hintText: "type group subject here ... ",
-                            labelStyle: new TextStyle(color: const Color(0xFF424242)),
-                          ),
-                        ),
+                            controller: controller,
+                            autofocus: true,
+                            maxLength: 20,
+                            style: TextStyle(fontSize: _sizeW / 25),
+                            decoration: new InputDecoration(
+                              errorStyle: value.getTextEmpty ? TextStyle(fontSize: _sizeW / 25, color: Colors.red) : TextStyle(fontSize: _sizeW / 25, color: Colors.black),
+                              errorText: value.getTextEmpty ? 'please enter your Channel Name' : null,
+                              hintText: "type group subject here ... ",
+                              labelStyle: new TextStyle(color: const Color(0xFF424242)),
+                            ),
+                            onChanged: (select) {
+                              value.setChlName(select);
+                            }),
                       ),
                     ],
                   ),
@@ -102,7 +110,23 @@ class CreateChannel extends StatelessWidget {
                   height: _sizeH / 15,
                   child: FloatingActionButton(
                     child: Icon(FontAwesome5.check),
-                    onPressed: () {},
+                    onPressed: () {
+                      IORouter.activePage = 'chat';
+                      value.emptyValidator(controller.text);
+                      if (!value.getTextEmpty) {
+                        if (value.getImage != null)
+                          HampayamClient.createChannel(controller.text, 24, context, photo: value.getImage);
+                        else
+                          HampayamClient.createChannel(controller.text, 24, context);
+                        value.setCreated(true);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) => ChlChatScreen(),
+                          ),
+                        );
+                      }
+                    },
                     backgroundColor: Colors.green,
                   ),
                 ),

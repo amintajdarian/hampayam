@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
+import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
 import 'package:hampayam_chat/Model/Primitives/DataWhat.dart';
 import 'package:hampayam_chat/Model/Primitives/DelRange.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Get.dart';
@@ -8,6 +9,8 @@ import 'package:hampayam_chat/Model/SeserilizedJson/MsgClient.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Pub.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Note.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/SendDel.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
+import 'package:provider/provider.dart';
 
 class ChatContent {
   static List<JDelRange> delSeq = List();
