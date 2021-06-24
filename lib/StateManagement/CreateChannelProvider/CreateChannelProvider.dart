@@ -68,6 +68,7 @@ class CreateChannelProvider extends ChangeNotifier {
   clear() {
     textEmpty = false;
     created = false;
+    nameChannel = null;
     imageFile = null;
     dataCreated = new JSubscriptionData();
     notifyListeners();

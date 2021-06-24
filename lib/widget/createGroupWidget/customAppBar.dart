@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
+import 'package:provider/provider.dart';
 
 class GrpCustomAppbar {
   static Widget customAppBar(double height, String barTitle, GlobalKey<ScaffoldState> key, BuildContext context) {
+    CreateGrpProvider grpProvider = Provider.of(context);
     return PreferredSize(
       preferredSize: Size.fromHeight(height),
       child: AnimatedContainer(
@@ -50,6 +53,7 @@ class GrpCustomAppbar {
                   padding: EdgeInsets.only(left: height / 40, right: height / 40),
                   child: IconButton(
                       onPressed: () {
+                        grpProvider.clearData();
                         Navigator.pop(context);
                       },
                       icon: Icon(

@@ -17,6 +17,7 @@ import 'package:hampayam_chat/Model/SeserilizedJson/MsgClient.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Pub.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Set.dart';
 import 'package:hampayam_chat/StateManagement/CreateChannelProvider/CreateChannelProvider.dart';
+import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
@@ -73,9 +74,33 @@ class HttpConnection {
     });
   }
 
-  static void sendRequestImage(String address, String apiKey, String token, File file, BuildContext context, {Function onSendProgress, Function onResievedProgress}) async {
+  static void sendRequestImageChannel(String address, String apiKey, String token, File file, BuildContext context, {Function onSendProgress, Function onResievedProgress}) async {
     Dio dio = Dio();
     CreateChannelProvider channelProvider = Provider.of(context, listen: false);
+    String imageUrl;
+    var headers = {"apikey": "$apiKey", "auth": 'token', "secret": "$token"};
+    File compressImage;
+    String url = setUrl(address);
+    await compressFile(file).then((value) => compressImage = value);
+    FormData formData = FormData.fromMap({"file": await MultipartFile.fromFile(compressImage.path)});
+    await dio
+        .post(
+      url,
+      data: formData,
+      queryParameters: headers,
+    )
+        .then((value) {
+      if (value.statusCode == 200) {
+        MsgSever msgSever = MsgSever.fromJson(value.data);
+        imageUrl = (msgSever.ctrl.GetCtrlParamsData().url);
+        channelProvider.setImageFile(imageUrl);
+      }
+    });
+  }
+
+  static void sendRequestImageGrp(String address, String apiKey, String token, File file, BuildContext context, {Function onSendProgress, Function onResievedProgress}) async {
+    Dio dio = Dio();
+    CreateGrpProvider grpProvider = Provider.of(context, listen: false);
     String imageUrl;
     var headers = {"apikey": "$apiKey", "auth": 'token', "secret": "$token"};
     File compressImage;
@@ -93,7 +118,7 @@ class HttpConnection {
         print(value);
         MsgSever msgSever = MsgSever.fromJson(value.data);
         imageUrl = (msgSever.ctrl.GetCtrlParamsData().url);
-        channelProvider.setImageFile(imageUrl);
+        grpProvider.setImageFile(imageUrl);
       }
     });
   }

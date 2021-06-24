@@ -163,7 +163,6 @@ class _ChlChatScreenState extends State<ChlChatScreen> with TickerProviderStateM
   }
 
   Future<void> onData(MsgType data) async {
-    print(data.msg);
     switch (data.type) {
       case 'd':
         JRcvMsg msg = JRcvMsg.fromJson(data.msg);
@@ -182,8 +181,9 @@ class _ChlChatScreenState extends State<ChlChatScreen> with TickerProviderStateM
 
         if (meta.hasSub()) {
           chlProvider.addSub(meta.sub);
-          chlProvider.addTopicSub(channelProvider.dataCreated);
+
           if (channelProvider.getCreated) {
+            chlProvider.addTopicSub(channelProvider.getDataCreated);
             channelProvider.setCreated(false);
             chatListProvider.addSubList(channelProvider.dataCreated);
             channelProvider.clear();

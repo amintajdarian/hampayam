@@ -4,9 +4,11 @@ import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
 class ContactProvide extends ChangeNotifier {
   List<JSubscriptionData> contacts = [];
   List<JSubscriptionData> contactsFiltered = [];
+  bool readContact = false;
 
   List<JSubscriptionData> get getConcact => contacts;
   List<JSubscriptionData> get getConcactFilter => contactsFiltered;
+  bool get getReadContact => readContact;
   void setContact(List<JSubscriptionData> searchData) {
     this.contacts = searchData;
     notifyListeners();
@@ -25,6 +27,11 @@ class ContactProvide extends ChangeNotifier {
     }
 
     contactsFiltered = contacts;
+    notifyListeners();
+  }
+
+  changeReadContact(bool change) {
+    this.readContact = change;
     notifyListeners();
   }
 }

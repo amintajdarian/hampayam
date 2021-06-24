@@ -41,6 +41,7 @@ class IORouter {
       await Future.delayed(Duration(minutes: 15)).then((value) => connect(address));
     }
     wsChannel.onMessage((event) {
+      print(event);
       var serverMsgMap = jsonDecode(event.toString());
       MsgSever msgSever = MsgSever.fromJson(serverMsgMap);
       if (msgSever.msg != null) {
@@ -133,7 +134,7 @@ class IORouter {
   }
 
   static void sendMap(Map<String, dynamic> msg) {
-    print(msg);
+    print(jsonEncode(msg));
     wsChannel.send(jsonEncode(msg));
   }
 

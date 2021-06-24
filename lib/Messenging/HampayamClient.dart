@@ -21,7 +21,6 @@ import 'package:hampayam_chat/Model/Primitives/UserCredential.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Account.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Get.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Hi.dart';
-import 'package:hampayam_chat/Model/SeserilizedJson/Leave.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Login.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/MsgClient.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/SendSub.dart';
@@ -193,6 +192,7 @@ class HampayamClient {
     JSndGet jSndGet = JSndGet(what: 'sub');
     JSndSub sub = JSndSub(id: newId, topic: 'fnd', jSndGet: jSndGet);
     MsgClient sendSub = MsgClient(jSndSub: sub);
+
     IORouter.sendMap(sendSub.toJson());
   }
 
@@ -228,9 +228,9 @@ class HampayamClient {
               contacString += 'tel:' + '0' + item.substring(item.length - 10) + ',';
           } else if (item.startsWith('0')) {
             if (counter == 0)
-              contacString += item.substring(item.length - 10) + ',';
+              contacString += item.substring(item.length - 11);
             else
-              contacString += 'tel:' + '0' + item.substring(item.length - 10) + ',';
+              contacString += ',' + 'tel:' + item.substring(item.length - 11) + ',';
           }
           if (contacString.length > 0) {
             counter++;
@@ -315,11 +315,11 @@ class HampayamClient {
     }
   }
 
-  static Future getImagefromcamera(BuildContext context) async {
+  static Future getImagefromcameraInChannel(BuildContext context) async {
     ProfileProvider profileProvider = Provider.of(context, listen: false);
     var image = await ImagePicker.platform.pickImage(source: ImageSource.camera);
     if (image != null) {
-      await HttpConnection.sendRequestImage(
+      HttpConnection.sendRequestImageChannel(
         IORouter.ipAddress,
         IORouter.apiKey,
         profileProvider.getToken,
@@ -329,13 +329,43 @@ class HampayamClient {
     }
   }
 
-  static Future getImagefromGallery(BuildContext context) async {
+  static Future getImagefromGalleryInChannel(BuildContext context) async {
     ProfileProvider profileProvider = Provider.of(context, listen: false);
 
     var image = await ImagePicker.platform.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
-      await HttpConnection.sendRequestImage(
+      await HttpConnection.sendRequestImageChannel(
+        IORouter.ipAddress,
+        IORouter.apiKey,
+        profileProvider.getToken,
+        File(image.path),
+        context,
+      );
+    }
+  }
+
+  static Future getImagefromcameraInGroup(BuildContext context) async {
+    ProfileProvider profileProvider = Provider.of(context, listen: false);
+    var image = await ImagePicker.platform.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      HttpConnection.sendRequestImageGrp(
+        IORouter.ipAddress,
+        IORouter.apiKey,
+        profileProvider.getToken,
+        File(image.path),
+        context,
+      );
+    }
+  }
+
+  static Future getImagefromGalleryInGroup(BuildContext context) async {
+    ProfileProvider profileProvider = Provider.of(context, listen: false);
+
+    var image = await ImagePicker.platform.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      HttpConnection.sendRequestImageGrp(
         IORouter.ipAddress,
         IORouter.apiKey,
         profileProvider.getToken,
@@ -372,6 +402,37 @@ class HampayamClient {
     JSndGet jSndGet = JSndGet(data: dataWhat, what: "data sub desc");
 
     JSndSub jSndSub = JSndSub(id: newId, topic: 'newchl$newId', jSndSet: jSndSet, jSndGet: jSndGet);
+    MsgClient sendSub = MsgClient(jSndSub: jSndSub);
+    IORouter.sendMap(sendSub.toJson());
+  }
+
+  static createGrp(String name, int limit, BuildContext context, {String photo}) {
+    CreateGrpProvider grpProvider = Provider.of(context, listen: false);
+
+    Description description;
+    if (photo != null) {
+      JPhoto jPhoto = JPhoto(data: photo, type: 'jpg');
+      JPublicData publicData = JPublicData(
+        fn: name,
+        photo: jPhoto,
+      );
+      grpProvider.addPublic(publicData);
+      description = Description(publicData: publicData);
+    } else {
+      JPublicData publicData = JPublicData(
+        fn: name,
+      );
+      grpProvider.addPublic(publicData);
+      description = Description(publicData: publicData);
+    }
+
+    JSndSet jSndSet = JSndSet(desc: description);
+    String newId = IORouter.generateRandomKey();
+
+    DataWhat dataWhat = DataWhat(limit: limit);
+    JSndGet jSndGet = JSndGet(data: dataWhat, what: "data sub desc");
+
+    JSndSub jSndSub = JSndSub(id: newId, topic: 'newgrp$newId', jSndSet: jSndSet, jSndGet: jSndGet);
     MsgClient sendSub = MsgClient(jSndSub: jSndSub);
     IORouter.sendMap(sendSub.toJson());
   }

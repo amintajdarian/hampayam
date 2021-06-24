@@ -1,11 +1,12 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
+import 'package:hampayam_chat/Model/Primitives/AccessLevelData.dart';
+import 'package:hampayam_chat/Model/Primitives/PublicData.dart';
 import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
 
 class CreateGrpProvider extends ChangeNotifier {
   List<bool> valueCheck = [];
   List<JSubscriptionData> dataAdded = [];
+  JSubscriptionData topicData = JSubscriptionData();
   bool floatingBtn = false;
   String imageFile;
   String nameGrp;
@@ -15,7 +16,11 @@ class CreateGrpProvider extends ChangeNotifier {
   List<bool> get getValue => valueCheck;
   bool get getfloatingBtn => floatingBtn;
   List<JSubscriptionData> get getdataAdded => dataAdded;
+  JSubscriptionData get getTopicData => topicData;
+
   String get getImage => imageFile;
+  bool get getTextEmpty => textEmpty;
+  bool get getCreated => created;
 
   setListCheck(int length) {
     this.valueCheck = List.filled(length, false);
@@ -65,11 +70,69 @@ class CreateGrpProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  setGrpName(String name) {
+    this.nameGrp = name;
+    notifyListeners();
+  }
+
+  setCreated(bool create) {
+    this.created = create;
+    notifyListeners();
+  }
+
+  addPublic(JPublicData data) {
+    this.topicData.public = data;
+    notifyListeners();
+  }
+
+  addAcs(JAccessLevelData accessLevelData) {
+    this.topicData.acs = accessLevelData;
+    notifyListeners();
+  }
+
+  addtopic(String topic) {
+    this.topicData.topic = topic;
+    notifyListeners();
+  }
+
+  addTimeUpdate(DateTime time) {
+    this.topicData.updated = time;
+    notifyListeners();
+  }
+
+  addtimeTouch(DateTime time) {
+    this.topicData.touched = time;
+    notifyListeners();
+  }
+
+  emptyValidator(String controller) {
+    if (controller != '') {
+      this.textEmpty = false;
+    } else {
+      this.textEmpty = true;
+    }
+    notifyListeners();
+  }
+
+  addToicSub(JSubscriptionData topicData) {
+    this.topicData = topicData;
+    notifyListeners();
+  }
+
+  changeCreated(bool created) {
+    this.created = created;
+    notifyListeners();
+  }
+
   clearData() {
-    valueCheck.clear();
+    valueCheck = List.filled(valueCheck.length, false);
     dataAdded.clear();
     floatingBtn = false;
-    imageFile = '';
+    imageFile = null;
+    nameGrp = null;
+    topicData = new JSubscriptionData();
+    created = false;
+
     notifyListeners();
   }
 }

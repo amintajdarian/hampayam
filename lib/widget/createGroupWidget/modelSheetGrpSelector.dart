@@ -5,9 +5,9 @@ import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:hampayam_chat/Messenging/HampayamClient.dart';
 import 'package:hexcolor/hexcolor.dart';
 
-class ModalFit extends StatelessWidget {
+class ModalFitGrp extends StatelessWidget {
   double size;
-  ModalFit(this.size);
+  ModalFitGrp(this.size);
 
   Widget avatar(String txt, Icon icon, String hex1, String hex2) {
     return Column(
@@ -45,7 +45,7 @@ class ModalFit extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              HampayamClient.getImagefromcamera(context);
+              HampayamClient.getImagefromcameraInGroup(context);
             },
             child: avatar("Camera", Icon(FontAwesome5.camera_retro), "#7B1FA2", "#7C4DFF"),
           ),
@@ -54,7 +54,7 @@ class ModalFit extends StatelessWidget {
           ),
           InkWell(
               onTap: () {
-                HampayamClient.getImagefromGallery(context);
+                HampayamClient.getImagefromGalleryInGroup(context);
               },
               child: avatar("Gallery", Icon(FontAwesome.picture), "#FFA000", "#D500F9")),
         ],

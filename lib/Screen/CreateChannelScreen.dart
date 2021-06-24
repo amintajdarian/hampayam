@@ -9,7 +9,7 @@ import 'package:hampayam_chat/Screen/chatScreen/ChlChat/ChlChatScreen.dart';
 import 'package:hampayam_chat/StateManagement/CreateChannelProvider/CreateChannelProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
 import 'package:hampayam_chat/translations/locale_keys.g.dart';
-import 'package:hampayam_chat/widget/createGroupWidget/modelSheetSelector.dart';
+import 'package:hampayam_chat/widget/modelSheetSelector.dart';
 import 'package:hampayam_chat/widget/setDataAppBar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -93,7 +93,7 @@ class CreateChannel extends StatelessWidget {
                             decoration: new InputDecoration(
                               errorStyle: value.getTextEmpty ? TextStyle(fontSize: _sizeW / 25, color: Colors.red) : TextStyle(fontSize: _sizeW / 25, color: Colors.black),
                               errorText: value.getTextEmpty ? 'please enter your Channel Name' : null,
-                              hintText: "type group subject here ... ",
+                              hintText: "type Channel subject here ... ",
                               labelStyle: new TextStyle(color: const Color(0xFF424242)),
                             ),
                             onChanged: (select) {

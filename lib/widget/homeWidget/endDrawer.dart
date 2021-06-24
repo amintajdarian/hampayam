@@ -134,7 +134,7 @@ class MyDrawer extends StatelessWidget {
                                 Navigator.push<void>(
                                   context,
                                   MaterialPageRoute<void>(
-                                    builder: (BuildContext context) => SetImageScreen(),
+                                    builder: (BuildContext context) => CreateGroup(),
                                   ),
                                 );
                               },

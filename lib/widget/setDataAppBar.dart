@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hampayam_chat/StateManagement/CreateChannelProvider/CreateChannelProvider.dart';
+import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
+import 'package:provider/provider.dart';
 
 class SetDataAppBar {
   static Widget customAppBar(double height, String barTitle, GlobalKey<ScaffoldState> key, BuildContext context, {String subtitle}) {
+    CreateChannelProvider channelProvider = Provider.of(context);
+    CreateGrpProvider grpProvider = Provider.of(context);
+
     return AnimatedContainer(
       duration: Duration(seconds: 1),
       height: height,
@@ -46,14 +52,7 @@ class SetDataAppBar {
                                 ),
                               ),
                             )
-                          : Text(
-                              '',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: height / 35,
-                              ),
-                            )
+                          : Container()
                     ],
                   ),
                 ],
@@ -65,6 +64,12 @@ class SetDataAppBar {
                 padding: EdgeInsets.only(left: height / 40, right: height / 40),
                 child: IconButton(
                     onPressed: () {
+                      if (channelProvider.getImage != null || channelProvider.getNameChannel != null) {
+                        channelProvider.clear();
+                      }
+                      if (grpProvider.getImage != null || grpProvider.nameGrp != null) {
+                        grpProvider.clearData();
+                      }
                       Navigator.pop(context);
                     },
                     icon: Icon(

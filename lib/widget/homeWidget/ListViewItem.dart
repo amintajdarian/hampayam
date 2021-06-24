@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
-import 'package:hampayam_chat/Screen/HomeScreen.dart';
 import 'package:hampayam_chat/Screen/chatScreen/ChlChat/ChlChatScreen.dart';
+import 'package:hampayam_chat/Screen/chatScreen/Grpchat/GrpChatScreen.dart';
 import 'package:hampayam_chat/Screen/chatScreen/P2pChat/P2pChatScreen.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/ChlProvder.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/GrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +16,7 @@ class ListViewItem {
     List<Widget> subChats = [];
     P2pProvider p2pProvider = Provider.of(context);
     ChlProvider chlProvider = Provider.of(context);
+    GrpProvider grpProvider = Provider.of(context);
     for (var item in subList) {
       String subName = item.public.fn.substring(0, 2);
       subChats.add(Padding(
@@ -38,6 +40,15 @@ class ListViewItem {
                 context,
                 MaterialPageRoute<void>(
                   builder: (BuildContext context) => ChlChatScreen(),
+                ),
+              );
+            } else if (item.topic.startsWith('grp')) {
+              grpProvider.addTopicSub(item);
+              grpProvider.changeShowButton(item.acs.mode.isWrite);
+              Navigator.push<void>(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => GrpChatScreen(),
                 ),
               );
             }

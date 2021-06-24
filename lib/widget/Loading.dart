@@ -27,8 +27,6 @@ class _ColorLoaderState extends State<ColorLoader> with SingleTickerProviderStat
     radius = widget.radius;
     dotRadius = widget.dotRadius;
 
-    print(dotRadius);
-
     controller = AnimationController(lowerBound: 0.0, upperBound: 1.0, duration: const Duration(milliseconds: 3000), vsync: this);
 
     animation_rotation = Tween(begin: 0.0, end: 1.0).animate(

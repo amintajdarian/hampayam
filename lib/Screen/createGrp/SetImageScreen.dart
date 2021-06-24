@@ -5,19 +5,22 @@ import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
+import 'package:hampayam_chat/Messenging/HampayamClient.dart';
+import 'package:hampayam_chat/Screen/chatScreen/Grpchat/GrpChatScreen.dart';
+import 'package:hampayam_chat/Screen/createGrp/ItemGridList.dart';
 import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
-import 'package:hampayam_chat/widget/createGroupWidget/modelSheetSelector.dart';
+import 'package:hampayam_chat/widget/createGroupWidget/modelSheetGrpSelector.dart';
 import 'package:hampayam_chat/widget/setDataAppBar.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
-class SetImageScreen extends StatefulWidget {
+class SetDataScreen extends StatefulWidget {
   @override
-  _SetImageScreenState createState() => _SetImageScreenState();
+  _SetDataScreenState createState() => _SetDataScreenState();
 }
 
-class _SetImageScreenState extends State<SetImageScreen> {
+class _SetDataScreenState extends State<SetDataScreen> {
   TextEditingController controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -61,7 +64,7 @@ class _SetImageScreenState extends State<SetImageScreen> {
                                     context: context,
                                     builder: (context) => SingleChildScrollView(
                                       controller: ModalScrollController.of(context),
-                                      child: ModalFit(_sizeW),
+                                      child: ModalFitGrp(_sizeW),
                                     ),
                                   );
                                 },
@@ -89,15 +92,20 @@ class _SetImageScreenState extends State<SetImageScreen> {
                               height: _sizeH,
                               width: _sizeW / 1.5,
                               child: TextFormField(
-                                autofocus: true,
-                                maxLength: 20,
-                                style: TextStyle(fontSize: _sizeW / 25),
-                                decoration: new InputDecoration(
-                                  hintText: "type group subject here ... ",
-                                  labelStyle: new TextStyle(color: const Color(0xFF424242)),
-                                ),
-                              ),
-                            ),
+                                  controller: controller,
+                                  autofocus: true,
+                                  maxLength: 20,
+                                  style: TextStyle(fontSize: _sizeW / 25),
+                                  decoration: new InputDecoration(
+                                    errorStyle: value.getTextEmpty ? TextStyle(fontSize: _sizeW / 25, color: Colors.red) : TextStyle(fontSize: _sizeW / 25, color: Colors.black),
+                                    errorText: value.getTextEmpty ? 'please enter your Group Name' : null,
+                                    hintText: "type Group subject here ... ",
+                                    labelStyle: new TextStyle(color: const Color(0xFF424242)),
+                                  ),
+                                  onChanged: (select) {
+                                    value.setGrpName(select);
+                                  }),
+                            )
                           ],
                         ),
                       ),
@@ -108,7 +116,23 @@ class _SetImageScreenState extends State<SetImageScreen> {
                         height: _sizeH / 15,
                         child: FloatingActionButton(
                           child: Icon(FontAwesome5.check),
-                          onPressed: () {},
+                          onPressed: () {
+                            IORouter.activePage = 'chat';
+                            value.emptyValidator(controller.text);
+                            if (!value.getTextEmpty) {
+                              if (value.getImage != null)
+                                HampayamClient.createGrp(controller.text, 24, context, photo: value.getImage);
+                              else
+                                HampayamClient.createGrp(controller.text, 24, context);
+                              value.setCreated(true);
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) => GrpChatScreen(),
+                                ),
+                              );
+                            }
+                          },
                           backgroundColor: Colors.green,
                         ),
                       ),
@@ -128,20 +152,7 @@ class _SetImageScreenState extends State<SetImageScreen> {
                     padding: const EdgeInsets.all(4.0),
                     mainAxisSpacing: 4.0,
                     crossAxisSpacing: 4.0,
-                    children: [
-                      Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 65,
-                            child: Icon(
-                              Elusive.child,
-                              size: 55,
-                            ),
-                          ),
-                          Text("data")
-                        ],
-                      ),
-                    ],
+                    children: ItemGrid.itemAdded(value.dataAdded, context, _sizeH),
                   ),
                 ),
               ),

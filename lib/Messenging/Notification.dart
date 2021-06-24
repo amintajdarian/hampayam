@@ -38,12 +38,7 @@ class MessageNotifcation {
       title: Text(title),
       content: Text(body),
       actions: <Widget>[
-        CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () {
-              print("");
-            },
-            child: Text("Okay")),
+        CupertinoDialogAction(isDefaultAction: true, onPressed: () {}, child: Text("Okay")),
       ],
     );
   }

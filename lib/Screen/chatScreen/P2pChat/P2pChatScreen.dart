@@ -116,17 +116,14 @@ class _P2pChatScreenState extends State<P2pChatScreen> with TickerProviderStateM
                       reverse: true,
                       itemCount: value1.chatList.length,
                       itemBuilder: (context, index) {
-                        if (index != value1.chatList.length - 1) {
+                        if (index < value1.chatList.length - 1) {
                           return ItemChatList.chatItem(value1.chatList[index], profileProvider.getUserName, profileProvider.fn + value1.chatList[index].seq.toString(), value1.dataSub.public.fn,
                               _sizeH, context, profileProvider.getToken);
-                        } else if (value1.chatList.last.seq != 1) {
+                        } else {
                           ChatContent.loadMoreData(value1.chatList[index].seq, value1.dataSub.topic, 24);
                           return Container(
                             child: SpinKitCircle(color: Colors.blue),
                           );
-                        } else if (index != 0) {
-                          return ItemChatList.chatItem(value1.chatList[index], profileProvider.getUserName, profileProvider.fn + value1.chatList[index].seq.toString(), value1.dataSub.public.fn,
-                              _sizeH, context, profileProvider.getToken);
                         }
                       }),
                   flex: 1,
@@ -150,7 +147,6 @@ class _P2pChatScreenState extends State<P2pChatScreen> with TickerProviderStateM
   }
 
   Future<void> onData(MsgType data) async {
-    print(data.msg);
     switch (data.type) {
       case 'd':
         JRcvMsg msg = JRcvMsg.fromJson(data.msg);
@@ -164,10 +160,6 @@ class _P2pChatScreenState extends State<P2pChatScreen> with TickerProviderStateM
 
         break;
       case 'm':
-        JRcvMeta meta = JRcvMeta.fromJson(data.msg);
-
-        print(meta);
-
         break;
       default:
     }

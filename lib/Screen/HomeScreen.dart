@@ -4,6 +4,7 @@ import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 
 import 'package:hampayam_chat/Messenging/HampayamClient.dart';
 import 'package:hampayam_chat/Messenging/Notification.dart';
+import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Pres.dart';
 import 'package:hampayam_chat/Screen/navigationPages/PageChannel.dart';
@@ -54,7 +55,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     Future.delayed(Duration(seconds: 0)).then((value) async {
       await HampayamClient.getDataAutoLogin(context, language).then((value) {
         notifcation.initializing();
-        HampayamClient.getPermissions();
       });
     });
 
@@ -110,10 +110,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Future<void> onData(MsgType data) async {
-    print(data.msg);
-    print(data.type);
+    if (data.type == 'c') {
+      JRcvCtrl ctrl = JRcvCtrl.fromJson(data.msg);
+      if (ctrl.topic == 'fnd' && contactProvide.getReadContact) {
+        HampayamClient.getPermissions();
+        contactProvide.changeReadContact(false);
+      }
+    }
     if (data.type == 'm') {
       JRcvMeta meta = JRcvMeta.fromJson(data.msg);
+      if (meta.topic == 'me') {
+        if (meta.hasCred()) {
+          HampayamClient.subToFnd();
+
+          contactProvide.changeReadContact(true);
+        }
+      }
       if (meta.topic == 'fnd') {
         if (meta.hasSub()) {
           meta.sub.sort((a, b) => a.public.fn.compareTo(b.public.fn));

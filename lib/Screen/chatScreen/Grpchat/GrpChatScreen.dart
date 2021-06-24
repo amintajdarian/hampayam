@@ -4,14 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Messenging/ChatContent.dart';
+import 'package:hampayam_chat/Messenging/GroupSettings.dart';
 import 'package:hampayam_chat/Messenging/HampayamClient.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
-import 'package:hampayam_chat/StateManagement/CreateChannelProvider/CreateChannelProvider.dart';
+import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
-import 'package:hampayam_chat/StateManagement/chatStateManagement/ChlProvder.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/GrpProvider.dart';
+
 import 'package:hampayam_chat/StateManagement/chatStateManagement/chatButtonProvide.dart';
 import 'package:hampayam_chat/widget/Loading.dart';
 import 'package:hampayam_chat/widget/chatWidget/ChatAppBar.dart';
@@ -31,28 +33,28 @@ class _GrpChatScreenState extends State<GrpChatScreen> with TickerProviderStateM
   TextEditingController textEditingController = TextEditingController();
   GlobalKey<ScaffoldState> _key = GlobalKey();
   FocusNode _focusNode = FocusNode();
-  CreateChannelProvider channelProvider;
+  CreateGrpProvider groupProvider;
   ProfileProvider profileProvider;
   ChatListProvider chatListProvider;
 
-  ChlProvider chlProvider;
+  GrpProvider grpProvider;
   ChatButtonProvider buttonProvider;
   int max = 0;
   StreamSubscription<MsgType> chatlisten;
   @override
   void initState() {
-    channelProvider = Provider.of(context, listen: false);
+    groupProvider = Provider.of(context, listen: false);
     profileProvider = Provider.of(context, listen: false);
     chatListProvider = Provider.of(context, listen: false);
     buttonProvider = Provider.of(context, listen: false);
-    chlProvider = Provider.of(context, listen: false);
+    grpProvider = Provider.of(context, listen: false);
 
     chatlisten = IORouter.chatScreenChannel.stream.listen(onData);
     if (chatlisten.isPaused) {
       chatlisten.resume();
     }
-    if (!channelProvider.getCreated) {
-      HampayamClient.subToChatFirst(chlProvider.getTopicData.topic);
+    if (!groupProvider.getCreated) {
+      HampayamClient.subToChatFirst(grpProvider.getTopicData.topic);
     }
 
     _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
@@ -94,21 +96,21 @@ class _GrpChatScreenState extends State<GrpChatScreen> with TickerProviderStateM
     return WillPopScope(
       onWillPop: () async {
         IORouter.activePage = 'home';
-        ChatContent.leaveChat(chlProvider.topicData.topic);
-        chlProvider.leaveSub();
+        ChatContent.leaveChat(grpProvider.topicData.topic);
+        grpProvider.leaveSub();
         Navigator.pop(context, '+');
 
         return true;
       },
-      child: Consumer2<CreateChannelProvider, ChlProvider>(builder: (context, value, value1, child) {
-        if (!channelProvider.getCreated) {
+      child: Consumer2<CreateGrpProvider, GrpProvider>(builder: (context, value, value1, child) {
+        if (!groupProvider.getCreated) {
           return Scaffold(
             key: _key,
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(_sizeH / 10),
-              child: chlProvider.getTopicData.public != null
+              child: value1.getTopicData.public != null
                   ? ChatAppBar(
-                      data: chlProvider.getTopicData,
+                      data: grpProvider.getTopicData,
                       height: _sizeH,
                     )
                   : Container(),
@@ -163,7 +165,6 @@ class _GrpChatScreenState extends State<GrpChatScreen> with TickerProviderStateM
   }
 
   Future<void> onData(MsgType data) async {
-    print(data.msg);
     switch (data.type) {
       case 'd':
         JRcvMsg msg = JRcvMsg.fromJson(data.msg);
@@ -174,26 +175,30 @@ class _GrpChatScreenState extends State<GrpChatScreen> with TickerProviderStateM
           chatListProvider.changReadMessage(max, msg.topic);
         }
 
-        chlProvider.addMsg(msg);
+        grpProvider.addMsg(msg);
 
         break;
       case 'm':
         JRcvMeta meta = JRcvMeta.fromJson(data.msg);
 
         if (meta.hasSub()) {
-          chlProvider.addSub(meta.sub);
-          chlProvider.addTopicSub(channelProvider.dataCreated);
-          if (channelProvider.getCreated) {
-            channelProvider.setCreated(false);
-            chatListProvider.addSubList(channelProvider.dataCreated);
-            channelProvider.clear();
+          grpProvider.addSub(meta.sub);
+
+          grpProvider.addTopicSub(groupProvider.getTopicData);
+          if (groupProvider.getCreated) {
+            for (var item in groupProvider.dataAdded) {
+              GroupChannelSettings.addMember(meta.topic, item.user);
+            }
+            groupProvider.changeCreated(false);
+            chatListProvider.addSubList(groupProvider.getTopicData);
+            groupProvider.clearData();
           }
         }
         if (meta.hasDesc()) {
-          if (channelProvider.getCreated) {
-            channelProvider.addAcs(meta.desc.acs);
-            channelProvider.addtimeTouch(DateTime.parse(meta.desc.updated));
-            channelProvider.addTimeUpdate(DateTime.parse(meta.desc.updated));
+          if (groupProvider.getCreated) {
+            groupProvider.addAcs(meta.desc.acs);
+            groupProvider.addtimeTouch(DateTime.parse(meta.desc.updated));
+            groupProvider.addTimeUpdate(DateTime.parse(meta.desc.updated));
           }
         }
 
@@ -201,8 +206,8 @@ class _GrpChatScreenState extends State<GrpChatScreen> with TickerProviderStateM
       case 'c':
         JRcvCtrl ctrl = JRcvCtrl.fromJson(data.msg);
         if (ctrl.topic != '') {
-          if (channelProvider.getCreated) {
-            channelProvider.addtopic(ctrl.topic);
+          if (groupProvider.getCreated) {
+            groupProvider.addtopic(ctrl.topic);
           }
         }
         break;

@@ -85,7 +85,6 @@ class TextFieldBuilder extends StatelessWidget {
                       ),
                       onPressed: () {
                         pressFunction();
-                        print(textEditingController.text);
                       },
                     ),
                   )

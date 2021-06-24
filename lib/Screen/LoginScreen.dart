@@ -281,7 +281,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           switch (event.type) {
                             case 'm':
                               JRcvMeta meta = JRcvMeta.fromJson(event.msg);
-                              print(event.msg);
+
                               if (meta.hasSub()) {
                                 if (meta.topic == 'me') {
                                   chatListProvider.clearData();
@@ -322,7 +322,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     HampayamClient.saveToken(ctrl.params.token);
                                     profileProvider.setUerName(ctrl.params.user);
                                     HampayamClient.subToMessanger();
-                                    HampayamClient.subToFnd();
+
                                     loginPageProvider.increamentCounter();
                                   }
                                 }
