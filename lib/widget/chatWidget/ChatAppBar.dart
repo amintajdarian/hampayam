@@ -6,15 +6,20 @@ import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Messenging/ChatContent.dart';
 import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
+import 'package:hampayam_chat/widget/chatWidget/PopUpMenuGrp.dart';
 import 'package:provider/provider.dart';
-
-import 'PopUpMenu.dart';
 
 class ChatAppBar extends StatelessWidget {
   double height;
   JSubscriptionData data;
   String token;
   ChatAppBar({this.data, this.height, this.token});
+  Widget selectPopUp() {
+    if (data.topic.startsWith('grp')) {
+      return PopUpMenuGrp();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     P2pProvider p2pProvider = Provider.of(context);
@@ -106,7 +111,7 @@ class ChatAppBar extends StatelessWidget {
               Spacer(
                 flex: 2,
               ),
-              Padding(padding: EdgeInsets.only(left: height / 40, right: height / 40), child: PopUpMenu()),
+              Padding(padding: EdgeInsets.only(left: height / 40, right: height / 40), child: selectPopUp()),
             ],
           ),
         ),

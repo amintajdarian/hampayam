@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:fluttericon/octicons_icons.dart';
 
-class PopUpMenu extends StatelessWidget {
+class PopUpMenuGrp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size.height;
     return PopupMenuButton(
-      icon: Icon(Icons.account_box),
-      tooltip: 'Account',
+      icon: Icon(
+        Octicons.kebab_vertical,
+        color: Colors.white,
+        size: size / 35,
+      ),
+      tooltip: 'Info',
       itemBuilder: (context) => [
         PopupMenuItem(
           child: Text(
@@ -17,7 +23,7 @@ class PopUpMenu extends StatelessWidget {
         ),
         PopupMenuItem(
           child: Text(
-            'FAQ',
+            'Mute',
             style: TextStyle(
               color: Colors.blueGrey,
             ),
@@ -25,15 +31,7 @@ class PopUpMenu extends StatelessWidget {
         ),
         PopupMenuItem(
           child: Text(
-            'Website',
-            style: TextStyle(
-              color: Colors.blueGrey,
-            ),
-          ),
-        ),
-        PopupMenuItem(
-          child: Text(
-            'Logout',
+            'Leave',
             style: TextStyle(
               color: Colors.blueGrey,
             ),
