@@ -10,6 +10,7 @@ import 'package:hampayam_chat/Messenging/HampayamClient.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
 import 'package:hampayam_chat/Screen/HomeScreen.dart';
+import 'package:hampayam_chat/Screen/LoginScreen/PincodeScreen.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
 import 'package:hampayam_chat/StateManagement/loginStateManagement/loginPageProvider.dart';
@@ -21,7 +22,7 @@ import 'package:hampayam_chat/widget/loginWidget/textFileBuilder.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
-import '../translations/locale_keys.g.dart';
+import '../../translations/locale_keys.g.dart';
 import 'dart:ui' as ui;
 
 const String LAGUAGE_CODE = 'languageCode';
@@ -52,7 +53,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   TextEditingController signupPasswordController = new TextEditingController();
 
-  TextEditingController signupConfirmPasswordController = new TextEditingController();
+  TextEditingController signupConfirmPasswordController =
+      new TextEditingController();
 
   PageController _pageController = PageController();
 
@@ -73,7 +75,8 @@ class _LoginScreenState extends State<LoginScreen> {
   _showPopupMenu(BuildContext context) {
     showMenu<String>(
       context: context,
-      position: RelativeRect.fromLTRB(25.0, 65.0, 24.0, 0.0), //position where you want to show the menu on screen
+      position: RelativeRect.fromLTRB(25.0, 65.0, 24.0,
+          0.0), //position where you want to show the menu on screen
       items: [
         PopupMenuItem<String>(
             child: Directionality(
@@ -125,7 +128,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    LoginPageProvider loginPageProvider = Provider.of<LoginPageProvider>(context);
+    LoginPageProvider loginPageProvider =
+        Provider.of<LoginPageProvider>(context);
     var _size = MediaQuery.of(context).size.width;
     return Consumer<LoginPageProvider>(builder: (context, value, child) {
       return Directionality(
@@ -140,7 +144,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 //>= 775.0 ? MediaQuery.of(context).size.height : 900,
                 decoration: new BoxDecoration(
                   gradient: new LinearGradient(
-                      colors: [HexColor('#CCFF90'), HexColor('#00E5FF')], begin: const FractionalOffset(0.0, 0.0), end: const FractionalOffset(1.0, 1.0), stops: [0.0, 1.0], tileMode: TileMode.clamp),
+                      colors: [HexColor('#CCFF90'), HexColor('#00E5FF')],
+                      begin: const FractionalOffset(0.0, 0.0),
+                      end: const FractionalOffset(1.0, 1.0),
+                      stops: [0.0, 1.0],
+                      tileMode: TileMode.clamp),
                 ),
                 child: Column(
                   //mainAxisSize: MainAxisSize.max,
@@ -215,7 +223,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildSignIn(BuildContext context) {
     var _size = MediaQuery.of(context).size.width;
-    LoginPageProvider loginPageProvider = Provider.of<LoginPageProvider>(context);
+    LoginPageProvider loginPageProvider =
+        Provider.of<LoginPageProvider>(context);
     ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
     ChatListProvider chatListProvider = Provider.of<ChatListProvider>(context);
     return Container(
@@ -254,7 +263,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           iconData: MfgLabs.lock_alt,
                           obscureText: loginPageProvider.getObscureTextLogin,
                           suffixIconShow: true,
-                          sufixIconData: loginPageProvider.getObscureTextLogin ? Elusive.eye_off : Elusive.eye,
+                          sufixIconData: loginPageProvider.getObscureTextLogin
+                              ? Elusive.eye_off
+                              : Elusive.eye,
                           pressFunction: () {
                             loginPageProvider.changeObscureTextLogin();
                           },
@@ -274,10 +285,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   mergin: .3,
                   hintText: LocaleKeys.Login.tr(),
                   pressFunction: () {
-                    if (loginUserNameController.text.isNotEmpty && loginPasswordController.text.isNotEmpty) {
+                    if (loginUserNameController.text.isNotEmpty &&
+                        loginPasswordController.text.isNotEmpty) {
                       loginPageProvider.changeProgress(true);
-                      signIn(context, loginUserNameController.text, loginPasswordController.text).then((value) {
-                        IORouter.loginScreenChannel.stream.listen((event) async {
+                      signIn(context, loginUserNameController.text,
+                              loginPasswordController.text)
+                          .then((value) {
+                        IORouter.loginScreenChannel.stream
+                            .listen((event) async {
                           switch (event.type) {
                             case 'm':
                               JRcvMeta meta = JRcvMeta.fromJson(event.msg);
@@ -285,28 +300,46 @@ class _LoginScreenState extends State<LoginScreen> {
                               if (meta.hasSub()) {
                                 if (meta.topic == 'me') {
                                   chatListProvider.clearData();
-                                  meta.sub.sort((a, b) => b.touched.compareTo(a.touched));
+
+                                  meta.sub.sort((a, b) {
+                                    if (a.touched != null && b.touched != null)
+                                      return b.touched.compareTo(a.touched);
+                                  });
 
                                   chatListProvider.listSpliter(meta.sub);
                                 }
                               }
                               if (meta.hasDesc()) {
-                                profileProvider.fname(meta.getDescription().getPublic().fn);
-                                if (meta.getDescription().getPublic().photo != null) {
-                                  if (meta.getDescription().getPublic().photo != null) {
-                                    profileProvider.setPhoto(meta.getDescription().getPublic().photo.data);
+                                profileProvider.fname(
+                                    meta.getDescription().getPublic().fn);
+                                if (meta.getDescription().getPublic().photo !=
+                                    null) {
+                                  if (meta.getDescription().getPublic().photo !=
+                                      null) {
+                                    profileProvider.setPhoto(meta
+                                        .getDescription()
+                                        .getPublic()
+                                        .photo
+                                        .data);
                                   }
                                 }
                                 if (meta.desc.getPublic().n != null) {
-                                  profileProvider.sname(meta.getDescription().getPublic().n.surname);
+                                  profileProvider.sname(meta
+                                      .getDescription()
+                                      .getPublic()
+                                      .n
+                                      .surname);
                                 }
                               }
                               if (meta.hasCred()) {
-                                profileProvider.setPhone(meta.getCredential(0).val);
+                                profileProvider
+                                    .setPhone(meta.getCredential(0).val);
+                                IORouter.activePage = 'home';
                                 Navigator.pushReplacement<void, void>(
                                   context,
                                   MaterialPageRoute<void>(
-                                    builder: (BuildContext context) => HomeScreen(),
+                                    builder: (BuildContext context) =>
+                                        HomeScreen(),
                                   ),
                                 );
                               }
@@ -320,7 +353,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   if (loginPageProvider.getConter == 0) {
                                     profileProvider.setToken(ctrl.params.token);
                                     HampayamClient.saveToken(ctrl.params.token);
-                                    profileProvider.setUerName(ctrl.params.user);
+                                    profileProvider
+                                        .setUerName(ctrl.params.user);
                                     HampayamClient.subToMessanger();
 
                                     loginPageProvider.increamentCounter();
@@ -336,11 +370,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           }
                         });
                       });
-                      loginPageProvider.changeTextUserNameEmpty(loginUserNameController.text);
-                      loginPageProvider.changeTextPasswordEmpty(loginPasswordController.text);
+                      loginPageProvider.changeTextUserNameEmpty(
+                          loginUserNameController.text);
+                      loginPageProvider.changeTextPasswordEmpty(
+                          loginPasswordController.text);
                     } else {
-                      loginPageProvider.changeTextUserNameEmpty(loginUserNameController.text);
-                      loginPageProvider.changeTextPasswordEmpty(loginPasswordController.text);
+                      loginPageProvider.changeTextUserNameEmpty(
+                          loginUserNameController.text);
+                      loginPageProvider.changeTextPasswordEmpty(
+                          loginPasswordController.text);
                       loginPageProvider.changeIsVAlidate(false);
                       loginPageProvider.changeValidateText('');
                       loginPageProvider.changeProgress(false);
@@ -357,7 +395,10 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: () {},
               child: Text(
                 LocaleKeys.Forgotpassword.tr(),
-                style: TextStyle(color: Colors.white, fontSize: 16.0, fontFamily: "WorkSansMedium"),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.0,
+                    fontFamily: "WorkSansMedium"),
               ),
             ),
             Row(
@@ -382,7 +423,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.only(left: 15.0, right: 15.0),
                   child: Text(
                     LocaleKeys.Or.tr(),
-                    style: TextStyle(color: Colors.white, fontSize: 16.0, fontFamily: "WorkSansMedium"),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.0,
+                        fontFamily: "WorkSansMedium"),
                   ),
                 ),
                 Container(
@@ -421,7 +465,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildSignUp(BuildContext context) {
     var _size = MediaQuery.of(context).size.width;
-    LoginPageProvider loginPageProvider = Provider.of<LoginPageProvider>(context);
+    LoginPageProvider loginPageProvider =
+        Provider.of<LoginPageProvider>(context);
+    ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
 
     return Container(
       //padding: EdgeInsets.only(top: 15.0),
@@ -430,12 +476,13 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           children: <Widget>[
             Stack(
-              //alignment: Alignment.topCenter,
-              overflow: Overflow.visible,
+              alignment: Alignment.topCenter,
+              clipBehavior: Clip.none,
               children: <Widget>[
                 Positioned(
                   child: Container(
-                    margin: EdgeInsets.only(right: _size / 10, left: _size / 10),
+                    margin:
+                        EdgeInsets.only(right: _size / 10, left: _size / 10),
                     child: Card(
                       elevation: 10.0,
                       color: Colors.white,
@@ -449,7 +496,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             hintText: LocaleKeys.name.tr(),
                             obscureText: false,
                             suffixIconShow: false,
+                            errorValidate:
+                                loginPageProvider.getValidateTextName,
+                            validateEmpty:
+                                loginPageProvider.getTextRegNameEmpty,
                             iconData: Icons.person,
+                            validateValue: loginPageProvider.getIsValidateName,
                           ),
                           spacebetween(_size),
                           TextFieldBuilder(
@@ -457,7 +509,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             hintText: LocaleKeys.UserName.tr(),
                             iconData: Icons.person_outline,
                             suffixIconShow: false,
+                            validateEmpty:
+                                loginPageProvider.getTextUserNameEmpty,
                             obscureText: false,
+                            errorValidate:
+                                loginPageProvider.getValidateTextUserName,
+                            validateValue:
+                                loginPageProvider.getIsValidateUserName,
                           ),
                           spacebetween(_size),
                           TextFieldBuilder(
@@ -467,28 +525,55 @@ class _LoginScreenState extends State<LoginScreen> {
                             textInputType: TextInputType.phone,
                             suffixIconShow: false,
                             obscureText: false,
+                            validateEmpty: loginPageProvider.getTextPhoneEmpty,
+                            validateValue: loginPageProvider.getIsValidatePhone,
+                            errorValidate:
+                                loginPageProvider.getValidateTextPhone,
                           ),
                           spacebetween(_size),
                           TextFieldBuilder(
-                            textEditingController: signupPasswordController,
-                            hintText: LocaleKeys.Password.tr(),
-                            iconData: MfgLabs.lock_alt,
-                            suffixIconShow: true,
-                            obscureText: loginPageProvider.getobscureTextSignup,
-                            sufixIconData: loginPageProvider.getobscureTextSignup ? Elusive.eye_off : Elusive.eye,
-                            pressFunction: () {
-                              loginPageProvider.changeObscureTextSignup();
-                            },
-                          ),
+                              textEditingController: signupPasswordController,
+                              hintText: LocaleKeys.Password.tr(),
+                              iconData: MfgLabs.lock_alt,
+                              suffixIconShow: true,
+                              obscureText:
+                                  loginPageProvider.getobscureTextSignup,
+                              sufixIconData:
+                                  loginPageProvider.getobscureTextSignup
+                                      ? Elusive.eye_off
+                                      : Elusive.eye,
+                              validateEmpty:
+                                  loginPageProvider.getTextRegPasswordEmpty,
+                              validateValue:
+                                  loginPageProvider.getIsValidatePassword,
+                              pressFunction: () {
+                                loginPageProvider.changeObscureTextSignup();
+                              },
+                              errorValidate:
+                                  loginPageProvider.getValidateTextPassword),
                           spacebetween(_size),
                           TextFieldBuilder(
-                            textEditingController: signupConfirmPasswordController,
+                            textEditingController:
+                                signupConfirmPasswordController,
                             hintText: LocaleKeys.ConfirmPass.tr(),
                             iconData: MfgLabs.lock_alt,
                             suffixIconShow: true,
-                            obscureText: loginPageProvider.getobscureTextSignupConfirm,
-                            sufixIconData: loginPageProvider.getobscureTextSignupConfirm ? Elusive.eye_off : Elusive.eye,
-                            pressFunction: () => {loginPageProvider.changeObscureTextSignupConfirm()},
+                            validateEmpty:
+                                loginPageProvider.getTextConfirimEmpty,
+                            obscureText:
+                                loginPageProvider.getobscureTextSignupConfirm,
+                            validateValue:
+                                loginPageProvider.getIsValidatePassword,
+                            sufixIconData:
+                                loginPageProvider.getobscureTextSignupConfirm
+                                    ? Elusive.eye_off
+                                    : Elusive.eye,
+                            pressFunction: () {
+                              loginPageProvider
+                                  .changeObscureTextSignupConfirm();
+                            },
+                            errorValidate:
+                                loginPageProvider.getValidateTextPassword,
                           ),
                           SizedBox(
                             height: _size / 11,
@@ -499,10 +584,82 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 ButtonWidget(
+                  enableProgress: false,
                   mergin: .75,
                   hintText: LocaleKeys.Register.tr(),
                   pressFunction: () {
-                    SignUp();
+                    loginPageProvider
+                        .changeTextRegNameEmpty(signupNameController.text);
+                    loginPageProvider
+                        .changeTextUserNameEmpty(signupUserNameController.text);
+                    loginPageProvider.changeTextRegPasswordEmpty(
+                        signupPasswordController.text);
+                    loginPageProvider.changeTextConfirimEmpty(
+                        signupConfirmPasswordController.text);
+                    loginPageProvider
+                        .changeTextPhoneEmpty(signupPhoneController.text);
+
+                    if (!(loginPageProvider.getTextRegNameEmpty &&
+                        loginPageProvider.textRegUserNameEmpty &&
+                        loginPageProvider.getTextPhoneEmpty &&
+                        loginPageProvider.getTextRegPasswordEmpty)) {
+                      if (signupPasswordController.text ==
+                          signupConfirmPasswordController.text) {
+                        loginPageProvider.changeIsVAlidatePassword(false);
+                        signUp(
+                          context,
+                          signupNameController.text,
+                          signupUserNameController.text,
+                          signupPhoneController.text,
+                          signupConfirmPasswordController.text,
+                        );
+                        IORouter.loginScreenChannel.stream.listen((event) {
+                          switch (event.type) {
+                            case 'c':
+                              JRcvCtrl ctrl = JRcvCtrl.fromJson(event.msg);
+                              if (ctrl.code == 409) {
+                                loginPageProvider
+                                    .changeValidateTextPassword(ctrl.text);
+                                loginPageProvider
+                                    .changeIsVAlidateUserName(true);
+                              } else if (ctrl.code == 400) {
+                                loginPageProvider
+                                    .changeValidateTextUserName(ctrl.text);
+                                loginPageProvider
+                                    .changeIsVAlidateUserName(true);
+                                loginPageProvider
+                                    .changeValidateTextPhone(ctrl.text);
+                                loginPageProvider.changeIsVAlidatePhone(true);
+                              } else if (ctrl.code == 422) {
+                                loginPageProvider
+                                    .changeValidateTextUserName(ctrl.text);
+                                loginPageProvider
+                                    .changeIsVAlidateUserName(true);
+                                loginPageProvider
+                                    .changeValidateTextPhone(ctrl.text);
+                                loginPageProvider.changeIsVAlidatePhone(true);
+                              } else if (ctrl.code == 300) {
+                                profileProvider.setToken(ctrl.params.token);
+                                Navigator.push<void>(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) =>
+                                        PinCodeVerificationScreen(
+                                            signupPhoneController.text),
+                                  ),
+                                );
+                              }
+
+                              break;
+                            default:
+                          }
+                        });
+                      } else {
+                        loginPageProvider.changeIsVAlidatePassword(true);
+                        loginPageProvider.changeValidateTextPassword(
+                            'Password and confirm password do not match ');
+                      }
+                    }
                   },
                   hasPadding: true,
                 ),
@@ -515,38 +672,39 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   _onSignInButtonPress() {
-    _pageController.animateToPage(0, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
+    _pageController.animateToPage(0,
+        duration: Duration(milliseconds: 500), curve: Curves.decelerate);
   }
 
   _onSignUpButtonPress() {
-    _pageController?.animateToPage(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
+    _pageController?.animateToPage(1,
+        duration: Duration(milliseconds: 500), curve: Curves.decelerate);
   }
 
   String lJsonId;
 
-  Future<void> signIn(BuildContext context, String username, String password) async {
-    await HampayamClient.loginChat(IORouter.ipAddress, IORouter.apiKey, context.locale.toLanguageTag(), username, password);
+  Future<void> signIn(
+      BuildContext context, String username, String password) async {
+    await HampayamClient.loginChat(
+      IORouter.ipAddress,
+      IORouter.apiKey,
+      context.locale.toLanguageTag(),
+      username,
+      password,
+    );
   }
 
-  Future<void> OnChatScreenEvent(MsgType msgType) async {}
-
-  void OnChatChannelDone() {
-    print('Chat Channel Done.');
-  }
-
-  void OnChatChannelError(Object e) {
-    print('Chat Channel Error: ' + e.toString());
-  }
-
-  Future<void> SignUp() async {}
-
-  Future<void> validateScreenEvent(MsgType msgType) async {}
-
-  void vadlidateOnChatChannelDone() {
-    print('Chat Channel Done.');
-  }
-
-  void validateOnChatChannelError(Object e) {
-    print('Chat Channel Error: ' + e.toString());
+  Future<void> signUp(BuildContext context, String name, String username,
+      String phone, String password) async {
+    if (name.length > 0)
+      HampayamClient.signUpChatWithPhone(
+        IORouter.ipAddress,
+        IORouter.apiKey,
+        context.locale.toLanguageTag(),
+        name,
+        phone,
+        username,
+        password,
+      );
   }
 }

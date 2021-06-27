@@ -20,6 +20,9 @@ import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvide
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/statusUserProvider.dart';
 
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/pageChangeProvider.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/ChlProvder.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/GrpProvider.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
 import 'package:hampayam_chat/StateManagement/loginStateManagement/loginPageProvider.dart';
 
 import 'package:hampayam_chat/widget/homeWidget/botomBar.dart';
@@ -35,17 +38,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  String language = '';
+  CreateGrpProvider createGrpProvider;
+  LoginPageProvider loginPageProvider;
   StatusUserProvider onlieProvider;
   ChatListProvider chatListProvider;
   ProfileProvider profileProvider;
   ContactProvide contactProvide;
-  CreateGrpProvider createGrpProvider;
-  LoginPageProvider loginPageProvider;
-  String language = '';
-
-  final PageController _pageController = PageController(initialPage: 0, keepPage: true);
+  final PageController _pageController =
+      PageController(initialPage: 0, keepPage: true);
   MessageNotifcation notifcation = MessageNotifcation();
   GlobalKey<ScaffoldState> _key = GlobalKey();
+  ChlProvider chlProvider;
+  P2pProvider p2pProvider;
+  GrpProvider grpProvider;
 
   @override
   void initState() {
@@ -56,6 +62,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       await HampayamClient.getDataAutoLogin(context, language).then((value) {
         notifcation.initializing();
       });
+      HampayamClient.subToFnd();
+      contactProvide.changeReadContact(true);
     });
 
     super.initState();
@@ -69,50 +77,77 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     profileProvider = Provider.of(context);
     contactProvide = Provider.of(context);
     loginPageProvider = Provider.of(context);
+    chlProvider = Provider.of(context);
+    p2pProvider = Provider.of(context);
+    grpProvider = Provider.of(context);
     createGrpProvider = Provider.of(context);
-    PageChangeProvider pageChangeProvider = Provider.of<PageChangeProvider>(context);
+
+    PageChangeProvider pageChangeProvider =
+        Provider.of<PageChangeProvider>(context);
     var _sizeH = MediaQuery.of(context).size.height;
-    return Scaffold(
-      key: _key,
-      appBar: PreferredSize(
-        preferredSize: Size(double.infinity, _sizeH / 10),
-        child: Visibility(visible: pageChangeProvider.enableAppbar, child: CustomAppbar.customAppBar(_sizeH, LocaleKeys.Messanger.tr(), _key)),
+    return WillPopScope(
+      onWillPop: () async {
+        chlProvider.leaveSub();
+        p2pProvider.leaveSub();
+        grpProvider.leaveSub();
+        createGrpProvider.clearData();
+        loginPageProvider.reset();
+        onlieProvider.reset();
+        chatListProvider.clearData();
+        profileProvider.reset();
+        contactProvide.reset();
+        return true;
+      },
+      child: Scaffold(
+        key: _key,
+        appBar: PreferredSize(
+          preferredSize: Size(double.infinity, _sizeH / 10),
+          child: Visibility(
+              visible: pageChangeProvider.enableAppbar,
+              child: CustomAppbar.customAppBar(
+                  _sizeH, LocaleKeys.Messanger.tr(), _key)),
+        ),
+        endDrawer: MyDrawer(),
+        body: Consumer4<PageChangeProvider, ChatListProvider, ProfileProvider,
+                ContactProvide>(
+            builder: (context, value1, value2, vlaue3, value4, child) {
+          return Padding(
+            padding: const EdgeInsets.all(1.0),
+            child: (PageView(
+              controller: _pageController,
+              children: <Widget>[
+                PageChatList(_sizeH),
+                UserPage(_sizeH),
+                PageWallet(MyDrawer()),
+                GroupPage(_sizeH),
+                ChannelPage(_sizeH),
+              ],
+              onPageChanged: (page) {
+                _pageController.animateToPage(page,
+                    duration: Duration(milliseconds: 500), curve: Curves.ease);
+
+                _pageController.jumpToPage(page);
+
+                pageChangeProvider.changePageIndex(page);
+                if (_pageController.page == 2)
+                  pageChangeProvider.changeEnableAppBAr(false);
+                else
+                  pageChangeProvider.changeEnableAppBAr(true);
+              },
+            )),
+          );
+        }),
+        bottomNavigationBar: BottomBar(_sizeH, this, _pageController),
       ),
-      endDrawer: MyDrawer(),
-      body: Consumer3<PageChangeProvider, ChatListProvider, ProfileProvider>(builder: (context, value1, value2, vlaue3, child) {
-        return Padding(
-          padding: const EdgeInsets.all(1.0),
-          child: (PageView(
-            controller: _pageController,
-            children: <Widget>[
-              PageChatList(_sizeH),
-              UserPage(_sizeH),
-              PageWallet(MyDrawer()),
-              GroupPage(_sizeH),
-              ChannelPage(_sizeH),
-            ],
-            onPageChanged: (page) {
-              _pageController.animateToPage(page, duration: Duration(milliseconds: 500), curve: Curves.ease);
-
-              _pageController.jumpToPage(page);
-
-              pageChangeProvider.changePageIndex(page);
-              if (_pageController.page == 2)
-                pageChangeProvider.changeEnableAppBAr(false);
-              else
-                pageChangeProvider.changeEnableAppBAr(true);
-            },
-          )),
-        );
-      }),
-      bottomNavigationBar: BottomBar(_sizeH, this, _pageController),
     );
   }
 
   Future<void> onData(MsgType data) async {
     if (data.type == 'c') {
       JRcvCtrl ctrl = JRcvCtrl.fromJson(data.msg);
-      if (ctrl.topic == 'fnd' && contactProvide.getReadContact) {
+      if (ctrl.topic == 'fnd' &&
+          ctrl.code == 200 &&
+          contactProvide.getReadContact) {
         HampayamClient.getPermissions();
         contactProvide.changeReadContact(false);
       }
@@ -120,11 +155,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     if (data.type == 'm') {
       JRcvMeta meta = JRcvMeta.fromJson(data.msg);
       if (meta.topic == 'me') {
-        if (meta.hasCred()) {
-          HampayamClient.subToFnd();
-
-          contactProvide.changeReadContact(true);
-        }
+        if (meta.hasCred()) {}
       }
       if (meta.topic == 'fnd') {
         if (meta.hasSub()) {
@@ -145,7 +176,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
       if (pres.what == 'msg') {
         chatListProvider.changUnreadMessage(pres.seq, pres.src);
-        chatListProvider.changLastMessage(pres.extra.message, pres.extra.fn, pres.src);
+        chatListProvider.changLastMessage(
+            pres.extra.message, pres.extra.fn, pres.src);
         notifcation.showNotifications(pres.extra.fn, pres.extra.message);
         chatListProvider.chatListChange(pres.src);
       }

@@ -14,7 +14,7 @@ import 'package:hampayam_chat/StateManagement/chatStateManagement/chatButtonProv
 import 'package:provider/provider.dart';
 
 import 'Screen/HomeScreen.dart';
-import 'Screen/LoginScreen.dart';
+import 'Screen/LoginScreen/LoginScreen.dart';
 import 'StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'StateManagement/HomeStateManagement/ProfileProvider.dart';
 import 'StateManagement/loginStateManagement/loginPageProvider.dart';
@@ -41,7 +41,8 @@ void main() async {
     ],
     child: EasyLocalization(
         supportedLocales: [Locale('en'), Locale('fa')],
-        path: 'assets/translations', // <-- change the path of the translation files
+        path:
+            'assets/translations', // <-- change the path of the translation files
         fallbackLocale: Locale('en'),
         child: value != null
             ? MyApp(

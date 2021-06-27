@@ -7,6 +7,7 @@ class ProfileProvider extends ChangeNotifier {
   String userName = '';
   String phone = '';
   String token = '';
+  String resp = '';
 
   String get getFname => fn;
   String get getSname => sn;
@@ -14,6 +15,7 @@ class ProfileProvider extends ChangeNotifier {
   String get getUserName => userName;
   String get getPhone => phone;
   String get getToken => token;
+  String get getResp => resp;
 
   void fname(String fn) {
     this.fn = fn;
@@ -35,6 +37,11 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setResp(String resp) {
+    this.resp = resp;
+    notifyListeners();
+  }
+
   void setUerName(String userName) {
     this.userName = userName;
     notifyListeners();
@@ -43,5 +50,15 @@ class ProfileProvider extends ChangeNotifier {
   void setToken(String token) {
     if (token != null) this.token = token;
     notifyListeners();
+  }
+
+  void reset() {
+    fn = '';
+    sn = '';
+    photoFile = '';
+    userName = '';
+    phone = '';
+    token = '';
+    resp = '';
   }
 }

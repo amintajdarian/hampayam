@@ -27,7 +27,8 @@ class GrpChatScreen extends StatefulWidget {
   State<GrpChatScreen> createState() => _GrpChatScreenState();
 }
 
-class _GrpChatScreenState extends State<GrpChatScreen> with TickerProviderStateMixin {
+class _GrpChatScreenState extends State<GrpChatScreen>
+    with TickerProviderStateMixin {
   AnimationController _controller;
   Animation _animation;
   TextEditingController textEditingController = TextEditingController();
@@ -57,7 +58,8 @@ class _GrpChatScreenState extends State<GrpChatScreen> with TickerProviderStateM
       HampayamClient.subToChatFirst(grpProvider.getTopicData.topic);
     }
 
-    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _animation = Tween(begin: 300.0, end: 50.0).animate(_controller)
       ..addListener(() {
         if (mounted) setState(() {});
@@ -102,7 +104,8 @@ class _GrpChatScreenState extends State<GrpChatScreen> with TickerProviderStateM
 
         return true;
       },
-      child: Consumer2<CreateGrpProvider, GrpProvider>(builder: (context, value, value1, child) {
+      child: Consumer2<CreateGrpProvider, GrpProvider>(
+          builder: (context, value, value1, child) {
         if (!groupProvider.getCreated) {
           return Scaffold(
             key: _key,
@@ -115,7 +118,8 @@ class _GrpChatScreenState extends State<GrpChatScreen> with TickerProviderStateM
                     )
                   : Container(),
             ),
-            body: Consumer<ChatButtonProvider>(builder: (context, value2, child) {
+            body:
+                Consumer<ChatButtonProvider>(builder: (context, value2, child) {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -126,16 +130,33 @@ class _GrpChatScreenState extends State<GrpChatScreen> with TickerProviderStateM
                           itemCount: value1.chatList.length,
                           itemBuilder: (context, index) {
                             if (index != value1.chatList.length - 1) {
-                              return ItemChatList.chatItem(value1.chatList[index], profileProvider.getUserName, profileProvider.fn + value1.chatList[index].seq.toString(),
-                                  value1.getTopicData.public.fn, _sizeH, context, profileProvider.getToken);
-                            } else if (value1.chatList.last.seq != 1) {
-                              ChatContent.loadMoreData(value1.chatList[index].seq, value1.topicData.topic, 24);
+                              return ItemChatList.chatItem(
+                                  value1.chatList[index],
+                                  profileProvider.getUserName,
+                                  profileProvider.fn +
+                                      value1.chatList[index].seq.toString(),
+                                  value1.getTopicData.public.fn,
+                                  _sizeH,
+                                  context,
+                                  profileProvider.getToken);
+                            } else if (index >= 23) {
+                              ChatContent.loadMoreData(
+                                  value1.chatList[index].seq,
+                                  value1.topicData.topic,
+                                  24);
                               return Container(
                                 child: SpinKitCircle(color: Colors.blue),
                               );
                             } else {
-                              return ItemChatList.chatItem(value1.chatList[index], profileProvider.getUserName, profileProvider.fn + value1.chatList[index].seq.toString(),
-                                  value1.getTopicData.public.fn, _sizeH, context, profileProvider.getToken);
+                              return ItemChatList.chatItem(
+                                  value1.chatList[index],
+                                  profileProvider.getUserName,
+                                  profileProvider.fn +
+                                      value1.chatList[index].seq.toString(),
+                                  value1.getTopicData.public.fn,
+                                  _sizeH,
+                                  context,
+                                  profileProvider.getToken);
                             }
                           }),
                       flex: 1,
@@ -150,6 +171,9 @@ class _GrpChatScreenState extends State<GrpChatScreen> with TickerProviderStateM
                             buttonProvider: value2,
                             currentUser: profileProvider.getUserName,
                             topic: value1.topicData.topic,
+                            seq: value1.chatList.length > 1
+                                ? value1.chatList.last.seq + 1
+                                : 1,
                           )
                         : Container()
                   ],

@@ -14,7 +14,8 @@ class ContactProvide extends ChangeNotifier {
     notifyListeners();
   }
 
-  void filterContacts(List<JSubscriptionData> contacts, TextEditingController searchController) {
+  void filterContacts(List<JSubscriptionData> contacts,
+      TextEditingController searchController) {
     if (searchController.text.isNotEmpty) {
       contacts.retainWhere((contact) {
         String searchTerm = searchController.text.toLowerCase();
@@ -33,5 +34,11 @@ class ContactProvide extends ChangeNotifier {
   changeReadContact(bool change) {
     this.readContact = change;
     notifyListeners();
+  }
+
+  void reset() {
+    contacts.clear();
+    contactsFiltered.clear();
+    readContact = false;
   }
 }

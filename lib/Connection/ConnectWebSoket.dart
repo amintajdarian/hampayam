@@ -30,15 +30,15 @@ class IORouter {
   static final String version = '1.0.0';
 
   static Future<void> connect(String address) async {
-    wsChannel = WebsocketManager(address);
+    wsChannel = new WebsocketManager(address);
 
-    // wsChannel = IOWebSocketChannel.connect(address);
     try {
       print('ok');
     } catch (e) {
       connectionStatus = 'Connection Lost';
       print('disconected');
-      await Future.delayed(Duration(minutes: 15)).then((value) => connect(address));
+      await Future.delayed(Duration(minutes: 15))
+          .then((value) => connect(address));
     }
     wsChannel.onMessage((event) {
       print(event);
@@ -139,6 +139,7 @@ class IORouter {
   }
 
   static void sendString(String msg) {
+    print(msg);
     wsChannel.send(msg);
   }
 

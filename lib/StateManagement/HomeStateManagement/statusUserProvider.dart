@@ -17,4 +17,9 @@ class StatusUserProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void reset() {
+    onlineUser.clear();
+    notifyListeners();
+  }
 }

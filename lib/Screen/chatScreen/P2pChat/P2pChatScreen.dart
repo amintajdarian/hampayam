@@ -22,7 +22,8 @@ class P2pChatScreen extends StatefulWidget {
   State<P2pChatScreen> createState() => _P2pChatScreenState();
 }
 
-class _P2pChatScreenState extends State<P2pChatScreen> with TickerProviderStateMixin {
+class _P2pChatScreenState extends State<P2pChatScreen>
+    with TickerProviderStateMixin {
   AnimationController _controller;
   Animation _animation;
   TextEditingController textEditingController = TextEditingController();
@@ -47,7 +48,8 @@ class _P2pChatScreenState extends State<P2pChatScreen> with TickerProviderStateM
 
     HampayamClient.subToChatFirst(p2pProvider.getDataSub.topic);
 
-    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _animation = Tween(begin: 300.0, end: 50.0).animate(_controller)
       ..addListener(() {
         if (mounted) setState(() {});
@@ -106,7 +108,8 @@ class _P2pChatScreenState extends State<P2pChatScreen> with TickerProviderStateM
                 ),
               )
             : null,
-        body: Consumer2<P2pProvider, ChatButtonProvider>(builder: (context, value1, value2, child) {
+        body: Consumer2<P2pProvider, ChatButtonProvider>(
+            builder: (context, value1, value2, child) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -116,11 +119,20 @@ class _P2pChatScreenState extends State<P2pChatScreen> with TickerProviderStateM
                       reverse: true,
                       itemCount: value1.chatList.length,
                       itemBuilder: (context, index) {
-                        if (index < value1.chatList.length - 1) {
-                          return ItemChatList.chatItem(value1.chatList[index], profileProvider.getUserName, profileProvider.fn + value1.chatList[index].seq.toString(), value1.dataSub.public.fn,
-                              _sizeH, context, profileProvider.getToken);
-                        } else {
-                          ChatContent.loadMoreData(value1.chatList[index].seq, value1.dataSub.topic, 24);
+                        if (index < value1.chatList.length - 1 ||
+                            value1.chatList.length == 1) {
+                          return ItemChatList.chatItem(
+                              value1.chatList[index],
+                              profileProvider.getUserName,
+                              profileProvider.fn +
+                                  value1.chatList[index].seq.toString(),
+                              value1.dataSub.public.fn,
+                              _sizeH,
+                              context,
+                              profileProvider.getToken);
+                        } else if (index >= 23) {
+                          ChatContent.loadMoreData(value1.chatList[index].seq,
+                              value1.dataSub.topic, 24);
                           return Container(
                             child: SpinKitCircle(color: Colors.blue),
                           );
@@ -137,6 +149,10 @@ class _P2pChatScreenState extends State<P2pChatScreen> with TickerProviderStateM
                   buttonProvider: value2,
                   currentUser: profileProvider.getUserName,
                   topic: value1.dataSub.topic,
+                  seq: value1.chatList.length > 0
+                      ? value1.chatList.last.seq + 1
+                      : 1,
+                  p2pProvider: value1,
                 )
               ],
             ),

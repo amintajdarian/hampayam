@@ -8,11 +8,16 @@ import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Screen/CreateChannelScreen.dart';
 import 'package:hampayam_chat/Screen/chatScreen/Grpchat/GrpInfoScreen.dart';
-import 'package:hampayam_chat/Screen/chatScreen/P2pChat/P2pChatScreen.dart';
 import 'package:hampayam_chat/Screen/createGrp/CreateGroupScreen.dart';
-import 'package:hampayam_chat/Screen/LoginScreen.dart';
-import 'package:hampayam_chat/Screen/createGrp/SetImageScreen.dart';
+import 'package:hampayam_chat/Screen/LoginScreen/LoginScreen.dart';
+import 'package:hampayam_chat/StateManagement/ContactStateManagment/ContactProvider.dart';
+import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
+import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
+import 'package:hampayam_chat/StateManagement/HomeStateManagement/statusUserProvider.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/ChlProvder.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/GrpProvider.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
 import 'package:hampayam_chat/StateManagement/loginStateManagement/loginPageProvider.dart';
 import 'package:hampayam_chat/translations/locale_keys.g.dart';
 import 'dart:ui';
@@ -38,13 +43,29 @@ class MyDrawer extends StatelessWidget {
   }
 
   void logOut(BuildContext context) {
-    LoginPageProvider loginPageProvider = Provider.of<LoginPageProvider>(context, listen: false);
+    ChlProvider chlProvider = Provider.of(context, listen: false);
+    P2pProvider p2pProvider = Provider.of(context, listen: false);
+    GrpProvider grpProvider = Provider.of(context, listen: false);
+    CreateGrpProvider createGrpProvider = Provider.of(context, listen: false);
+    LoginPageProvider loginPageProvider = Provider.of(context, listen: false);
+    StatusUserProvider onlieProvider = Provider.of(context, listen: false);
+    ChatListProvider chatListProvider = Provider.of(context, listen: false);
+    ProfileProvider profileProvider = Provider.of(context, listen: false);
+    ContactProvide contactProvide = Provider.of(context, listen: false);
 
     IORouter.activePage = 'login';
     final storage = new FlutterSecureStorage();
     storage?.delete(key: 'token');
     IORouter.closeConnection();
+    chlProvider.leaveSub();
+    p2pProvider.leaveSub();
+    grpProvider.leaveSub();
+    createGrpProvider.clearData();
     loginPageProvider.reset();
+    onlieProvider.reset();
+    chatListProvider.clearData();
+    profileProvider.reset();
+    contactProvide.reset();
     Navigator.pushReplacement<void, void>(
       context,
       MaterialPageRoute<void>(
@@ -67,13 +88,14 @@ class MyDrawer extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.only(bottom: _size / 10),
         child: ClipRRect(
-          borderRadius: EasyLocalization.of(context).currentLocale.toString() == 'fa'
-              ? BorderRadius.only(
-                  bottomRight: Radius.circular(150),
-                )
-              : BorderRadius.only(
-                  bottomLeft: Radius.circular(150),
-                ),
+          borderRadius:
+              EasyLocalization.of(context).currentLocale.toString() == 'fa'
+                  ? BorderRadius.only(
+                      bottomRight: Radius.circular(150),
+                    )
+                  : BorderRadius.only(
+                      bottomLeft: Radius.circular(150),
+                    ),
           child: SizedBox(
             child: Drawer(
               child: Container(
@@ -95,34 +117,47 @@ class MyDrawer extends StatelessWidget {
                         SizedBox(height: _size / 30),
                         Container(
                           margin: EdgeInsets.only(left: _size / 20),
-                          child: profileProvider.getPhoto != null
+                          child: profileProvider.getPhoto != ''
                               ? CachedNetworkImage(
-                                  imageUrl: HttpConnection.fileUrl(IORouter.ipAddress, profileProvider.photoFile),
-                                  httpHeaders: HttpConnection.setHeader(IORouter.apiKey, profileProvider.getToken),
-                                  progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
-                                  imageBuilder: (context, imageProvider) => Container(
+                                  imageUrl: HttpConnection.fileUrl(
+                                      IORouter.ipAddress,
+                                      profileProvider.photoFile),
+                                  httpHeaders: HttpConnection.setHeader(
+                                      IORouter.apiKey,
+                                      profileProvider.getToken),
+                                  progressIndicatorBuilder:
+                                      (context, url, downloadProgress) =>
+                                          CircularProgressIndicator(
+                                              value: downloadProgress.progress),
+                                  imageBuilder: (context, imageProvider) =>
+                                      Container(
                                     width: _size / 5,
                                     height: _size / 6,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                                      image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.cover),
                                     ),
                                   ),
                                 )
-                              : CircleAvatar(radius: 35, child: Icon(Icons.person)),
+                              : CircleAvatar(
+                                  radius: 35, child: Icon(Icons.person)),
                         ),
                         Container(
                           margin: EdgeInsets.only(left: 45),
                           child: Text(
                             profileProvider.getFname,
-                            style: TextStyle(color: Colors.white, fontSize: _size / 40),
+                            style: TextStyle(
+                                color: Colors.white, fontSize: _size / 40),
                           ),
                         ),
                         Container(
                           margin: EdgeInsets.only(left: _size / 20),
                           child: Text(
                             profileProvider.getPhone,
-                            style: TextStyle(color: Colors.white, fontSize: _size / 40),
+                            style: TextStyle(
+                                color: Colors.white, fontSize: _size / 40),
                           ),
                         ),
                         SizedBox(height: _size / 10),
@@ -135,7 +170,8 @@ class MyDrawer extends StatelessWidget {
                                 Navigator.push<void>(
                                   context,
                                   MaterialPageRoute<void>(
-                                    builder: (BuildContext context) => CreateGroup(),
+                                    builder: (BuildContext context) =>
+                                        CreateGroup(),
                                   ),
                                 );
                               },
@@ -167,7 +203,8 @@ class MyDrawer extends StatelessWidget {
                             Navigator.push<void>(
                               context,
                               MaterialPageRoute<void>(
-                                builder: (BuildContext context) => CreateChannel(),
+                                builder: (BuildContext context) =>
+                                    CreateChannel(),
                               ),
                             );
                           },
@@ -197,7 +234,11 @@ class MyDrawer extends StatelessWidget {
                         sizeBox(_size),
                         GestureDetector(
                           onTap: () async {
-                            Navigator.pushReplacement<void, void>(context, MaterialPageRoute<void>(builder: (BuildContext context) => InfoGrp()));
+                            Navigator.pushReplacement<void, void>(
+                                context,
+                                MaterialPageRoute<void>(
+                                    builder: (BuildContext context) =>
+                                        InfoGrp()));
                           },
                           child: Container(
                             margin: EdgeInsets.only(left: _size / 10),
@@ -276,7 +317,8 @@ class MyDrawer extends StatelessWidget {
                           child: Container(),
                         ),
                         Container(
-                          margin: EdgeInsets.only(right: _size / 8, left: _size / 8),
+                          margin: EdgeInsets.only(
+                              right: _size / 8, left: _size / 8),
                           child: GestureDetector(
                             onTap: () {
                               logOut(context);
@@ -290,7 +332,10 @@ class MyDrawer extends StatelessWidget {
                                 SizedBox(width: _size / 30),
                                 Text(
                                   LocaleKeys.Logout.tr(),
-                                  style: TextStyle(color: Colors.white, fontSize: _size / 30, fontWeight: FontWeight.w500),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: _size / 30,
+                                      fontWeight: FontWeight.w500),
                                 ),
                               ],
                             ),

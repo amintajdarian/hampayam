@@ -1,7 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hampayam_chat/Messenging/ChatContent.dart';
+import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/GrpProvider.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/chatButtonProvide.dart';
+import 'package:provider/provider.dart';
 
 class BottomBarWidget extends StatelessWidget {
   Animation animation;
@@ -11,13 +15,27 @@ class BottomBarWidget extends StatelessWidget {
   double size;
   ChatButtonProvider buttonProvider;
   String topic;
-
+  int seq;
   String currentUser;
-  BottomBarWidget({this.size, this.animation, this.focusNode, this.textController, this.controller, this.buttonProvider, this.topic, this.currentUser});
+  P2pProvider p2pProvider;
+  BottomBarWidget(
+      {this.size,
+      this.animation,
+      this.focusNode,
+      this.textController,
+      this.controller,
+      this.buttonProvider,
+      this.topic,
+      this.currentUser,
+      this.seq,
+      this.p2pProvider});
+
   @override
-  Widget build(BuildContext context) {
+  build(BuildContext context) {
+    GrpProvider grpProvider = Provider.of(context);
     return Container(
-      margin: EdgeInsets.only(bottom: size / 60, left: size / 70, right: size / 70, top: size / 65),
+      margin: EdgeInsets.only(
+          bottom: size / 60, left: size / 70, right: size / 70, top: size / 65),
       height: size / 18,
       child: Row(
         children: [
@@ -27,7 +45,10 @@ class BottomBarWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(size / 25),
-                boxShadow: [BoxShadow(offset: Offset(0, 3), blurRadius: 5, color: Colors.grey)],
+                boxShadow: [
+                  BoxShadow(
+                      offset: Offset(0, 3), blurRadius: 5, color: Colors.grey)
+                ],
               ),
               child: Row(
                 children: [
@@ -36,7 +57,9 @@ class BottomBarWidget extends StatelessWidget {
                     child: TextField(
                       controller: textController,
                       focusNode: focusNode,
-                      decoration: InputDecoration(hintText: "Type Something...", border: InputBorder.none),
+                      decoration: InputDecoration(
+                          hintText: "Type Something...",
+                          border: InputBorder.none),
                     ),
                   ),
                 ],
@@ -45,24 +68,38 @@ class BottomBarWidget extends StatelessWidget {
           ),
           SizedBox(width: size / 85),
           buttonProvider.getButtonEn
-              ? Container(
-                  padding: EdgeInsets.all(size / 65),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: new LinearGradient(colors: [
-                      Color(0xFF33D6F2),
-                      Color(0xFF4DAAED),
-                    ]),
-                  ),
-                  child: InkWell(
+              ? InkWell(
+                  onTap: () {
+                    ChatContent.sendTextMessage(
+                        topic, textController.text, currentUser, context);
+                    JRcvMsg msg = JRcvMsg(
+                        topic: topic,
+                        from: currentUser,
+                        ts: DateTime.now().toUtc().toString(),
+                        seq: seq,
+                        content: textController.text);
+                    if (topic.startsWith('usr')) {
+                      p2pProvider.inserMsg(msg);
+                    }
+                    if (topic.startsWith('grp')) {
+                      p2pProvider.inserMsg(msg);
+                    }
+
+                    textController.clear();
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(size / 65),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: new LinearGradient(colors: [
+                        Color(0xFF33D6F2),
+                        Color(0xFF4DAAED),
+                      ]),
+                    ),
                     child: Icon(
                       Icons.send,
                       color: Colors.white,
                     ),
-                    onTap: () {
-                      ChatContent.sendTextMessage(topic, textController.text, currentUser, context);
-                      textController.clear();
-                    },
                   ),
                 )
               : Container(

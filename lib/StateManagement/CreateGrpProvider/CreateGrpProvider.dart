@@ -132,6 +132,7 @@ class CreateGrpProvider extends ChangeNotifier {
     nameGrp = null;
     topicData = new JSubscriptionData();
     created = false;
+    textEmpty = false;
 
     notifyListeners();
   }

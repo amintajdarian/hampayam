@@ -16,16 +16,17 @@ class ChatListProvider extends ChangeNotifier {
   List<JSubscriptionData> get getUSerList => userList;
   void listSpliter(List<JSubscriptionData> dataSub) {
     subList = (dataSub);
-
-    for (var item in dataSub) {
-      if (item.topic.startsWith('usr')) {
-        userList.add(item);
-      } else if (item.topic.startsWith('grp')) {
-        groupList.add(item);
-      } else if (item.topic.startsWith('chl')) {
-        channelList.add(item);
-      } else if (item.topic.startsWith('bot')) {
-        botList.add(item);
+    if (subList.length > 0) {
+      for (var item in dataSub) {
+        if (item.topic.startsWith('usr')) {
+          userList.add(item);
+        } else if (item.topic.startsWith('grp')) {
+          groupList.add(item);
+        } else if (item.topic.startsWith('chl')) {
+          channelList.add(item);
+        } else if (item.topic.startsWith('bot')) {
+          botList.add(item);
+        }
       }
     }
     notifyListeners();
@@ -208,15 +209,26 @@ class ChatListProvider extends ChangeNotifier {
   }
 
   void changeNameItem(String name, String topic) {
-    subList.elementAt(subList.indexWhere((element) => element.topic == topic)).topic = topic;
+    subList
+        .elementAt(subList.indexWhere((element) => element.topic == topic))
+        .topic = topic;
     if (topic.startsWith('usr')) {
-      userList.elementAt(userList.indexWhere((element) => element.topic == topic)).topic = topic;
+      userList
+          .elementAt(userList.indexWhere((element) => element.topic == topic))
+          .topic = topic;
     } else if (topic.startsWith('grp')) {
-      groupList.elementAt(groupList.indexWhere((element) => element.topic == topic)).topic = topic;
+      groupList
+          .elementAt(groupList.indexWhere((element) => element.topic == topic))
+          .topic = topic;
     } else if (topic.startsWith('chl')) {
-      channelList.elementAt(channelList.indexWhere((element) => element.topic == topic)).topic = topic;
+      channelList
+          .elementAt(
+              channelList.indexWhere((element) => element.topic == topic))
+          .topic = topic;
     } else if (topic.startsWith('bot')) {
-      botList.elementAt(botList.indexWhere((element) => element.topic == topic)).topic = topic;
+      botList
+          .elementAt(botList.indexWhere((element) => element.topic == topic))
+          .topic = topic;
     }
     groupList.toSet().toList();
 

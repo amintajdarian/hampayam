@@ -16,7 +16,6 @@ import 'package:hampayam_chat/Model/Primitives/Name.dart';
 import 'package:hampayam_chat/Model/Primitives/Photo.dart';
 import 'package:hampayam_chat/Model/Primitives/PublicData.dart';
 import 'package:hampayam_chat/Model/Primitives/Subscription.dart';
-import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
 import 'package:hampayam_chat/Model/Primitives/UserCredential.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Account.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Get.dart';
@@ -36,13 +35,18 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class HampayamClient {
-  static Future<void> loginChat(String address, String apiKey, String language, String username, String password) async {
+  static Future<void> loginChat(String address, String apiKey, String language,
+      String username, String password) async {
     IORouter.connect('ws://$address/v0/channels?apikey=$apiKey');
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
 
     String newId = IORouter.generateRandomKey();
-    JSndHi hi = JSndHi(id: newId, lang: language, ua: androidInfo.version.release, ver: IORouter.version);
+    JSndHi hi = JSndHi(
+        id: newId,
+        lang: language,
+        ua: androidInfo.version.release,
+        ver: IORouter.version);
     MsgClient sendHi = MsgClient(jSndHi: hi);
     IORouter.sendMap(sendHi.toJson());
     String secret = IORouter.base4dEncod(username + ':' + password);
@@ -51,30 +55,52 @@ class HampayamClient {
     IORouter.sendMap(sendLogin.toJson());
   }
 
-  static Future<void> signUpChatWithPhone(String address, String apiKey, String language, String name, String phone, String username, String password) async {
-    IORouter.connect(' ws://$address/v0/channels?apikey=$apiKey');
+  static Future<void> signUpChatWithPhone(
+      String address,
+      String apiKey,
+      String language,
+      String name,
+      String phone,
+      String username,
+      String password) async {
+    IORouter.connect('ws://$address/v0/channels?apikey=$apiKey');
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     String newId = IORouter.generateRandomKey();
-    JSndHi hi = JSndHi(id: newId, lang: language, ua: androidInfo.version.release, ver: IORouter.version);
+    JSndHi hi = JSndHi(
+        id: newId,
+        lang: language,
+        ua: androidInfo.version.release,
+        ver: IORouter.version);
     MsgClient sendHi = MsgClient(jSndHi: hi);
     IORouter.sendMap(sendHi.toJson());
     String secret = IORouter.base4dEncod(username + ':' + password);
-    JPublicData public;
-    JPublicData(fn: name);
+    JPublicData public = JPublicData(fn: name);
+
     Description description = Description(publicData: public);
     JUserCredential credential = JUserCredential(meth: "tel", val: phone);
-    JSndAcc acc = JSndAcc(id: newId, user: 'new', scheme: 'basic', secret: secret, login: true, desc: description, cred: credential as List);
+    List<JUserCredential> tempCred = [];
+    tempCred.add(credential);
+    JSndAcc acc = JSndAcc(
+        id: newId,
+        user: 'new',
+        scheme: 'basic',
+        secret: secret,
+        login: true,
+        desc: description,
+        cred: tempCred);
     MsgClient sendAcc = MsgClient(jSndAcc: acc);
     IORouter.sendMap(sendAcc.toJson());
   }
 
-  static Widget showImage(String item, String token, Widget dataAvatar, double size) {
+  static Widget showImage(
+      String item, String token, Widget dataAvatar, double size) {
     if (item != null) {
       return CachedNetworkImage(
         imageUrl: HttpConnection.fileUrl(IORouter.ipAddress, item),
         httpHeaders: HttpConnection.setHeader(IORouter.apiKey, token),
-        progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
+        progressIndicatorBuilder: (context, url, downloadProgress) =>
+            CircularProgressIndicator(value: downloadProgress.progress),
         imageBuilder: (context, imageProvider) => Container(
           width: size / 20,
           height: size / 20,
@@ -92,7 +118,16 @@ class HampayamClient {
     }
   }
 
-  static void signUpChatWithEmail(String address, String apiKey, String userAgent, String language, String verssion, String name, String email, String username, String password) {
+  static void signUpChatWithEmail(
+      String address,
+      String apiKey,
+      String userAgent,
+      String language,
+      String verssion,
+      String name,
+      String email,
+      String username,
+      String password) {
     IORouter.connect(' ws://$address/v0/channels?apikey=$apiKey');
     String newId = IORouter.generateRandomKey();
     JSndHi hi = JSndHi(id: newId, lang: language, ua: userAgent, ver: verssion);
@@ -103,7 +138,14 @@ class HampayamClient {
     JPublicData(fn: name);
     Description description = Description(publicData: public);
     JUserCredential credential = JUserCredential(meth: "email", val: email);
-    JSndAcc acc = JSndAcc(id: newId, user: 'new', scheme: 'basic', secret: secret, login: true, desc: description, cred: credential as List);
+    JSndAcc acc = JSndAcc(
+        id: newId,
+        user: 'new',
+        scheme: 'basic',
+        secret: secret,
+        login: true,
+        desc: description,
+        cred: credential as List);
     MsgClient sendAcc = MsgClient(jSndAcc: acc);
     IORouter.sendMap(sendAcc.toJson());
   }
@@ -114,7 +156,8 @@ class HampayamClient {
     JUserCredential credential = JUserCredential(meth: "tel", resp: resp);
     cred.add(credential);
     String newId = IORouter.generateRandomKey();
-    JSndLogin login = JSndLogin(id: newId, scheme: 'token', secret: token, cred: cred);
+    JSndLogin login =
+        JSndLogin(id: newId, scheme: 'token', secret: token, cred: cred);
     MsgClient sendLogin = MsgClient(jSndLogin: login);
     IORouter.sendMap(sendLogin.toJson());
   }
@@ -125,7 +168,8 @@ class HampayamClient {
     JUserCredential credential = JUserCredential(meth: "email", resp: resp);
     cred.add(credential);
     String newId = IORouter.generateRandomKey();
-    JSndLogin login = JSndLogin(id: newId, scheme: 'token', secret: token, cred: cred);
+    JSndLogin login =
+        JSndLogin(id: newId, scheme: 'token', secret: token, cred: cred);
     MsgClient sendLogin = MsgClient(jSndLogin: login);
     IORouter.sendMap(sendLogin.toJson());
   }
@@ -135,14 +179,19 @@ class HampayamClient {
     await storage.write(key: 'token', value: token);
   }
 
-  static Future<void> autoLogin(String address, String apiKey, String language, String value) async {
+  static Future<void> autoLogin(
+      String address, String apiKey, String language, String value) async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     IORouter.connect('ws://$address/v0/channels?apikey=$apiKey');
 
     if (value != null) {
       String newId = IORouter.generateRandomKey();
-      JSndHi hi = JSndHi(id: newId, lang: language, ua: androidInfo.version.release, ver: IORouter.version);
+      JSndHi hi = JSndHi(
+          id: newId,
+          lang: language,
+          ua: androidInfo.version.release,
+          ver: IORouter.version);
       MsgClient sendHi = MsgClient(jSndHi: hi);
       IORouter.sendMap(sendHi.toJson());
       JSndLogin login = JSndLogin(id: newId, scheme: 'token', secret: value);
@@ -165,7 +214,11 @@ class HampayamClient {
     Subscription subscription = new Subscription(ims: DateTime.now().toUtc());
     DataWhat data = new DataWhat(limit: 24);
     Description description = new Description(ims: DateTime.now().toUtc());
-    JSndGet jSndGet = new JSndGet(data: data, sub: subscription, desc: description, what: 'data sub desc');
+    JSndGet jSndGet = new JSndGet(
+        data: data,
+        sub: subscription,
+        desc: description,
+        what: 'data sub desc');
 
     JSndSub jSndSub = JSndSub(id: newId, topic: topic, jSndGet: jSndGet);
     MsgClient sendSub = MsgClient(jSndSub: jSndSub);
@@ -180,7 +233,12 @@ class HampayamClient {
     DataWhat data = new DataWhat(limit: 24);
     Description description = new Description(ims: DateTime.now().toUtc());
     Delete del = Delete(since: since);
-    JSndGet jSndGet = new JSndGet(data: data, sub: subscription, desc: description, del: del, what: 'data sub desc');
+    JSndGet jSndGet = new JSndGet(
+        data: data,
+        sub: subscription,
+        desc: description,
+        del: del,
+        what: 'data sub desc');
 
     JSndSub jSndSub = JSndSub(id: newId, topic: topic, jSndGet: jSndGet);
     MsgClient sendSub = MsgClient(jSndSub: jSndSub);
@@ -198,15 +256,18 @@ class HampayamClient {
 
   static void contactSearch(String contactList) {
     if (contactList.length > 0) {
-      IORouter.sendString('{"set":{"id":"95589","topic":"fnd","desc":{"public":"tel:$contactList"}}}');
-      JSndGet jSndGet = JSndGet(id: IORouter.generateRandomKey(), topic: 'fnd', what: 'sub');
+      IORouter.sendString(
+          '{"set":{"id":"95589","topic":"fnd","desc":{"public":"tel:$contactList"}}}');
+      JSndGet jSndGet =
+          JSndGet(id: IORouter.generateRandomKey(), topic: 'fnd', what: 'sub');
       MsgClient sendGet = MsgClient(jSndGet: jSndGet);
       IORouter.sendMap(sendGet.toJson());
     }
   }
 
   static void getContatct() async {
-    List<Contact> contacts = (await ContactsService.getContacts(withThumbnails: false)).toList();
+    List<Contact> contacts =
+        (await ContactsService.getContacts(withThumbnails: false)).toList();
     String contacString = '';
     int counter = 0;
     List<String> phone = [];
@@ -214,7 +275,11 @@ class HampayamClient {
       for (var item in contacts) {
         if (item.phones.toList().length > 0) {
           if (!phone.contains(item.phones.toList().elementAt(0).value)) {
-            phone.add(item.phones.toList().first.value.replaceAll(new RegExp(r"\s+"), ""));
+            phone.add(item.phones
+                .toList()
+                .first
+                .value
+                .replaceAll(new RegExp(r"\s+"), ""));
           }
         }
       }
@@ -225,12 +290,14 @@ class HampayamClient {
             if (counter == 0)
               contacString += '0' + item.substring(item.length - 10) + ',';
             else
-              contacString += 'tel:' + '0' + item.substring(item.length - 10) + ',';
+              contacString +=
+                  'tel:' + '0' + item.substring(item.length - 10) + ',';
           } else if (item.startsWith('0')) {
             if (counter == 0)
               contacString += item.substring(item.length - 11);
             else
-              contacString += ',' + 'tel:' + item.substring(item.length - 11) + ',';
+              contacString +=
+                  ',' + 'tel:' + item.substring(item.length - 11) + ',';
           }
           if (contacString.length > 0) {
             counter++;
@@ -242,7 +309,8 @@ class HampayamClient {
     }
   }
 
-  static void chnageProfileName(String fn, {String surname, ProfileProvider profileName}) {
+  static void chnageProfileName(String fn,
+      {String surname, ProfileProvider profileName}) {
     String newId = IORouter.generateRandomKey();
     JName name = JName(surname: surname);
     JPublicData publicData = JPublicData(fn: fn, n: name);
@@ -259,14 +327,18 @@ class HampayamClient {
     }
   }
 
-  static Future<void> getDataAutoLogin(BuildContext context, String language) async {
-    ProfileProvider profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-    ChatListProvider chatListProvider = Provider.of<ChatListProvider>(context, listen: false);
+  static Future<void> getDataAutoLogin(
+      BuildContext context, String language) async {
+    ProfileProvider profileProvider =
+        Provider.of<ProfileProvider>(context, listen: false);
+    ChatListProvider chatListProvider =
+        Provider.of<ChatListProvider>(context, listen: false);
 
     final storage = new FlutterSecureStorage();
     String value = await storage.read(key: 'token') ?? null;
     if (profileProvider.token == '') {
-      await HampayamClient.autoLogin(IORouter.ipAddress, IORouter.apiKey, language, value);
+      await HampayamClient.autoLogin(
+          IORouter.ipAddress, IORouter.apiKey, language, value);
       IORouter.homeScreenChannel.stream.listen((event) async {
         switch (event.type) {
           case 'm':
@@ -275,19 +347,28 @@ class HampayamClient {
             if (meta.topic == 'me') {
               if (meta.hasSub()) {
                 chatListProvider.clearData();
-                meta.sub.sort((a, b) => b.touched.compareTo(a.touched));
-                chatListProvider.listSpliter(meta.sub);
+                if (meta.sub.length > 1) {
+                  meta.sub.sort((a, b) {
+                    if (a.touched != null && b.touched != null) {
+                      print(b.touched);
+                      return b.touched.compareTo(a.touched);
+                    }
+                  });
+                  chatListProvider.listSpliter(meta.sub);
+                }
               }
 
               if (meta.hasDesc()) {
                 profileProvider.fname(meta.getDescription().getPublic().fn);
                 if (meta.getDescription().getPublic().photo != null) {
                   if (meta.getDescription().getPublic().photo != null) {
-                    profileProvider.setPhoto(meta.getDescription().getPublic().photo.data);
+                    profileProvider
+                        .setPhoto(meta.getDescription().getPublic().photo.data);
                   }
                 }
                 if (meta.desc.getPublic().n != null) {
-                  profileProvider.sname(meta.getDescription().getPublic().n.surname);
+                  profileProvider
+                      .sname(meta.getDescription().getPublic().n.surname);
                 }
               }
               if (meta.hasCred()) {
@@ -317,7 +398,8 @@ class HampayamClient {
 
   static Future getImagefromcameraInChannel(BuildContext context) async {
     ProfileProvider profileProvider = Provider.of(context, listen: false);
-    var image = await ImagePicker.platform.pickImage(source: ImageSource.camera);
+    var image =
+        await ImagePicker.platform.pickImage(source: ImageSource.camera);
     if (image != null) {
       HttpConnection.sendRequestImageChannel(
         IORouter.ipAddress,
@@ -332,7 +414,8 @@ class HampayamClient {
   static Future getImagefromGalleryInChannel(BuildContext context) async {
     ProfileProvider profileProvider = Provider.of(context, listen: false);
 
-    var image = await ImagePicker.platform.pickImage(source: ImageSource.gallery);
+    var image =
+        await ImagePicker.platform.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
       await HttpConnection.sendRequestImageChannel(
@@ -347,7 +430,8 @@ class HampayamClient {
 
   static Future getImagefromcameraInGroup(BuildContext context) async {
     ProfileProvider profileProvider = Provider.of(context, listen: false);
-    var image = await ImagePicker.platform.pickImage(source: ImageSource.camera);
+    var image =
+        await ImagePicker.platform.pickImage(source: ImageSource.camera);
     if (image != null) {
       HttpConnection.sendRequestImageGrp(
         IORouter.ipAddress,
@@ -362,7 +446,8 @@ class HampayamClient {
   static Future getImagefromGalleryInGroup(BuildContext context) async {
     ProfileProvider profileProvider = Provider.of(context, listen: false);
 
-    var image = await ImagePicker.platform.pickImage(source: ImageSource.gallery);
+    var image =
+        await ImagePicker.platform.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
       HttpConnection.sendRequestImageGrp(
@@ -375,7 +460,8 @@ class HampayamClient {
     }
   }
 
-  static createChannel(String name, int limit, BuildContext context, {String photo}) {
+  static createChannel(String name, int limit, BuildContext context,
+      {String photo}) {
     CreateChannelProvider channelProvider = Provider.of(context, listen: false);
 
     Description description;
@@ -401,12 +487,14 @@ class HampayamClient {
     DataWhat dataWhat = DataWhat(limit: limit);
     JSndGet jSndGet = JSndGet(data: dataWhat, what: "data sub desc");
 
-    JSndSub jSndSub = JSndSub(id: newId, topic: 'newchl$newId', jSndSet: jSndSet, jSndGet: jSndGet);
+    JSndSub jSndSub = JSndSub(
+        id: newId, topic: 'newchl$newId', jSndSet: jSndSet, jSndGet: jSndGet);
     MsgClient sendSub = MsgClient(jSndSub: jSndSub);
     IORouter.sendMap(sendSub.toJson());
   }
 
-  static createGrp(String name, int limit, BuildContext context, {String photo}) {
+  static createGrp(String name, int limit, BuildContext context,
+      {String photo}) {
     CreateGrpProvider grpProvider = Provider.of(context, listen: false);
 
     Description description;
@@ -432,7 +520,8 @@ class HampayamClient {
     DataWhat dataWhat = DataWhat(limit: limit);
     JSndGet jSndGet = JSndGet(data: dataWhat, what: "data sub desc");
 
-    JSndSub jSndSub = JSndSub(id: newId, topic: 'newgrp$newId', jSndSet: jSndSet, jSndGet: jSndGet);
+    JSndSub jSndSub = JSndSub(
+        id: newId, topic: 'newgrp$newId', jSndSet: jSndSet, jSndGet: jSndGet);
     MsgClient sendSub = MsgClient(jSndSub: jSndSub);
     IORouter.sendMap(sendSub.toJson());
   }

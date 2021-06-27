@@ -12,8 +12,18 @@ class LoginPageProvider extends ChangeNotifier {
   bool textConfirimEmpty = false;
   bool textPhoneEmpty = false;
   String validateText;
+  String validateTextPhone;
+  String validateTextUserName;
+  String validateTextPassword;
+  String validateTextName;
   bool isValidate = false;
+
+  bool isValidatePhone = false;
+  bool isValidateName = false;
+  bool isValidatePassword = false;
+  bool isValidateUserName = false;
   bool progressEnable = false;
+  bool progressEnableSignUp = false;
   int counter = 0;
   Color right;
   Color left;
@@ -26,11 +36,20 @@ class LoginPageProvider extends ChangeNotifier {
   bool get getTextRegNameEmpty => textRegNameEmpty;
   bool get getTextRegUserNameEmpty => textRegUserNameEmpty;
   bool get getTextRegPasswordEmpty => textRegPasswordEmpty;
-  bool get getTextConfirimEmpty => textRegPasswordEmpty;
-  bool get getTextPhoneEmpty => textRegPasswordEmpty;
+  bool get getTextConfirimEmpty => textConfirimEmpty;
+  bool get getTextPhoneEmpty => textPhoneEmpty;
   bool get getIsValidate => isValidate;
+  bool get getIsValidatePassword => isValidatePassword;
+  bool get getIsValidatePhone => isValidatePhone;
+  bool get getIsValidateUserName => isValidateUserName;
+  bool get getIsValidateName => isValidateName;
   String get getValidateText => validateText;
+  String get getValidateTextUserName => validateTextUserName;
+  String get getValidateTextName => validateTextName;
+  String get getValidateTextPassword => validateTextPassword;
+  String get getValidateTextPhone => validateTextPhone;
   bool get getprogressEnable => progressEnable;
+  bool get getprogressEnableSignUp => progressEnableSignUp;
 
   Color get getColorRight => right;
   Color get getColorLeft => left;
@@ -135,6 +154,26 @@ class LoginPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void changeIsVAlidatePassword(bool valid) {
+    this.isValidatePassword = valid;
+    notifyListeners();
+  }
+
+  void changeIsVAlidatePhone(bool valid) {
+    this.isValidatePhone = valid;
+    notifyListeners();
+  }
+
+  void changeIsVAlidateUserName(bool valid) {
+    this.isValidateUserName = valid;
+    notifyListeners();
+  }
+
+  void changeIsVAlidatName(bool valid) {
+    this.isValidateName = valid;
+    notifyListeners();
+  }
+
   void changeValidateText(String textField) {
     if (textField.isNotEmpty) {
       this.validateText = textField;
@@ -142,7 +181,40 @@ class LoginPageProvider extends ChangeNotifier {
     }
   }
 
+  void changeValidateTextPassword(String textField) {
+    if (textField.isNotEmpty) {
+      this.validateTextPassword = textField;
+      notifyListeners();
+    }
+  }
+
+  void changeValidateTextPhone(String textField) {
+    if (textField.isNotEmpty) {
+      this.validateTextPhone = textField;
+      notifyListeners();
+    }
+  }
+
+  void changeValidateTextUserName(String textField) {
+    if (textField.isNotEmpty) {
+      this.validateTextUserName = textField;
+      notifyListeners();
+    }
+  }
+
+  void changeValidateTextName(String textField) {
+    if (textField.isNotEmpty) {
+      this.validateTextName = textField;
+      notifyListeners();
+    }
+  }
+
   void changeProgress(bool pr) {
+    this.progressEnable = pr;
+    notifyListeners();
+  }
+
+  void changeProgressSignUp(bool pr) {
     this.progressEnable = pr;
     notifyListeners();
   }
@@ -168,9 +240,22 @@ class LoginPageProvider extends ChangeNotifier {
     textRegPasswordEmpty = false;
     textConfirimEmpty = false;
     textPhoneEmpty = false;
+    validateText = null;
+    validateTextPhone = null;
+    validateTextUserName = null;
+    validateTextPassword = null;
+    validateTextName = null;
     isValidate = false;
+
+    isValidatePhone = false;
+    isValidateName = false;
+    isValidatePassword = false;
+    isValidateUserName = false;
     progressEnable = false;
+    progressEnableSignUp = false;
     counter = 0;
+    right = null;
+    left = null;
     notifyListeners();
   }
 }

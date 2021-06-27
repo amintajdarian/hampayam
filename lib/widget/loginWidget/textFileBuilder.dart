@@ -15,19 +15,20 @@ class TextFieldBuilder extends StatelessWidget {
   final bool validateEmpty;
   final bool validateValue;
   final String errorValidate;
-  TextFieldBuilder({
-    this.textEditingController,
-    this.iconData,
-    this.hintText,
-    this.obscureText,
-    this.pressFunction,
-    this.suffixIconShow,
-    this.sufixIconData,
-    this.textInputType,
-    this.validateEmpty,
-    this.validateValue,
-    this.errorValidate,
-  });
+  final Function(String) onchange;
+  TextFieldBuilder(
+      {this.textEditingController,
+      this.iconData,
+      this.hintText,
+      this.obscureText,
+      this.pressFunction,
+      this.suffixIconShow,
+      this.sufixIconData,
+      this.textInputType,
+      this.validateEmpty,
+      this.validateValue,
+      this.errorValidate,
+      this.onchange});
   @override
   Widget build(BuildContext context) {
     var _size = MediaQuery.of(context).size.width;
@@ -37,6 +38,7 @@ class TextFieldBuilder extends StatelessWidget {
       child: Align(
         alignment: Alignment.center,
         child: TextField(
+          onChanged: onchange,
           obscureText: obscureText,
           controller: textEditingController,
           keyboardType: textInputType != null ? textInputType : TextInputType.text,

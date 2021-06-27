@@ -39,9 +39,24 @@ class JSubscriptionData {
   @JsonKey(name: 'lastmsg', includeIfNull: false)
   LastMessage lastMessage;
 
-  JSubscriptionData({this.user, this.updated, this.touched, this.acs, this.read, this.recv, this.clear, this.public, this.private, this.online, this.topic, this.seq, this.seen, this.lastMessage});
+  JSubscriptionData(
+      {this.user,
+      this.updated,
+      this.touched,
+      this.acs,
+      this.read,
+      this.recv,
+      this.clear,
+      this.public,
+      this.private,
+      this.online,
+      this.topic,
+      this.seq,
+      this.seen,
+      this.lastMessage});
 
-  factory JSubscriptionData.fromJson(Map<String, dynamic> json) => _$JSubscriptionDataFromJson(json);
+  factory JSubscriptionData.fromJson(Map<String, dynamic> json) =>
+      _$JSubscriptionDataFromJson(json);
   Map<String, dynamic> toJson() => _$JSubscriptionDataToJson(this);
 
   hasAcs() {
