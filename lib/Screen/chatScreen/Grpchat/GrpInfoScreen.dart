@@ -2,27 +2,15 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/entypo_icons.dart';
-
 import 'package:fluttericon/mfg_labs_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
-import 'package:hampayam_chat/Messenging/ChatContent.dart';
-import 'package:hampayam_chat/Messenging/GroupSettings.dart';
-import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
-import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
-import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
 import 'package:hampayam_chat/Screen/chatScreen/AddMember/AddMemberScreen.dart';
-import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
-import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
-import 'package:hampayam_chat/StateManagement/chatStateManagement/AddMemberProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/GrpProvider.dart';
-
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
-
-import '../../HomeScreen.dart';
 
 class InfoGrp extends StatelessWidget {
   bool exit = false;
