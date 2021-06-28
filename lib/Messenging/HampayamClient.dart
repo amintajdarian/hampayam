@@ -8,7 +8,6 @@ import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
-import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
 import 'package:hampayam_chat/Model/Primitives/DataWhat.dart';
 import 'package:hampayam_chat/Model/Primitives/Delete.dart';
 import 'package:hampayam_chat/Model/Primitives/Description.dart';
@@ -211,14 +210,10 @@ class HampayamClient {
   static void subToChatFirst(String topic) {
     String newId = IORouter.generateRandomKey();
 
-    Subscription subscription = new Subscription(ims: DateTime.now().toUtc());
     DataWhat data = new DataWhat(limit: 24);
     Description description = new Description(ims: DateTime.now().toUtc());
-    JSndGet jSndGet = new JSndGet(
-        data: data,
-        sub: subscription,
-        desc: description,
-        what: 'data sub desc');
+    JSndGet jSndGet =
+        new JSndGet(data: data, desc: description, what: 'data sub desc');
 
     JSndSub jSndSub = JSndSub(id: newId, topic: topic, jSndGet: jSndGet);
     MsgClient sendSub = MsgClient(jSndSub: jSndSub);
@@ -294,10 +289,9 @@ class HampayamClient {
                   'tel:' + '0' + item.substring(item.length - 10) + ',';
           } else if (item.startsWith('0')) {
             if (counter == 0)
-              contacString += item.substring(item.length - 11);
+              contacString += item.substring(item.length - 11) + ',';
             else
-              contacString +=
-                  ',' + 'tel:' + item.substring(item.length - 11) + ',';
+              contacString += 'tel:' + item.substring(item.length - 11) + ',';
           }
           if (contacString.length > 0) {
             counter++;
@@ -373,6 +367,7 @@ class HampayamClient {
               }
               if (meta.hasCred()) {
                 profileProvider.setPhone(meta.getCredential(0).val);
+                profileProvider.changeSetSub(false);
               }
             }
 

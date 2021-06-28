@@ -8,6 +8,7 @@ import 'package:hampayam_chat/Messenging/HampayamClient.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
+import 'package:hampayam_chat/Screen/HomeScreen.dart';
 import 'package:hampayam_chat/StateManagement/CreateChannelProvider/CreateChannelProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
@@ -25,7 +26,8 @@ class ChlChatScreen extends StatefulWidget {
   State<ChlChatScreen> createState() => _ChlChatScreenState();
 }
 
-class _ChlChatScreenState extends State<ChlChatScreen> with TickerProviderStateMixin {
+class _ChlChatScreenState extends State<ChlChatScreen>
+    with TickerProviderStateMixin {
   AnimationController _controller;
   Animation _animation;
   TextEditingController textEditingController = TextEditingController();
@@ -55,7 +57,8 @@ class _ChlChatScreenState extends State<ChlChatScreen> with TickerProviderStateM
       HampayamClient.subToChatFirst(chlProvider.getTopicData.topic);
     }
 
-    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _animation = Tween(begin: 300.0, end: 50.0).animate(_controller)
       ..addListener(() {
         if (mounted) setState(() {});
@@ -96,11 +99,17 @@ class _ChlChatScreenState extends State<ChlChatScreen> with TickerProviderStateM
         IORouter.activePage = 'home';
         ChatContent.leaveChat(chlProvider.topicData.topic);
         chlProvider.leaveSub();
-        Navigator.pop(context, '+');
+        Navigator.pushReplacement<void, void>(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => HomeScreen(),
+          ),
+        );
 
         return true;
       },
-      child: Consumer2<CreateChannelProvider, ChlProvider>(builder: (context, value, value1, child) {
+      child: Consumer2<CreateChannelProvider, ChlProvider>(
+          builder: (context, value, value1, child) {
         if (!channelProvider.getCreated) {
           return Scaffold(
             key: _key,
@@ -113,7 +122,8 @@ class _ChlChatScreenState extends State<ChlChatScreen> with TickerProviderStateM
                     )
                   : Container(),
             ),
-            body: Consumer<ChatButtonProvider>(builder: (context, value2, child) {
+            body:
+                Consumer<ChatButtonProvider>(builder: (context, value2, child) {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -124,16 +134,33 @@ class _ChlChatScreenState extends State<ChlChatScreen> with TickerProviderStateM
                           itemCount: value1.chatList.length,
                           itemBuilder: (context, index) {
                             if (index != value1.chatList.length - 1) {
-                              return ItemChatList.chatItem(value1.chatList[index], profileProvider.getUserName, profileProvider.fn + value1.chatList[index].seq.toString(),
-                                  value1.getTopicData.public.fn, _sizeH, context, profileProvider.getToken);
+                              return ItemChatList.chatItem(
+                                  value1.chatList[index],
+                                  profileProvider.getUserName,
+                                  profileProvider.fn +
+                                      value1.chatList[index].seq.toString(),
+                                  value1.getTopicData.public.fn,
+                                  _sizeH,
+                                  context,
+                                  profileProvider.getToken);
                             } else if (value1.chatList.last.seq != 1) {
-                              ChatContent.loadMoreData(value1.chatList[index].seq, value1.topicData.topic, 24);
+                              ChatContent.loadMoreData(
+                                  value1.chatList[index].seq,
+                                  value1.topicData.topic,
+                                  24);
                               return Container(
                                 child: SpinKitCircle(color: Colors.blue),
                               );
                             } else {
-                              return ItemChatList.chatItem(value1.chatList[index], profileProvider.getUserName, profileProvider.fn + value1.chatList[index].seq.toString(),
-                                  value1.getTopicData.public.fn, _sizeH, context, profileProvider.getToken);
+                              return ItemChatList.chatItem(
+                                  value1.chatList[index],
+                                  profileProvider.getUserName,
+                                  profileProvider.fn +
+                                      value1.chatList[index].seq.toString(),
+                                  value1.getTopicData.public.fn,
+                                  _sizeH,
+                                  context,
+                                  profileProvider.getToken);
                             }
                           }),
                       flex: 1,
@@ -185,7 +212,7 @@ class _ChlChatScreenState extends State<ChlChatScreen> with TickerProviderStateM
           if (channelProvider.getCreated) {
             chlProvider.addTopicSub(channelProvider.getDataCreated);
             channelProvider.setCreated(false);
-            chatListProvider.addSubList(channelProvider.dataCreated);
+            chatListProvider.addSubListByTopic(channelProvider.dataCreated);
             channelProvider.clear();
           }
         }

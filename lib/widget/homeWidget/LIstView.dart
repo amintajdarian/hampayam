@@ -13,13 +13,15 @@ class ListViewWidget extends StatelessWidget {
   ListViewWidget({this.chatList, this.size});
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ProfileProvider, StatusUserProvider>(builder: (context, value1, value2, child) {
+    return Consumer2<ProfileProvider, StatusUserProvider>(
+        builder: (context, value1, value2, child) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
           child: ListView(
             padding: EdgeInsets.only(top: 20),
-            children: ListViewItem.chatList(chatList, value1.token, size, value2.getOnlineUser, context),
+            children: ListViewItem.chatList(
+                chatList, value1.token, size, value2.getOnlineUser, context),
           ),
         ),
       );

@@ -12,7 +12,8 @@ import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.da
 import 'package:provider/provider.dart';
 
 class ListViewItem {
-  static List<Widget> chatList(List<JSubscriptionData> subList, String token, double size, List online, BuildContext context) {
+  static List<Widget> chatList(List<JSubscriptionData> subList, String token,
+      double size, List online, BuildContext context) {
     List<Widget> subChats = [];
     P2pProvider p2pProvider = Provider.of(context);
     ChlProvider chlProvider = Provider.of(context);
@@ -35,6 +36,7 @@ class ListViewItem {
               );
             } else if (item.topic.startsWith('chl')) {
               chlProvider.addTopicSub(item);
+
               chlProvider.changeShowButton(item.acs.mode.isWrite);
               Navigator.push<void>(
                 context,
@@ -44,6 +46,7 @@ class ListViewItem {
               );
             } else if (item.topic.startsWith('grp')) {
               grpProvider.addTopicSub(item);
+
               grpProvider.changeShowButton(item.acs.mode.isWrite);
               Navigator.push<void>(
                 context,
@@ -64,22 +67,32 @@ class ListViewItem {
                     ? Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          item.lastMessage.fn + ' :' + (item.lastMessage.message.runtimeType == String ? item.lastMessage.message.toString() : 'data'),
+                          item.lastMessage.fn +
+                              ' :' +
+                              (item.lastMessage.message.runtimeType == String
+                                  ? item.lastMessage.message.toString()
+                                  : 'data'),
                         ),
                       )
                     : null,
                 leading: item.public.photo != null
                     ? Stack(children: [
                         CachedNetworkImage(
-                          imageUrl: HttpConnection.fileUrl(IORouter.ipAddress, item.public.photo.data),
-                          httpHeaders: HttpConnection.setHeader(IORouter.apiKey, token),
-                          progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
+                          imageUrl: HttpConnection.fileUrl(
+                              IORouter.ipAddress, item.public.photo.data),
+                          httpHeaders:
+                              HttpConnection.setHeader(IORouter.apiKey, token),
+                          progressIndicatorBuilder:
+                              (context, url, downloadProgress) =>
+                                  CircularProgressIndicator(
+                                      value: downloadProgress.progress),
                           imageBuilder: (context, imageProvider) => Container(
                             width: size / 15,
                             height: size / 15,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              image: DecorationImage(image: imageProvider, fit: BoxFit.fill),
+                              image: DecorationImage(
+                                  image: imageProvider, fit: BoxFit.fill),
                             ),
                           ),
                         ),
@@ -88,7 +101,8 @@ class ListViewItem {
                           child: new Positioned(
                             bottom: 1,
                             left: 1,
-                            child: new Icon(Icons.brightness_1, size: 20, color: Colors.green),
+                            child: new Icon(Icons.brightness_1,
+                                size: 20, color: Colors.green),
                           ),
                         )
                       ])
@@ -105,7 +119,8 @@ class ListViewItem {
                             child: new Positioned(
                               bottom: 1,
                               left: 1,
-                              child: new Icon(Icons.brightness_1, size: 20, color: Colors.green),
+                              child: new Icon(Icons.brightness_1,
+                                  size: 20, color: Colors.green),
                             ),
                           )
                         ],

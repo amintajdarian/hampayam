@@ -24,6 +24,9 @@ Params _$ParamsFromJson(Map<String, dynamic> json) {
     what: json['what'] as String,
     url: json['url'] as String,
     seq: json['seq'] as int,
+    acs: json['acs'] == null
+        ? null
+        : JAccessLevelData.fromJson(json['acs'] as Map<String, dynamic>),
   );
 }
 
@@ -52,5 +55,6 @@ Map<String, dynamic> _$ParamsToJson(Params instance) {
   writeNotNull('what', instance.what);
   writeNotNull('url', instance.url);
   writeNotNull('seq', instance.seq);
+  writeNotNull('acs', instance.acs?.toJson());
   return val;
 }

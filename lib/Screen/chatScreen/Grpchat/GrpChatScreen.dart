@@ -12,6 +12,7 @@ import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
 import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/AddMemberProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/GrpProvider.dart';
 
 import 'package:hampayam_chat/StateManagement/chatStateManagement/chatButtonProvide.dart';
@@ -21,6 +22,8 @@ import 'package:hampayam_chat/widget/chatWidget/ItemChatList.dart';
 
 import 'package:hampayam_chat/widget/chatWidget/bottomBarWidget.dart';
 import 'package:provider/provider.dart';
+
+import '../../HomeScreen.dart';
 
 class GrpChatScreen extends StatefulWidget {
   @override
@@ -35,6 +38,7 @@ class _GrpChatScreenState extends State<GrpChatScreen>
   GlobalKey<ScaffoldState> _key = GlobalKey();
   FocusNode _focusNode = FocusNode();
   CreateGrpProvider groupProvider;
+  AddMemberProvider addMemberProvider;
   ProfileProvider profileProvider;
   ChatListProvider chatListProvider;
 
@@ -45,6 +49,7 @@ class _GrpChatScreenState extends State<GrpChatScreen>
   @override
   void initState() {
     groupProvider = Provider.of(context, listen: false);
+    addMemberProvider = Provider.of(context, listen: false);
     profileProvider = Provider.of(context, listen: false);
     chatListProvider = Provider.of(context, listen: false);
     buttonProvider = Provider.of(context, listen: false);
@@ -100,7 +105,12 @@ class _GrpChatScreenState extends State<GrpChatScreen>
         IORouter.activePage = 'home';
         ChatContent.leaveChat(grpProvider.topicData.topic);
         grpProvider.leaveSub();
-        Navigator.pop(context, '+');
+        Navigator.pushReplacement<void, void>(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => HomeScreen(),
+          ),
+        );
 
         return true;
       },
@@ -189,6 +199,7 @@ class _GrpChatScreenState extends State<GrpChatScreen>
   }
 
   Future<void> onData(MsgType data) async {
+    print(data.msg);
     switch (data.type) {
       case 'd':
         JRcvMsg msg = JRcvMsg.fromJson(data.msg);
@@ -207,18 +218,19 @@ class _GrpChatScreenState extends State<GrpChatScreen>
 
         if (meta.hasSub()) {
           grpProvider.addSub(meta.sub);
-
+          addMemberProvider.addMember(meta.sub);
           grpProvider.addTopicSub(groupProvider.getTopicData);
           if (groupProvider.getCreated) {
             for (var item in groupProvider.dataAdded) {
               GroupChannelSettings.addMember(meta.topic, item.user);
             }
             groupProvider.changeCreated(false);
-            chatListProvider.addSubList(groupProvider.getTopicData);
+            chatListProvider.addSubListByTopic(groupProvider.getTopicData);
             groupProvider.clearData();
           }
         }
         if (meta.hasDesc()) {
+          grpProvider.addTopicDesc(meta.desc);
           if (groupProvider.getCreated) {
             groupProvider.addAcs(meta.desc.acs);
             groupProvider.addtimeTouch(DateTime.parse(meta.desc.updated));
@@ -232,6 +244,16 @@ class _GrpChatScreenState extends State<GrpChatScreen>
         if (ctrl.topic != '') {
           if (groupProvider.getCreated) {
             groupProvider.addtopic(ctrl.topic);
+          }
+          if (ctrl.hasParams()) {
+            if (ctrl.params.user != null) {
+              for (var item in addMemberProvider.dataAdded) {
+                if (item.user == ctrl.params.user) {
+                  item.acs = ctrl.params.acs;
+                  grpProvider.addMemberSub(item);
+                }
+              }
+            }
           }
         }
         break;

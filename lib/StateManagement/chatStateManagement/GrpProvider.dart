@@ -1,20 +1,33 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
+import 'package:hampayam_chat/Model/Primitives/DescriptionData.dart';
 import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
 
 class GrpProvider extends ChangeNotifier {
   JSubscriptionData topicData = JSubscriptionData();
+  JDescriptionData dataDesc = JDescriptionData();
   List<JSubscriptionData> dataSub = [];
   List<JRcvMsg> chatList = [];
   bool showButtonBar = true;
 
   JSubscriptionData get getTopicData => topicData;
+  JDescriptionData get getDataDesc => dataDesc;
   bool get getShowButton => showButtonBar;
   List<JSubscriptionData> get getDataSub => dataSub;
   List<JRcvMsg> get getchatList => chatList;
 
   addSub(List<JSubscriptionData> data) {
     this.dataSub = data;
+    notifyListeners();
+  }
+
+  addMemberSub(JSubscriptionData data) {
+    this.dataSub.add(data);
+    notifyListeners();
+  }
+
+  addTopicDesc(JDescriptionData data) {
+    if (data.hasDefAcs() != null) this.dataDesc = data;
     notifyListeners();
   }
 
@@ -41,8 +54,14 @@ class GrpProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  inserstMsg(JRcvMsg msg) {
+    chatList.insert(0, msg);
+    notifyListeners();
+  }
+
   leaveSub() {
     topicData = new JSubscriptionData();
+    dataDesc = new JDescriptionData();
     this.dataSub.clear();
     this.chatList.clear();
     this.showButtonBar = true;

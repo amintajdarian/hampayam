@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
@@ -30,7 +29,10 @@ class _SetDataScreenState extends State<SetDataScreen> {
     var _sizeH = MediaQuery.of(context).size.height;
     return Scaffold(
       key: _key,
-      appBar: PreferredSize(child: SetDataAppBar.customAppBar(_sizeH, 'new Group', _key, context, subtitle: 'add Subject'), preferredSize: Size.fromHeight(_sizeH / 10)),
+      appBar: PreferredSize(
+          child: SetDataAppBar.customAppBar(_sizeH, 'new Group', _key, context,
+              subtitle: 'add Subject'),
+          preferredSize: Size.fromHeight(_sizeH / 10)),
       body: Consumer<CreateGrpProvider>(builder: (context, value, child) {
         return Container(
           height: _sizeH,
@@ -44,7 +46,8 @@ class _SetDataScreenState extends State<SetDataScreen> {
                   children: [
                     Card(
                       child: Padding(
-                        padding: EdgeInsets.only(left: _sizeH / 45, right: _sizeH / 45),
+                        padding: EdgeInsets.only(
+                            left: _sizeH / 45, right: _sizeH / 45),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -63,7 +66,8 @@ class _SetDataScreenState extends State<SetDataScreen> {
                                   showMaterialModalBottomSheet(
                                     context: context,
                                     builder: (context) => SingleChildScrollView(
-                                      controller: ModalScrollController.of(context),
+                                      controller:
+                                          ModalScrollController.of(context),
                                       child: ModalFitGrp(_sizeW),
                                     ),
                                   );
@@ -73,8 +77,12 @@ class _SetDataScreenState extends State<SetDataScreen> {
                                   foregroundImage: value.getImage != null
                                       ? Image(
                                           image: CachedNetworkImageProvider(
-                                          HttpConnection.fileUrl(IORouter.ipAddress, value.imageFile),
-                                          headers: HttpConnection.setHeader(IORouter.apiKey, profileProvider.getToken),
+                                          HttpConnection.fileUrl(
+                                              IORouter.ipAddress,
+                                              value.imageFile),
+                                          headers: HttpConnection.setHeader(
+                                              IORouter.apiKey,
+                                              profileProvider.getToken),
                                         )).image
                                       : null,
                                   radius: 30.0,
@@ -97,10 +105,19 @@ class _SetDataScreenState extends State<SetDataScreen> {
                                   maxLength: 20,
                                   style: TextStyle(fontSize: _sizeW / 25),
                                   decoration: new InputDecoration(
-                                    errorStyle: value.getTextEmpty ? TextStyle(fontSize: _sizeW / 25, color: Colors.red) : TextStyle(fontSize: _sizeW / 25, color: Colors.black),
-                                    errorText: value.getTextEmpty ? 'please enter your Group Name' : null,
+                                    errorStyle: value.getTextEmpty
+                                        ? TextStyle(
+                                            fontSize: _sizeW / 25,
+                                            color: Colors.red)
+                                        : TextStyle(
+                                            fontSize: _sizeW / 25,
+                                            color: Colors.black),
+                                    errorText: value.getTextEmpty
+                                        ? 'please enter your Group Name'
+                                        : null,
                                     hintText: "type Group subject here ... ",
-                                    labelStyle: new TextStyle(color: const Color(0xFF424242)),
+                                    labelStyle: new TextStyle(
+                                        color: const Color(0xFF424242)),
                                   ),
                                   onChanged: (select) {
                                     value.setGrpName(select);
@@ -121,14 +138,18 @@ class _SetDataScreenState extends State<SetDataScreen> {
                             value.emptyValidator(controller.text);
                             if (!value.getTextEmpty) {
                               if (value.getImage != null)
-                                HampayamClient.createGrp(controller.text, 24, context, photo: value.getImage);
+                                HampayamClient.createGrp(
+                                    controller.text, 24, context,
+                                    photo: value.getImage);
                               else
-                                HampayamClient.createGrp(controller.text, 24, context);
+                                HampayamClient.createGrp(
+                                    controller.text, 24, context);
                               value.setCreated(true);
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute<void>(
-                                  builder: (BuildContext context) => GrpChatScreen(),
+                                  builder: (BuildContext context) =>
+                                      GrpChatScreen(),
                                 ),
                               );
                             }
@@ -145,14 +166,15 @@ class _SetDataScreenState extends State<SetDataScreen> {
               Padding(
                 padding: EdgeInsets.only(top: _sizeH / 45),
                 child: Container(
-                  height: _sizeH / 1.904,
+                  height: _sizeH / 5.5,
                   child: GridView.count(
                     crossAxisCount: 4,
                     childAspectRatio: 1.0,
                     padding: const EdgeInsets.all(4.0),
                     mainAxisSpacing: 4.0,
                     crossAxisSpacing: 4.0,
-                    children: ItemGrid.itemAdded(value.dataAdded, context, _sizeH),
+                    children:
+                        ItemGrid.itemAdded(value.getdataAdded, context, _sizeH),
                   ),
                 ),
               ),

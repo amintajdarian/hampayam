@@ -4,7 +4,9 @@ import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvide
 import 'package:provider/provider.dart';
 
 class SetDataAppBar {
-  static Widget customAppBar(double height, String barTitle, GlobalKey<ScaffoldState> key, BuildContext context, {String subtitle}) {
+  static Widget customAppBar(double height, String barTitle,
+      GlobalKey<ScaffoldState> key, BuildContext context,
+      {String subtitle}) {
     CreateChannelProvider channelProvider = Provider.of(context);
     CreateGrpProvider grpProvider = Provider.of(context);
 
@@ -12,7 +14,8 @@ class SetDataAppBar {
       duration: Duration(seconds: 1),
       height: height,
       child: ClipRRect(
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(height / 55)),
+        borderRadius:
+            BorderRadius.vertical(bottom: Radius.circular(height / 55)),
         child: Container(
           decoration: BoxDecoration(
             gradient: new LinearGradient(
@@ -38,7 +41,16 @@ class SetDataAppBar {
                     children: [
                       Text(
                         barTitle,
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: height / 35, shadows: [BoxShadow(offset: Offset(3, 3), color: Colors.purple, blurRadius: 3.0)]),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: height / 35,
+                            shadows: [
+                              BoxShadow(
+                                  offset: Offset(3, 3),
+                                  color: Colors.purple,
+                                  blurRadius: 3.0)
+                            ]),
                       ),
                       subtitle != null
                           ? Padding(
@@ -64,10 +76,12 @@ class SetDataAppBar {
                 padding: EdgeInsets.only(left: height / 40, right: height / 40),
                 child: IconButton(
                     onPressed: () {
-                      if (channelProvider.getImage != null || channelProvider.getNameChannel != null) {
+                      if (channelProvider.getImage != null ||
+                          channelProvider.getNameChannel != null) {
                         channelProvider.clear();
                       }
-                      if (grpProvider.getImage != null || grpProvider.nameGrp != null) {
+                      if (grpProvider.getImage != null ||
+                          grpProvider.nameGrp != null) {
                         grpProvider.clearData();
                       }
                       Navigator.pop(context);

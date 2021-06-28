@@ -18,21 +18,23 @@ class BottomBarWidget extends StatelessWidget {
   int seq;
   String currentUser;
   P2pProvider p2pProvider;
-  BottomBarWidget(
-      {this.size,
-      this.animation,
-      this.focusNode,
-      this.textController,
-      this.controller,
-      this.buttonProvider,
-      this.topic,
-      this.currentUser,
-      this.seq,
-      this.p2pProvider});
+  GrpProvider grpProvider;
+  BottomBarWidget({
+    this.size,
+    this.animation,
+    this.focusNode,
+    this.textController,
+    this.controller,
+    this.buttonProvider,
+    this.topic,
+    this.currentUser,
+    this.seq,
+  });
 
   @override
   build(BuildContext context) {
-    GrpProvider grpProvider = Provider.of(context);
+    p2pProvider = Provider.of(context);
+    grpProvider = Provider.of(context);
     return Container(
       margin: EdgeInsets.only(
           bottom: size / 60, left: size / 70, right: size / 70, top: size / 65),
@@ -82,7 +84,7 @@ class BottomBarWidget extends StatelessWidget {
                       p2pProvider.inserMsg(msg);
                     }
                     if (topic.startsWith('grp')) {
-                      p2pProvider.inserMsg(msg);
+                      grpProvider.inserstMsg(msg);
                     }
 
                     textController.clear();

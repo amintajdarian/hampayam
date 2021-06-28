@@ -8,6 +8,7 @@ class ProfileProvider extends ChangeNotifier {
   String phone = '';
   String token = '';
   String resp = '';
+  bool setSub = true;
 
   String get getFname => fn;
   String get getSname => sn;
@@ -16,6 +17,7 @@ class ProfileProvider extends ChangeNotifier {
   String get getPhone => phone;
   String get getToken => token;
   String get getResp => resp;
+  bool get getSetSub => setSub;
 
   void fname(String fn) {
     this.fn = fn;
@@ -52,6 +54,11 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void changeSetSub(bool subEn) {
+    this.setSub = subEn;
+    notifyListeners();
+  }
+
   void reset() {
     fn = '';
     sn = '';
@@ -60,5 +67,6 @@ class ProfileProvider extends ChangeNotifier {
     phone = '';
     token = '';
     resp = '';
+    setSub = true;
   }
 }

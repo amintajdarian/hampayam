@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+
+import 'AccessLevelData.dart';
 part 'Params.g.dart';
 
 @JsonSerializable()
@@ -35,6 +37,8 @@ class Params {
   String url;
   @JsonKey(name: 'seq', includeIfNull: false)
   int seq;
+  @JsonKey(name: 'acs', includeIfNull: false)
+  JAccessLevelData acs;
 
   Params(
       {this.build,
@@ -52,7 +56,8 @@ class Params {
       this.count,
       this.what,
       this.url,
-      this.seq});
+      this.seq,
+      this.acs});
   factory Params.fromJson(Map<String, dynamic> json) => _$ParamsFromJson(json);
   Map<String, dynamic> toJson() => _$ParamsToJson(this);
 }

@@ -5,7 +5,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Messenging/ChatContent.dart';
 import 'package:hampayam_chat/Messenging/HampayamClient.dart';
-import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
@@ -45,8 +44,10 @@ class _P2pChatScreenState extends State<P2pChatScreen>
     if (chatlisten.isPaused) {
       chatlisten.resume();
     }
-
-    HampayamClient.subToChatFirst(p2pProvider.getDataSub.topic);
+    if (p2pProvider.getDataSub.topic != null)
+      HampayamClient.subToChatFirst(p2pProvider.getDataSub.topic);
+    else
+      HampayamClient.subToChatFirst(p2pProvider.getDataSub.user);
 
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
@@ -152,7 +153,6 @@ class _P2pChatScreenState extends State<P2pChatScreen>
                   seq: value1.chatList.length > 0
                       ? value1.chatList.last.seq + 1
                       : 1,
-                  p2pProvider: value1,
                 )
               ],
             ),

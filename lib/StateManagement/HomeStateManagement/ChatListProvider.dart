@@ -32,7 +32,7 @@ class ChatListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addSubList(JSubscriptionData data) {
+  void addSubListByTopic(JSubscriptionData data) {
     if (data.topic.startsWith('usr')) {
       userList.insert(0, data);
     } else if (data.topic.startsWith('grp')) {
@@ -40,6 +40,20 @@ class ChatListProvider extends ChangeNotifier {
     } else if (data.topic.startsWith('chl')) {
       channelList.insert(0, data);
     } else if (data.topic.startsWith('bot')) {
+      botList.insert(0, data);
+    }
+    subList.insert(0, data);
+    notifyListeners();
+  }
+
+  void addSubListByUser(JSubscriptionData data) {
+    if (data.user.startsWith('usr')) {
+      userList.insert(0, data);
+    } else if (data.user.startsWith('grp')) {
+      groupList.insert(0, data);
+    } else if (data.user.startsWith('chl')) {
+      channelList.insert(0, data);
+    } else if (data.user.startsWith('bot')) {
       botList.insert(0, data);
     }
     subList.insert(0, data);

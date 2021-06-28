@@ -33,18 +33,18 @@ class CreateGrpProvider extends ChangeNotifier {
   }
 
   void setDataAdded(List<JSubscriptionData> data) {
-    int counter = 0;
     for (int i = 0; i < valueCheck.length; i++) {
       if (valueCheck[i]) {
-        if (!dataAdded.contains(data[i])) dataAdded.add(data[i]);
+        if (!dataAdded.contains(data[i])) {
+          dataAdded.add(data[i]);
+        }
       } else if (!valueCheck[i]) {
         if (dataAdded.contains(data[i])) {
           dataAdded.remove(data[i]);
         }
-        counter++;
       }
     }
-    if (counter == valueCheck.length) dataAdded.clear();
+
     notifyListeners();
   }
 

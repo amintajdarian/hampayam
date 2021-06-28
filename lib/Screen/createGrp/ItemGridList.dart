@@ -9,47 +9,48 @@ import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvide
 import 'package:provider/provider.dart';
 
 class ItemGrid {
-  static List<Widget> itemAdded(List<JSubscriptionData> items, BuildContext context, double size) {
+  static List<Widget> itemAdded(
+      List<JSubscriptionData> items, BuildContext context, double size) {
     ProfileProvider profileProvider = Provider.of(context);
     List<Widget> tempList = [];
     for (var item in items) {
-      if (item.public.photo != null) {
-        tempList.add(
-          Column(
-            children: [
-              item.public.photo != null
-                  ? Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 65,
-                          foregroundImage: Image(
-                              image: CachedNetworkImageProvider(
-                            HttpConnection.fileUrl(IORouter.ipAddress, item.public.photo.data),
-                            headers: HttpConnection.setHeader(IORouter.apiKey, profileProvider.getToken),
-                          )).image,
+      tempList.add(
+        Column(
+          children: [
+            item.public.photo != null
+                ? Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 65,
+                        foregroundImage: Image(
+                            image: CachedNetworkImageProvider(
+                          HttpConnection.fileUrl(
+                              IORouter.ipAddress, item.public.photo.data),
+                          headers: HttpConnection.setHeader(
+                              IORouter.apiKey, profileProvider.getToken),
+                        )).image,
+                      ),
+                      Text(
+                        item.public.fn,
+                        style: TextStyle(fontSize: size / 50),
+                      )
+                    ],
+                  )
+                : Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 65,
+                        child: Icon(
+                          Elusive.child,
+                          size: 55,
                         ),
-                        Text(
-                          item.public.fn,
-                          style: TextStyle(fontSize: size / 50),
-                        )
-                      ],
-                    )
-                  : Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 65,
-                          child: Icon(
-                            Elusive.child,
-                            size: 55,
-                          ),
-                        ),
-                        Text(item.public.fn)
-                      ],
-                    ),
-            ],
-          ),
-        );
-      }
+                      ),
+                      Text(item.public.fn)
+                    ],
+                  ),
+          ],
+        ),
+      );
     }
     return tempList;
   }

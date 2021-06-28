@@ -20,6 +20,7 @@ import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvide
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/statusUserProvider.dart';
 
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/pageChangeProvider.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/AddMemberProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/ChlProvder.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/GrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
@@ -40,6 +41,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String language = '';
   CreateGrpProvider createGrpProvider;
+  AddMemberProvider addMemberProvider;
   LoginPageProvider loginPageProvider;
   StatusUserProvider onlieProvider;
   ChatListProvider chatListProvider;
@@ -58,13 +60,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     IORouter.activePage = 'home';
 
     IORouter.homeScreenChannel.stream.listen(onData);
-    Future.delayed(Duration(seconds: 0)).then((value) async {
-      await HampayamClient.getDataAutoLogin(context, language).then((value) {
-        notifcation.initializing();
+    profileProvider = Provider.of(context, listen: false);
+    if (profileProvider.getSetSub) {
+      Future.delayed(Duration(seconds: 0)).then((value) async {
+        await HampayamClient.getDataAutoLogin(context, language).then((value) {
+          notifcation.initializing();
+        });
+        HampayamClient.subToFnd();
+        contactProvide.changeReadContact(true);
       });
-      HampayamClient.subToFnd();
-      contactProvide.changeReadContact(true);
-    });
+    }
 
     super.initState();
   }
@@ -74,12 +79,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     language = context.locale.toLanguageTag();
     onlieProvider = Provider.of(context);
     chatListProvider = Provider.of(context);
-    profileProvider = Provider.of(context);
+
     contactProvide = Provider.of(context);
     loginPageProvider = Provider.of(context);
     chlProvider = Provider.of(context);
     p2pProvider = Provider.of(context);
     grpProvider = Provider.of(context);
+    addMemberProvider = Provider.of(context);
     createGrpProvider = Provider.of(context);
 
     PageChangeProvider pageChangeProvider =
@@ -162,6 +168,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           meta.sub.sort((a, b) => a.public.fn.compareTo(b.public.fn));
           contactProvide.setContact(meta.sub);
           createGrpProvider.setListCheck(meta.sub.length);
+          addMemberProvider.setListCheck(meta.sub.length);
         }
       }
     }

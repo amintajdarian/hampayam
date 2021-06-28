@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/octicons_icons.dart';
+import 'package:hampayam_chat/Screen/chatScreen/Grpchat/GrpInfoScreen.dart';
 
 class PopUpMenuGrp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size.height;
     return PopupMenuButton(
+      onSelected: (value) {
+        if (value == 1) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) => InfoGrp()));
+        }
+      },
       icon: Icon(
         Octicons.kebab_vertical,
         color: Colors.white,
@@ -14,14 +21,16 @@ class PopUpMenuGrp extends StatelessWidget {
       tooltip: 'Info',
       itemBuilder: (context) => [
         PopupMenuItem(
+          value: 1,
           child: Text(
-            'Profile',
+            'info',
             style: TextStyle(
               color: Colors.blueGrey,
             ),
           ),
         ),
         PopupMenuItem(
+          value: 2,
           child: Text(
             'Mute',
             style: TextStyle(
@@ -30,6 +39,7 @@ class PopUpMenuGrp extends StatelessWidget {
           ),
         ),
         PopupMenuItem(
+          value: 3,
           child: Text(
             'Leave',
             style: TextStyle(

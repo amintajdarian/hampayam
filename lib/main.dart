@@ -6,6 +6,7 @@ import 'package:hampayam_chat/StateManagement/CreateChannelProvider/CreateChanne
 import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/statusUserProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/pageChangeProvider.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/AddMemberProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/ChlProvder.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/GrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
@@ -38,6 +39,7 @@ void main() async {
       ChangeNotifierProvider(create: (context) => ChatButtonProvider()),
       ChangeNotifierProvider(create: (context) => ChlProvider()),
       ChangeNotifierProvider(create: (context) => GrpProvider()),
+      ChangeNotifierProvider(create: (context) => AddMemberProvider()),
     ],
     child: EasyLocalization(
         supportedLocales: [Locale('en'), Locale('fa')],

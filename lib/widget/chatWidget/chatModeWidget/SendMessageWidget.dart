@@ -2,10 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
-import 'package:hampayam_chat/widget/chatWidget/widgetSelector.dart';
+
+import '../widgetSelector.dart';
 
 class SendMsg {
-  static Widget sendMsgMode(double size, JRcvMsg msg, String name, BuildContext context, String token) {
+  static Widget sendMsgMode(double size, JRcvMsg msg, String name,
+      BuildContext context, String token) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Padding(
@@ -44,7 +46,10 @@ class SendMsg {
             SizedBox(width: 15),
             Text(
               msg.ts,
-              style: Theme.of(context).textTheme.bodyText2.apply(color: Colors.grey),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText2
+                  .apply(color: Colors.grey),
             ),
           ],
         ),

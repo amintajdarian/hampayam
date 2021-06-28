@@ -1,16 +1,20 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
-import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
+import 'package:hampayam_chat/Screen/chatScreen/P2pChat/P2pChatScreen.dart';
+import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
 import 'package:provider/provider.dart';
-import 'package:roundcheckbox/roundcheckbox.dart';
 
-class ItemContact {
+class ItemContactNCH {
   static List<Widget> listOfContact(List<JSubscriptionData> subList,
       double size, BuildContext context, String token) {
-    CreateGrpProvider createGrpProvider = Provider.of(context, listen: false);
+    P2pProvider p2pProvider = Provider.of(context, listen: false);
+    ChatListProvider chatListProvider = Provider.of(context, listen: false);
 
     List<Widget> listItem = [];
     if (subList != null) {
@@ -20,15 +24,38 @@ class ItemContact {
             child: Padding(
           padding: EdgeInsets.all(size / 200),
           child: ListTile(
-            trailing: RoundCheckBox(
-              isChecked: createGrpProvider.getValue[subList.indexOf(item)],
-              size: size / 25,
-              onTap: (selected) {
-                createGrpProvider.changeValue(selected, subList.indexOf(item));
-                createGrpProvider.setDataAdded(subList);
-                createGrpProvider.floatingBtnEnable();
-              },
-            ),
+            onTap: () {
+              int counter = 0;
+              int index = 0;
+              for (int i = 0; i < chatListProvider.getUSerList.length; i++) {
+                if (chatListProvider.getUSerList[i].user != null) {
+                  if (chatListProvider.getUSerList[i].user == item.user) {
+                    counter++;
+                    index = i;
+                  }
+                } else if (chatListProvider.getUSerList[i].topic != null) {
+                  if (chatListProvider.getUSerList[i].topic == item.user) {
+                    counter++;
+                    index = i;
+                  }
+                }
+              }
+              if (counter == 0) {
+                item.touched = DateTime.now().toUtc();
+                item.updated = DateTime.now().toUtc();
+                chatListProvider.addSubListByUser(item);
+                p2pProvider.addSub(item);
+              } else {
+                p2pProvider.addSub(chatListProvider.getUSerList[index]);
+              }
+
+              Navigator.pushReplacement<void, void>(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => P2pChatScreen(),
+                ),
+              );
+            },
             title: Text(item.public.fn),
             subtitle: Text(item.private[0]),
             leading: item.public.photo != null
