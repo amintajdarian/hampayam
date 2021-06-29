@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Messenging/ChatContent.dart';
 import 'package:hampayam_chat/Messenging/HampayamClient.dart';
+import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
@@ -176,6 +177,10 @@ class _P2pChatScreenState extends State<P2pChatScreen>
 
         break;
       case 'm':
+        JRcvMeta meta = JRcvMeta.fromJson(data.msg);
+        if (meta.hasDesc()) {
+          p2pProvider.addAcs(meta.desc.acs);
+        }
         break;
       default:
     }

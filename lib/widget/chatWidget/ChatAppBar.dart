@@ -8,6 +8,7 @@ import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
 import 'package:hampayam_chat/widget/chatWidget/PopUpMenuChl.dart';
 import 'package:hampayam_chat/widget/chatWidget/PopUpMenuGrp.dart';
+import 'package:hampayam_chat/widget/chatWidget/PopUpMenuP2p.dart';
 import 'package:provider/provider.dart';
 
 class ChatAppBar extends StatelessWidget {
@@ -20,6 +21,8 @@ class ChatAppBar extends StatelessWidget {
       return PopUpMenuGrp();
     } else if (data.topic.startsWith('chl')) {
       return PopUpMenuChl();
+    } else if (data.topic.startsWith('usr')) {
+      return PopUpMenuP2p();
     }
   }
 

@@ -1,17 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
+import 'package:hampayam_chat/Model/Primitives/AccessLevelData.dart';
 import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
 
 class P2pProvider extends ChangeNotifier {
   JSubscriptionData dataSub = JSubscriptionData();
+  JAccessLevelData dataAcs = JAccessLevelData();
   List<JRcvMsg> chatList = [];
   int lastSeq = 0;
   JSubscriptionData get getDataSub => dataSub;
+  JAccessLevelData get getDataAcs => dataAcs;
   List<JRcvMsg> get getchatList => chatList;
   int get getLastSeq => lastSeq;
 
   addSub(JSubscriptionData data) {
     this.dataSub = data;
+    notifyListeners();
+  }
+
+  addAcs(JAccessLevelData data) {
+    this.dataAcs = data;
     notifyListeners();
   }
 
