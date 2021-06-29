@@ -6,6 +6,7 @@ import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Messenging/ChatContent.dart';
 import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
+import 'package:hampayam_chat/widget/chatWidget/PopUpMenuChl.dart';
 import 'package:hampayam_chat/widget/chatWidget/PopUpMenuGrp.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,8 @@ class ChatAppBar extends StatelessWidget {
   Widget selectPopUp() {
     if (data.topic.startsWith('grp')) {
       return PopUpMenuGrp();
+    } else if (data.topic.startsWith('chl')) {
+      return PopUpMenuChl();
     }
   }
 

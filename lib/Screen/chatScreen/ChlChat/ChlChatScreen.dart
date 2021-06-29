@@ -12,6 +12,7 @@ import 'package:hampayam_chat/Screen/HomeScreen.dart';
 import 'package:hampayam_chat/StateManagement/CreateChannelProvider/CreateChannelProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/AddMemberProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/ChlProvder.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/chatButtonProvide.dart';
 import 'package:hampayam_chat/widget/Loading.dart';
@@ -32,6 +33,7 @@ class _ChlChatScreenState extends State<ChlChatScreen>
   Animation _animation;
   TextEditingController textEditingController = TextEditingController();
   GlobalKey<ScaffoldState> _key = GlobalKey();
+  AddMemberProvider addMemberProvider;
   FocusNode _focusNode = FocusNode();
   CreateChannelProvider channelProvider;
   ProfileProvider profileProvider;
@@ -48,6 +50,7 @@ class _ChlChatScreenState extends State<ChlChatScreen>
     chatListProvider = Provider.of(context, listen: false);
     buttonProvider = Provider.of(context, listen: false);
     chlProvider = Provider.of(context, listen: false);
+    addMemberProvider = Provider.of(context, listen: false);
 
     chatlisten = IORouter.chatScreenChannel.stream.listen(onData);
     if (chatlisten.isPaused) {
@@ -208,7 +211,7 @@ class _ChlChatScreenState extends State<ChlChatScreen>
 
         if (meta.hasSub()) {
           chlProvider.addSub(meta.sub);
-
+          addMemberProvider.addMember(meta.sub);
           if (channelProvider.getCreated) {
             chlProvider.addTopicSub(channelProvider.getDataCreated);
             channelProvider.setCreated(false);
@@ -217,6 +220,7 @@ class _ChlChatScreenState extends State<ChlChatScreen>
           }
         }
         if (meta.hasDesc()) {
+          chlProvider.addTopicDesc(meta.desc);
           if (channelProvider.getCreated) {
             channelProvider.addAcs(meta.desc.acs);
             channelProvider.addtimeTouch(DateTime.parse(meta.desc.updated));
@@ -230,6 +234,16 @@ class _ChlChatScreenState extends State<ChlChatScreen>
         if (ctrl.topic != '') {
           if (channelProvider.getCreated) {
             channelProvider.addtopic(ctrl.topic);
+          }
+          if (ctrl.hasParams()) {
+            if (ctrl.params.user != null) {
+              for (var item in addMemberProvider.dataAdded) {
+                if (item.user == ctrl.params.user) {
+                  item.acs = ctrl.params.acs;
+                  chlProvider.addMemberSub(item);
+                }
+              }
+            }
           }
         }
         break;

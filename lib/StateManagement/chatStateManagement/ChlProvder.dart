@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
+import 'package:hampayam_chat/Model/Primitives/DescriptionData.dart';
 import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
 
 class ChlProvider extends ChangeNotifier {
@@ -7,14 +8,25 @@ class ChlProvider extends ChangeNotifier {
   List<JSubscriptionData> dataSub = [];
   List<JRcvMsg> chatList = [];
   bool showButtonBar = true;
-
+  JDescriptionData dataDesc = JDescriptionData();
   JSubscriptionData get getTopicData => topicData;
+  JDescriptionData get getDataDesc => dataDesc;
   bool get getShowButton => showButtonBar;
   List<JSubscriptionData> get getDataSub => dataSub;
   List<JRcvMsg> get getchatList => chatList;
 
   addSub(List<JSubscriptionData> data) {
     this.dataSub = data;
+    notifyListeners();
+  }
+
+  addMemberSub(JSubscriptionData data) {
+    this.dataSub.add(data);
+    notifyListeners();
+  }
+
+  addTopicDesc(JDescriptionData data) {
+    if (data.hasDefAcs() != null) this.dataDesc = data;
     notifyListeners();
   }
 

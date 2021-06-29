@@ -29,7 +29,7 @@ class AddMemberScreen extends StatelessWidget {
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(_sizeH / 10),
             child: GrpCustomAppbar.customAppBar(
-                _sizeH, LocaleKeys.DrawerCreatGrp.tr(), _key, context)),
+                _sizeH, 'added Member', _key, context)),
         body: Consumer2<ContactProvide, AddMemberProvider>(
             builder: (context, value1, value2, child) {
           return Padding(
