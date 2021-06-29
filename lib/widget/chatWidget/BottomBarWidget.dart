@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hampayam_chat/Messenging/ChatContent.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/ChlProvder.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/GrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/chatButtonProvide.dart';
@@ -19,6 +20,7 @@ class BottomBarWidget extends StatelessWidget {
   String currentUser;
   P2pProvider p2pProvider;
   GrpProvider grpProvider;
+  ChlProvider chlProvider;
   BottomBarWidget({
     this.size,
     this.animation,
@@ -35,6 +37,7 @@ class BottomBarWidget extends StatelessWidget {
   build(BuildContext context) {
     p2pProvider = Provider.of(context);
     grpProvider = Provider.of(context);
+    chlProvider = Provider.of(context);
     return Container(
       margin: EdgeInsets.only(
           bottom: size / 60, left: size / 70, right: size / 70, top: size / 65),
@@ -85,6 +88,8 @@ class BottomBarWidget extends StatelessWidget {
                     }
                     if (topic.startsWith('grp')) {
                       grpProvider.inserstMsg(msg);
+                    } else if (topic.startsWith('chl')) {
+                      chlProvider.inserstMsg(msg);
                     }
 
                     textController.clear();

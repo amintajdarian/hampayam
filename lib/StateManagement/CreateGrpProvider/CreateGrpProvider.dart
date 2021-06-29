@@ -16,6 +16,7 @@ class CreateGrpProvider extends ChangeNotifier {
   List<bool> get getValue => valueCheck;
   bool get getfloatingBtn => floatingBtn;
   List<JSubscriptionData> get getdataAdded => dataAdded;
+  String get getNameGrp => nameGrp;
   JSubscriptionData get getTopicData => topicData;
 
   String get getImage => imageFile;

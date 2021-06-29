@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
+import 'package:hampayam_chat/Messenging/GroupSettings.dart';
 
 import 'package:hampayam_chat/Messenging/HampayamClient.dart';
 import 'package:hampayam_chat/Messenging/Notification.dart';
@@ -162,10 +163,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       JRcvMeta meta = JRcvMeta.fromJson(data.msg);
       if (meta.topic == 'me') {
         if (meta.hasCred()) {}
+        if (meta.hasSub()) {
+          if (chatListProvider.getAddedData) {
+            chatListProvider.addSubListByTopic(meta.sub[0]);
+            chatListProvider.addedDataEn(false);
+          }
+        }
       }
       if (meta.topic == 'fnd') {
         if (meta.hasSub()) {
           meta.sub.sort((a, b) => a.public.fn.compareTo(b.public.fn));
+          for (var item in meta.sub) {
+            item.topic = item.user;
+          }
           contactProvide.setContact(meta.sub);
           createGrpProvider.setListCheck(meta.sub.length);
           addMemberProvider.setListCheck(meta.sub.length);
@@ -187,6 +197,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             pres.extra.message, pres.extra.fn, pres.src);
         notifcation.showNotifications(pres.extra.fn, pres.extra.message);
         chatListProvider.chatListChange(pres.src);
+      }
+      if (pres.what == 'acs') {
+        GroupChannelSettings.addTopic(pres.src);
+        chatListProvider.addedDataEn(true);
       }
 
       if (pres.what == 'read') {

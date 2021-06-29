@@ -1,8 +1,7 @@
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:hampayam_chat/StateManagement/ContactStateManagment/ContactProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
-import 'package:hampayam_chat/widget/createGroupWidget/customAppBar.dart';
+import 'package:hampayam_chat/widget/ContactDataAppBar%20.dart';
 import 'package:hampayam_chat/widget/chatWidget/itemContactWithNoCheckBox.dart';
 import 'package:provider/provider.dart';
 
@@ -17,8 +16,7 @@ class ContactScreen extends StatelessWidget {
       key: _key,
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(_sizeH / 10),
-          child:
-              GrpCustomAppbar.customAppBar(_sizeH, 'contacts', _key, context)),
+          child: ContactAppBar.customAppBar(_sizeH, 'contacts', _key, context)),
       body: Consumer<ContactProvide>(builder: (context, value1, child) {
         return Padding(
           padding: const EdgeInsets.all(8.0),

@@ -3,13 +3,10 @@ import 'package:hampayam_chat/StateManagement/CreateChannelProvider/CreateChanne
 import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
 import 'package:provider/provider.dart';
 
-class SetDataAppBar {
+class ContactAppVar {
   static Widget customAppBar(double height, String barTitle,
       GlobalKey<ScaffoldState> key, BuildContext context,
       {String subtitle}) {
-    CreateChannelProvider channelProvider = Provider.of(context);
-    CreateGrpProvider grpProvider = Provider.of(context);
-
     return AnimatedContainer(
       duration: Duration(seconds: 1),
       height: height,
@@ -76,15 +73,7 @@ class SetDataAppBar {
                 padding: EdgeInsets.only(left: height / 40, right: height / 40),
                 child: IconButton(
                     onPressed: () {
-                      if (channelProvider.getImage != null ||
-                          channelProvider.getNameChannel != null) {
-                        channelProvider.clear();
-                      }
-                      if (grpProvider.getImage != null ||
-                          grpProvider.getNameGrp != null) {
-                        grpProvider.clearData();
-                      }
-                      Navigator.pop(context);
+                      Navigator.pushReplacementNamed(context, '+');
                     },
                     icon: Icon(
                       Icons.arrow_forward,

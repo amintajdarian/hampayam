@@ -136,7 +136,8 @@ class _ChlChatScreenState extends State<ChlChatScreen>
                           reverse: true,
                           itemCount: value1.chatList.length,
                           itemBuilder: (context, index) {
-                            if (index != value1.chatList.length - 1) {
+                            if (index <= value1.chatList.length - 1 ||
+                                value1.chatList.length == 1) {
                               return ItemChatList.chatItem(
                                   value1.chatList[index],
                                   profileProvider.getUserName,
@@ -146,7 +147,7 @@ class _ChlChatScreenState extends State<ChlChatScreen>
                                   _sizeH,
                                   context,
                                   profileProvider.getToken);
-                            } else if (value1.chatList.last.seq != 1) {
+                            } else if (index >= 23) {
                               ChatContent.loadMoreData(
                                   value1.chatList[index].seq,
                                   value1.topicData.topic,
@@ -154,16 +155,6 @@ class _ChlChatScreenState extends State<ChlChatScreen>
                               return Container(
                                 child: SpinKitCircle(color: Colors.blue),
                               );
-                            } else {
-                              return ItemChatList.chatItem(
-                                  value1.chatList[index],
-                                  profileProvider.getUserName,
-                                  profileProvider.fn +
-                                      value1.chatList[index].seq.toString(),
-                                  value1.getTopicData.public.fn,
-                                  _sizeH,
-                                  context,
-                                  profileProvider.getToken);
                             }
                           }),
                       flex: 1,
@@ -178,6 +169,9 @@ class _ChlChatScreenState extends State<ChlChatScreen>
                             buttonProvider: value2,
                             currentUser: profileProvider.getUserName,
                             topic: value1.topicData.topic,
+                            seq: value1.chatList.length > 0
+                                ? value1.chatList.last.seq + 1
+                                : 1,
                           )
                         : Container()
                   ],
@@ -203,7 +197,12 @@ class _ChlChatScreenState extends State<ChlChatScreen>
           chatListProvider.changReadMessage(max, msg.topic);
         }
 
-        chlProvider.addMsg(msg);
+        if (chlProvider.getchatList.length > 0) {
+          if (msg.seq != chlProvider.getchatList.last.seq)
+            chlProvider.addMsg(msg);
+        } else {
+          chlProvider.addMsg(msg);
+        }
 
         break;
       case 'm':

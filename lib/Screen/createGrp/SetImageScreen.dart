@@ -163,7 +163,7 @@ class _SetDataScreenState extends State<SetDataScreen> {
                   ],
                 ),
               ),
-              Padding(
+              /* Padding(
                 padding: EdgeInsets.only(top: _sizeH / 45),
                 child: Container(
                   height: _sizeH / 5.5,
@@ -177,7 +177,7 @@ class _SetDataScreenState extends State<SetDataScreen> {
                         ItemGrid.itemAdded(value.getdataAdded, context, _sizeH),
                   ),
                 ),
-              ),
+              ), */
             ],
           ),
         );

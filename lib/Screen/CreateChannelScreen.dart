@@ -16,19 +16,21 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 class CreateChannel extends StatelessWidget {
+  TextEditingController controller = TextEditingController();
+  GlobalKey<ScaffoldState> _key = GlobalKey(); // add this
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = TextEditingController();
-    GlobalKey<ScaffoldState> _key = GlobalKey(); // add this
     var _sizeH = MediaQuery.of(context).size.height;
     var _sizeW = MediaQuery.of(context).size.width;
     ProfileProvider profileProvider = Provider.of(context);
-
     return Scaffold(
       key: _key,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(_sizeH / 10),
-        child: SetDataAppBar.customAppBar(_sizeH, LocaleKeys.DrawerCreatChl.tr(), key, context, subtitle: 'add Subject'),
+        child: SetDataAppBar.customAppBar(
+            _sizeH, LocaleKeys.DrawerCreatChl.tr(), _key, context,
+            subtitle: 'add Subject'),
       ),
       body: Consumer<CreateChannelProvider>(builder: (context, value, child) {
         return Container(
@@ -38,7 +40,8 @@ class CreateChannel extends StatelessWidget {
             children: [
               Card(
                 child: Padding(
-                  padding: EdgeInsets.only(left: _sizeH / 45, right: _sizeH / 45),
+                  padding:
+                      EdgeInsets.only(left: _sizeH / 45, right: _sizeH / 45),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -67,8 +70,11 @@ class CreateChannel extends StatelessWidget {
                             foregroundImage: value.getImage != null
                                 ? Image(
                                     image: CachedNetworkImageProvider(
-                                    HttpConnection.fileUrl(IORouter.ipAddress, value.imageFile),
-                                    headers: HttpConnection.setHeader(IORouter.apiKey, profileProvider.getToken),
+                                    HttpConnection.fileUrl(
+                                        IORouter.ipAddress, value.imageFile),
+                                    headers: HttpConnection.setHeader(
+                                        IORouter.apiKey,
+                                        profileProvider.getToken),
                                   )).image
                                 : null,
                             radius: 30.0,
@@ -82,24 +88,32 @@ class CreateChannel extends StatelessWidget {
                       ),
                       SizedBox(width: _sizeW / 20),
                       Container(
-                        alignment: Alignment.center,
-                        height: _sizeH,
-                        width: _sizeW / 1.5,
-                        child: TextFormField(
+                          alignment: Alignment.center,
+                          height: _sizeH,
+                          width: _sizeW / 1.5,
+                          child: TextField(
                             controller: controller,
                             autofocus: true,
                             maxLength: 20,
                             style: TextStyle(fontSize: _sizeW / 25),
                             decoration: new InputDecoration(
-                              errorStyle: value.getTextEmpty ? TextStyle(fontSize: _sizeW / 25, color: Colors.red) : TextStyle(fontSize: _sizeW / 25, color: Colors.black),
-                              errorText: value.getTextEmpty ? 'please enter your Channel Name' : null,
+                              errorStyle: value.getTextEmpty
+                                  ? TextStyle(
+                                      fontSize: _sizeW / 25, color: Colors.red)
+                                  : TextStyle(
+                                      fontSize: _sizeW / 25,
+                                      color: Colors.black),
+                              errorText: value.getTextEmpty
+                                  ? 'please enter your Chl Name'
+                                  : null,
                               hintText: "type Channel subject here ... ",
-                              labelStyle: new TextStyle(color: const Color(0xFF424242)),
+                              labelStyle:
+                                  new TextStyle(color: const Color(0xFF424242)),
                             ),
                             onChanged: (select) {
                               value.setChlName(select);
-                            }),
-                      ),
+                            },
+                          )),
                     ],
                   ),
                 ),
@@ -115,9 +129,12 @@ class CreateChannel extends StatelessWidget {
                       value.emptyValidator(controller.text);
                       if (!value.getTextEmpty) {
                         if (value.getImage != null)
-                          HampayamClient.createChannel(controller.text, 24, context, photo: value.getImage);
+                          HampayamClient.createChannel(
+                              controller.text, 24, context,
+                              photo: value.getImage);
                         else
-                          HampayamClient.createChannel(controller.text, 24, context);
+                          HampayamClient.createChannel(
+                              controller.text, 24, context);
                         value.setCreated(true);
                         Navigator.pushReplacement(
                           context,

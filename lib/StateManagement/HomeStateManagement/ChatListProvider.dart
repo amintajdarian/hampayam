@@ -8,12 +8,13 @@ class ChatListProvider extends ChangeNotifier {
   List<JSubscriptionData> groupList = [];
   List<JSubscriptionData> channelList = [];
   List<JSubscriptionData> botList = [];
-
+  bool addedData = false;
   List<JSubscriptionData> get getSubList => subList;
   List<JSubscriptionData> get getBlockList => blockList;
   List<JSubscriptionData> get getGroupList => groupList;
   List<JSubscriptionData> get getChanelList => channelList;
   List<JSubscriptionData> get getUSerList => userList;
+  bool get getAddedData => addedData;
   void listSpliter(List<JSubscriptionData> dataSub) {
     subList = (dataSub);
     if (subList.length > 0) {
@@ -29,6 +30,11 @@ class ChatListProvider extends ChangeNotifier {
         }
       }
     }
+    notifyListeners();
+  }
+
+  void addedDataEn(bool en) {
+    this.addedData = en;
     notifyListeners();
   }
 
@@ -255,6 +261,7 @@ class ChatListProvider extends ChangeNotifier {
     groupList.clear();
     subList.clear();
     channelList.clear();
+    addedData = false;
   }
 
   void deleteItem(String topic) {

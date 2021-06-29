@@ -48,7 +48,7 @@ class ItemContactNCH {
               } else {
                 p2pProvider.addSub(chatListProvider.getUSerList[index]);
               }
-
+              IORouter.activePage = 'chat';
               Navigator.pushReplacement<void, void>(
                 context,
                 MaterialPageRoute<void>(

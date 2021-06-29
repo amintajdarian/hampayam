@@ -5,6 +5,9 @@ import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Messenging/ChatContent.dart';
 import 'package:hampayam_chat/Model/Primitives/SubscriptionData.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/AddMemberProvider.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/ChlProvder.dart';
+import 'package:hampayam_chat/StateManagement/chatStateManagement/GrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.dart';
 import 'package:hampayam_chat/widget/chatWidget/PopUpMenuChl.dart';
 import 'package:hampayam_chat/widget/chatWidget/PopUpMenuGrp.dart';
@@ -29,6 +32,9 @@ class ChatAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     P2pProvider p2pProvider = Provider.of(context);
+    GrpProvider grpProvider = Provider.of(context);
+    ChlProvider chlProvider = Provider.of(context);
+    AddMemberProvider addMemberProvider = Provider.of(context);
     return AnimatedContainer(
       duration: Duration(seconds: 1),
       height: height,
@@ -59,7 +65,14 @@ class ChatAppBar extends StatelessWidget {
                       onPressed: () {
                         IORouter.activePage = 'home';
                         ChatContent.leaveChat(data.topic);
-                        p2pProvider.leaveSub();
+                        if (data.topic.startsWith('grp')) {
+                          grpProvider.leaveSub();
+                        } else if (data.topic.startsWith('chl')) {
+                          chlProvider.leaveSub();
+                        } else if (data.topic.startsWith('usr')) {
+                          p2pProvider.leaveSub();
+                        }
+                        addMemberProvider.clearData();
                         Navigator.of(context).popAndPushNamed('+');
                       },
                       icon: Icon(

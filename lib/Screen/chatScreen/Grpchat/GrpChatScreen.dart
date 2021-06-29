@@ -209,8 +209,12 @@ class _GrpChatScreenState extends State<GrpChatScreen>
           ChatContent.readMsg(msg.topic, max);
           chatListProvider.changReadMessage(max, msg.topic);
         }
-
-        grpProvider.addMsg(msg);
+        if (grpProvider.getchatList.length > 0) {
+          if (msg.seq != grpProvider.getchatList.last.seq)
+            grpProvider.addMsg(msg);
+        } else {
+          grpProvider.addMsg(msg);
+        }
 
         break;
       case 'm':
@@ -222,6 +226,7 @@ class _GrpChatScreenState extends State<GrpChatScreen>
           grpProvider.addTopicSub(groupProvider.getTopicData);
           if (groupProvider.getCreated) {
             for (var item in groupProvider.dataAdded) {
+              grpProvider.addMemberSub(item);
               GroupChannelSettings.addMember(meta.topic, item.user);
             }
             groupProvider.changeCreated(false);
@@ -247,10 +252,12 @@ class _GrpChatScreenState extends State<GrpChatScreen>
           }
           if (ctrl.hasParams()) {
             if (ctrl.params.user != null) {
-              for (var item in addMemberProvider.dataAdded) {
-                if (item.user == ctrl.params.user) {
-                  item.acs = ctrl.params.acs;
-                  grpProvider.addMemberSub(item);
+              if (addMemberProvider.getMember.length > 0) {
+                for (var item in addMemberProvider.dataAdded) {
+                  if (item.user == ctrl.params.user) {
+                    item.acs = ctrl.params.acs;
+                    grpProvider.addMemberSub(item);
+                  }
                 }
               }
             }

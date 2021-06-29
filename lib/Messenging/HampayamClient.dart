@@ -340,7 +340,6 @@ class HampayamClient {
             print(event.msg);
             if (meta.topic == 'me') {
               if (meta.hasSub()) {
-                chatListProvider.clearData();
                 if (meta.sub.length > 1) {
                   meta.sub.sort((a, b) {
                     if (a.touched != null && b.touched != null) {
