@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hampayam_chat/StateManagement/ContactStateManagment/ContactProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
-import 'package:hampayam_chat/widget/ContactDataAppBar%20.dart';
+import 'package:hampayam_chat/widget/ContactDataAppBar.dart';
 import 'package:hampayam_chat/widget/chatWidget/itemContactWithNoCheckBox.dart';
 import 'package:provider/provider.dart';
 

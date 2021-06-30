@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hampayam_chat/StateManagement/CreateChannelProvider/CreateChannelProvider.dart';
-import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
-import 'package:provider/provider.dart';
 
-class ContactAppVar {
+class ContactAppBar {
   static Widget customAppBar(double height, String barTitle,
       GlobalKey<ScaffoldState> key, BuildContext context,
       {String subtitle}) {

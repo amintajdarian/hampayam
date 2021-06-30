@@ -405,6 +405,38 @@ class HampayamClient {
     }
   }
 
+  static Future getImagefromcameraInSetting(BuildContext context) async {
+    ProfileProvider profileProvider = Provider.of(context, listen: false);
+    var image =
+        await ImagePicker.platform.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      HttpConnection.sendRequestImageSetting(
+        IORouter.ipAddress,
+        IORouter.apiKey,
+        profileProvider.getToken,
+        File(image.path),
+        context,
+      );
+    }
+  }
+
+  static Future getImagefromGalleryInSetting(BuildContext context) async {
+    ProfileProvider profileProvider = Provider.of(context, listen: false);
+
+    var image =
+        await ImagePicker.platform.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      await HttpConnection.sendRequestImageSetting(
+        IORouter.ipAddress,
+        IORouter.apiKey,
+        profileProvider.getToken,
+        File(image.path),
+        context,
+      );
+    }
+  }
+
   static Future getImagefromGalleryInChannel(BuildContext context) async {
     ProfileProvider profileProvider = Provider.of(context, listen: false);
 
@@ -518,5 +550,31 @@ class HampayamClient {
         id: newId, topic: 'newgrp$newId', jSndSet: jSndSet, jSndGet: jSndGet);
     MsgClient sendSub = MsgClient(jSndSub: jSndSub);
     IORouter.sendMap(sendSub.toJson());
+  }
+
+  static changeProfilePhoto(String urlImage) {
+    JPhoto photo = JPhoto(data: urlImage, type: 'jpg');
+    JPublicData publicData = JPublicData(photo: photo);
+    Description description = Description(publicData: publicData);
+    JSndSet jSndSet = JSndSet(
+        desc: description, id: IORouter.generateRandomKey(), topic: 'me');
+    MsgClient sendSet = MsgClient(jSndSet: jSndSet);
+    IORouter.sendMap(sendSet.toJson());
+  }
+
+  static changeProfileName(String name, {String surname}) {
+    JPublicData publicData;
+    if (surname != null) {
+      JName jName = JName(surname: surname);
+
+      publicData = JPublicData(fn: name, n: jName);
+    } else {
+      publicData = JPublicData(fn: name);
+    }
+    Description description = Description(publicData: publicData);
+    JSndSet jSndSet = JSndSet(
+        desc: description, id: IORouter.generateRandomKey(), topic: 'me');
+    MsgClient sendSet = MsgClient(jSndSet: jSndSet);
+    IORouter.sendMap(sendSet.toJson());
   }
 }

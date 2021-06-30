@@ -8,6 +8,8 @@ import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.da
 import 'package:hampayam_chat/StateManagement/chatStateManagement/chatButtonProvide.dart';
 import 'package:provider/provider.dart';
 
+import 'EmojiButton.dart';
+
 class BottomBarWidget extends StatelessWidget {
   Animation animation;
   FocusNode focusNode;
@@ -57,7 +59,16 @@ class BottomBarWidget extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  IconButton(icon: Icon(Icons.face), onPressed: () {}),
+                  IconButton(
+                      icon: Icon(Icons.face),
+                      onPressed: () {
+                        EmojiText(
+                          text: '',
+                          style: TextStyle(fontSize: 20),
+                          emojiFontMultiplier:
+                              Utils.isOnlyEmojis('comment') ? 3 : 1.4,
+                        );
+                      }),
                   Expanded(
                     child: TextField(
                       controller: textController,
@@ -131,5 +142,17 @@ class BottomBarWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class Utils {
+  static final emailRegExp = RegExp(
+      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+
+  static final onlyEmojiRegExp = RegExp(
+      '^(\u00a9|\u00ae|[\u2000-\u3300]|\ufe0f|[\ud83c-\ud83e][\udc00-\udfff]|\udb40[\udc61-\udc7f]|\s|\t|\n|\r)*\$');
+
+  static bool isOnlyEmojis(String comment) {
+    return onlyEmojiRegExp.hasMatch(comment);
   }
 }

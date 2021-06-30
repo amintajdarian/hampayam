@@ -9,7 +9,7 @@ import 'package:hampayam_chat/Screen/chatScreen/ChlChat/ChlChatScreen.dart';
 import 'package:hampayam_chat/StateManagement/CreateChannelProvider/CreateChannelProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
 import 'package:hampayam_chat/translations/locale_keys.g.dart';
-import 'package:hampayam_chat/widget/modelSheetSelector.dart';
+import 'package:hampayam_chat/widget/modelSheetSelectorCrChannel.dart';
 import 'package:hampayam_chat/widget/setDataAppBar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';

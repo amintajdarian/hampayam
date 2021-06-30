@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
+import 'package:hampayam_chat/Messenging/HampayamClient.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgsServer.dart';
 import 'package:hampayam_chat/Model/Primitives/Description.dart';
@@ -44,37 +45,23 @@ class HttpConnection {
   }
 
   static Future<File> compressFile(File file) async {
-    File compressedFile = await FlutterNativeImage.compressImage(file.path, quality: 50, targetWidth: 600, targetHeight: 300);
+    File compressedFile = await FlutterNativeImage.compressImage(file.path,
+        quality: 50, targetWidth: 600, targetHeight: 300);
     return compressedFile;
   }
 
   showFile(String uri, dynamic header, String data) async {
     Dio dio = Dio();
-    await dio.get(fileUrl(IORouter.apiKey, data), queryParameters: header).then((value) {
+    await dio
+        .get(fileUrl(IORouter.apiKey, data), queryParameters: header)
+        .then((value) {
       print(value);
     });
   }
 
-  static sendRequest(String url, Map<String, String> headers, String topic, File file, BuildContext context, {Function onSendProgress, Function onResievedProgress}) async {
-    ProfileProvider profileProvider = Provider.of<ProfileProvider>(context);
-    Dio dio = Dio();
-    FormData formData = FormData.fromMap({"file": await MultipartFile.fromFile(file.path)});
-    await dio
-        .post(
-      url,
-      data: formData,
-      queryParameters: headers,
-      onSendProgress: onSendProgress,
-    )
-        .then((value) {
-      if (value.statusCode == 200) {
-        MsgSever msgSever = MsgSever.fromJson(value.data);
-        profileProvider.setPhoto(msgSever.ctrl.GetCtrlParamsData().url);
-      }
-    });
-  }
-
-  static void sendRequestImageChannel(String address, String apiKey, String token, File file, BuildContext context, {Function onSendProgress, Function onResievedProgress}) async {
+  static void sendRequestImageChannel(String address, String apiKey,
+      String token, File file, BuildContext context,
+      {Function onSendProgress, Function onResievedProgress}) async {
     Dio dio = Dio();
     CreateChannelProvider channelProvider = Provider.of(context, listen: false);
     String imageUrl;
@@ -82,7 +69,8 @@ class HttpConnection {
     File compressImage;
     String url = setUrl(address);
     await compressFile(file).then((value) => compressImage = value);
-    FormData formData = FormData.fromMap({"file": await MultipartFile.fromFile(compressImage.path)});
+    FormData formData = FormData.fromMap(
+        {"file": await MultipartFile.fromFile(compressImage.path)});
     await dio
         .post(
       url,
@@ -98,7 +86,38 @@ class HttpConnection {
     });
   }
 
-  static void sendRequestImageGrp(String address, String apiKey, String token, File file, BuildContext context, {Function onSendProgress, Function onResievedProgress}) async {
+  static void sendRequestImageSetting(String address, String apiKey,
+      String token, File file, BuildContext context,
+      {Function onSendProgress, Function onResievedProgress}) async {
+    Dio dio = Dio();
+    ProfileProvider profileProvider = Provider.of(context, listen: false);
+    String imageUrl;
+    var headers = {"apikey": "$apiKey", "auth": 'token', "secret": "$token"};
+    File compressImage;
+    String url = setUrl(address);
+    await compressFile(file).then((value) => compressImage = value);
+    FormData formData = FormData.fromMap(
+        {"file": await MultipartFile.fromFile(compressImage.path)});
+    await dio
+        .post(
+      url,
+      data: formData,
+      queryParameters: headers,
+    )
+        .then((value) {
+      if (value.statusCode == 200) {
+        MsgSever msgSever = MsgSever.fromJson(value.data);
+        imageUrl = (msgSever.ctrl.GetCtrlParamsData().url);
+        HampayamClient.changeProfilePhoto(
+            msgSever.ctrl.GetCtrlParamsData().url);
+        profileProvider.setPhoto(imageUrl);
+      }
+    });
+  }
+
+  static void sendRequestImageGrp(String address, String apiKey, String token,
+      File file, BuildContext context,
+      {Function onSendProgress, Function onResievedProgress}) async {
     Dio dio = Dio();
     CreateGrpProvider grpProvider = Provider.of(context, listen: false);
     String imageUrl;
@@ -106,7 +125,8 @@ class HttpConnection {
     File compressImage;
     String url = setUrl(address);
     await compressFile(file).then((value) => compressImage = value);
-    FormData formData = FormData.fromMap({"file": await MultipartFile.fromFile(compressImage.path)});
+    FormData formData = FormData.fromMap(
+        {"file": await MultipartFile.fromFile(compressImage.path)});
     await dio
         .post(
       url,
@@ -122,21 +142,6 @@ class HttpConnection {
       }
     });
   }
-
-  setImageProfile(String address, String apiKey, String token, File file, BuildContext context) async {
-    var url = setUrl(address);
-    var headers = setHeader(apiKey, token);
-
-    await compressFile(file).then((value) async {
-      await sendRequest(url, headers, 'me', value, context);
-    });
-  }
-
-  /* sendFileToChat(String address, String apiKey, String token, File file, String topic, Function onprogress, {String text}) async {
-    String url = setUrl(address);
-    var headers = setHeader(apiKey, token);
-    await sendRequest(url, headers, topic, file,context);
-  } */
 
   setImage(File file, String topic, JRcvCtrl ctrl) {
     String newId = IORouter.generateRandomKey();
@@ -168,7 +173,8 @@ class HttpConnection {
       entity = JTextEntity(tp: 'IM', data: data);
       content = JPubContent(ent: entity as List, fmt: format as List);
       head = JPubHead(mime: "text/x-drafty");
-      pub = JSndPub(id: newId, topic: topic, noecho: true, head: head, content: content);
+      pub = JSndPub(
+          id: newId, topic: topic, noecho: true, head: head, content: content);
       sendPub = MsgClient(jSndPub: pub);
       IORouter.sendMap(sendPub.toJson());
     } else {
@@ -177,7 +183,8 @@ class HttpConnection {
       entity = JTextEntity(tp: 'EX', data: data);
       content = JPubContent(ent: entity as List, fmt: format as List);
       head = JPubHead(mime: "text/x-drafty");
-      pub = JSndPub(id: newId, topic: topic, noecho: true, head: head, content: content);
+      pub = JSndPub(
+          id: newId, topic: topic, noecho: true, head: head, content: content);
       sendPub = MsgClient(jSndPub: pub);
       IORouter.sendMap(sendPub.toJson());
     }

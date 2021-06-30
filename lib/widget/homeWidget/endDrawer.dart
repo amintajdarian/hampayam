@@ -8,6 +8,7 @@ import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Connection/HttpConnection.dart';
 import 'package:hampayam_chat/Screen/Contact/ContactScreen.dart';
 import 'package:hampayam_chat/Screen/CreateChannelScreen.dart';
+import 'package:hampayam_chat/Screen/SettingScreen.dart';
 import 'package:hampayam_chat/Screen/createGrp/CreateGroupScreen.dart';
 import 'package:hampayam_chat/Screen/LoginScreen/LoginScreen.dart';
 import 'package:hampayam_chat/StateManagement/ContactStateManagment/ContactProvider.dart';
@@ -265,7 +266,15 @@ class MyDrawer extends StatelessWidget {
                         divider(_size),
                         sizeBox(_size),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push<void>(
+                              context,
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) =>
+                                    SettingScreen(),
+                              ),
+                            );
+                          },
                           child: Container(
                             margin: EdgeInsets.only(left: _size / 10),
                             child: Row(
