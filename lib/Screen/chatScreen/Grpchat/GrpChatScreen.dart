@@ -6,12 +6,15 @@ import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Messenging/ChatContent.dart';
 import 'package:hampayam_chat/Messenging/GroupSettings.dart';
 import 'package:hampayam_chat/Messenging/HampayamClient.dart';
+import 'package:hampayam_chat/Messenging/Notification.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
+import 'package:hampayam_chat/Model/DeSeserilizedJson/Pres.dart';
 import 'package:hampayam_chat/StateManagement/CreateGrpProvider/CreateGrpProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
+import 'package:hampayam_chat/StateManagement/HomeStateManagement/statusUserProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/AddMemberProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/GrpProvider.dart';
 
@@ -34,6 +37,8 @@ class _GrpChatScreenState extends State<GrpChatScreen>
     with TickerProviderStateMixin {
   AnimationController _controller;
   Animation _animation;
+  StatusUserProvider onlieProvider;
+  MessageNotifcation notifcation = MessageNotifcation();
   TextEditingController textEditingController = TextEditingController();
   GlobalKey<ScaffoldState> _key = GlobalKey();
   FocusNode _focusNode = FocusNode();
@@ -54,7 +59,8 @@ class _GrpChatScreenState extends State<GrpChatScreen>
     chatListProvider = Provider.of(context, listen: false);
     buttonProvider = Provider.of(context, listen: false);
     grpProvider = Provider.of(context, listen: false);
-
+    onlieProvider = Provider.of(context, listen: false);
+    notifcation.initializing();
     chatlisten = IORouter.chatScreenChannel.stream.listen(onData);
     if (chatlisten.isPaused) {
       chatlisten.resume();
@@ -182,7 +188,7 @@ class _GrpChatScreenState extends State<GrpChatScreen>
                             currentUser: profileProvider.getUserName,
                             topic: value1.topicData.topic,
                             seq: value1.chatList.length > 1
-                                ? value1.chatList.last.seq + 1
+                                ? value1.chatList.first.seq + 1
                                 : 1,
                           )
                         : Container()
@@ -210,7 +216,7 @@ class _GrpChatScreenState extends State<GrpChatScreen>
           chatListProvider.changReadMessage(max, msg.topic);
         }
         if (grpProvider.getchatList.length > 0) {
-          if (msg.seq != grpProvider.getchatList.last.seq)
+          if (msg.seq != grpProvider.getchatList.first.seq)
             grpProvider.addMsg(msg);
         } else {
           grpProvider.addMsg(msg);
@@ -262,6 +268,31 @@ class _GrpChatScreenState extends State<GrpChatScreen>
               }
             }
           }
+        }
+        break;
+      case 'p':
+        JRcvPres pres = JRcvPres.fromJson(data.msg);
+        if (pres.what == 'off') {
+          onlieProvider.deleteOnlineUser(pres.src);
+        }
+        if (pres.what == 'on') {
+          if (pres.src.startsWith('usr')) onlieProvider.addOnlineUser(pres.src);
+        }
+
+        if (pres.what == 'msg') {
+          chatListProvider.changUnreadMessage(pres.seq, pres.src);
+          chatListProvider.changLastMessage(
+              pres.extra.message, pres.extra.fn, pres.src);
+          notifcation.showNotifications(pres.extra.fn, pres.extra.message);
+          chatListProvider.chatListChange(pres.src);
+        }
+        if (pres.what == 'acs') {
+          GroupChannelSettings.addTopic(pres.src);
+          chatListProvider.addedDataEn(true);
+        }
+
+        if (pres.what == 'read') {
+          chatListProvider.changReadMessage(pres.seq, pres.src);
         }
         break;
       default:

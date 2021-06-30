@@ -161,7 +161,7 @@ class _P2pChatScreenState extends State<P2pChatScreen>
                   currentUser: profileProvider.getUserName,
                   topic: value1.dataSub.topic,
                   seq: value1.chatList.length > 0
-                      ? value1.chatList.last.seq + 1
+                      ? value1.chatList.first.seq + 1
                       : 1,
                 )
               ],
@@ -182,6 +182,7 @@ class _P2pChatScreenState extends State<P2pChatScreen>
           chatListProvider.changReadMessage(max, msg.topic);
         }
         if (p2pProvider.getchatList.length > 0) {
+          print(p2pProvider.getchatList.first.seq);
           if (msg.seq != p2pProvider.getchatList.last.seq)
             p2pProvider.addMsg(msg);
         } else {

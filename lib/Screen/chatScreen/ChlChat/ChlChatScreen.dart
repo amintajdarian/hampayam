@@ -4,14 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hampayam_chat/Connection/ConnectWebSoket.dart';
 import 'package:hampayam_chat/Messenging/ChatContent.dart';
+import 'package:hampayam_chat/Messenging/GroupSettings.dart';
 import 'package:hampayam_chat/Messenging/HampayamClient.dart';
+import 'package:hampayam_chat/Messenging/Notification.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Ctrl.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/Meta.dart';
 import 'package:hampayam_chat/Model/DeSeserilizedJson/MsgData.dart';
+import 'package:hampayam_chat/Model/DeSeserilizedJson/Pres.dart';
 import 'package:hampayam_chat/Screen/HomeScreen.dart';
 import 'package:hampayam_chat/StateManagement/CreateChannelProvider/CreateChannelProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ChatListProvider.dart';
 import 'package:hampayam_chat/StateManagement/HomeStateManagement/ProfileProvider.dart';
+import 'package:hampayam_chat/StateManagement/HomeStateManagement/statusUserProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/AddMemberProvider.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/ChlProvder.dart';
 import 'package:hampayam_chat/StateManagement/chatStateManagement/chatButtonProvide.dart';
@@ -38,7 +42,8 @@ class _ChlChatScreenState extends State<ChlChatScreen>
   CreateChannelProvider channelProvider;
   ProfileProvider profileProvider;
   ChatListProvider chatListProvider;
-
+  StatusUserProvider onlieProvider;
+  MessageNotifcation notifcation = MessageNotifcation();
   ChlProvider chlProvider;
   ChatButtonProvider buttonProvider;
   int max = 0;
@@ -51,7 +56,8 @@ class _ChlChatScreenState extends State<ChlChatScreen>
     buttonProvider = Provider.of(context, listen: false);
     chlProvider = Provider.of(context, listen: false);
     addMemberProvider = Provider.of(context, listen: false);
-
+    onlieProvider = Provider.of(context, listen: false);
+    notifcation.initializing();
     chatlisten = IORouter.chatScreenChannel.stream.listen(onData);
     if (chatlisten.isPaused) {
       chatlisten.resume();
@@ -170,7 +176,7 @@ class _ChlChatScreenState extends State<ChlChatScreen>
                             currentUser: profileProvider.getUserName,
                             topic: value1.topicData.topic,
                             seq: value1.chatList.length > 0
-                                ? value1.chatList.last.seq + 1
+                                ? value1.chatList.first.seq + 1
                                 : 1,
                           )
                         : Container()
@@ -198,7 +204,7 @@ class _ChlChatScreenState extends State<ChlChatScreen>
         }
 
         if (chlProvider.getchatList.length > 0) {
-          if (msg.seq != chlProvider.getchatList.last.seq)
+          if (msg.seq != chlProvider.getchatList.first.seq)
             chlProvider.addMsg(msg);
         } else {
           chlProvider.addMsg(msg);
@@ -244,6 +250,31 @@ class _ChlChatScreenState extends State<ChlChatScreen>
               }
             }
           }
+        }
+        break;
+      case 'p':
+        JRcvPres pres = JRcvPres.fromJson(data.msg);
+        if (pres.what == 'off') {
+          onlieProvider.deleteOnlineUser(pres.src);
+        }
+        if (pres.what == 'on') {
+          if (pres.src.startsWith('usr')) onlieProvider.addOnlineUser(pres.src);
+        }
+
+        if (pres.what == 'msg') {
+          chatListProvider.changUnreadMessage(pres.seq, pres.src);
+          chatListProvider.changLastMessage(
+              pres.extra.message, pres.extra.fn, pres.src);
+          notifcation.showNotifications(pres.extra.fn, pres.extra.message);
+          chatListProvider.chatListChange(pres.src);
+        }
+        if (pres.what == 'acs') {
+          GroupChannelSettings.addTopic(pres.src);
+          chatListProvider.addedDataEn(true);
+        }
+
+        if (pres.what == 'read') {
+          chatListProvider.changReadMessage(pres.seq, pres.src);
         }
         break;
       default:
