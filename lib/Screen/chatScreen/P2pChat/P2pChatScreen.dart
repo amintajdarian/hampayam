@@ -132,7 +132,7 @@ class _P2pChatScreenState extends State<P2pChatScreen>
                       itemBuilder: (context, index) {
                         if (index <= value1.chatList.length - 1 ||
                             value1.chatList.length == 1) {
-                          return ItemChatList.chatItem(
+                          return ItemChatList(
                               value1.chatList[index],
                               profileProvider.getUserName,
                               profileProvider.fn +

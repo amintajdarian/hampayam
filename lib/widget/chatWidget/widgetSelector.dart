@@ -18,9 +18,11 @@ class WidgetSelector extends StatelessWidget {
       JPubContent pubContent = JPubContent.fromJson(msg.content);
       if (pubContent.ent[0].data.mime.startsWith('image')) {
         return CachedNetworkImage(
-          imageUrl: HttpConnection.fileUrl(IORouter.ipAddress, pubContent.ent[0].data.val),
+          imageUrl: HttpConnection.fileUrl(
+              IORouter.ipAddress, pubContent.ent[0].data.val),
           httpHeaders: HttpConnection.setHeader(IORouter.apiKey, token),
-          progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
+          progressIndicatorBuilder: (context, url, downloadProgress) =>
+              CircularProgressIndicator(value: downloadProgress.progress),
           imageBuilder: (context, imageProvider) => Container(
             width: size / 3,
             height: size / 3,

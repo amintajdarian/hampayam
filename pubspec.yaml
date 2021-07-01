@@ -42,13 +42,17 @@ dependencies:
   json_annotation: ^3.1.0
   mime: ^1.0.0
   modal_bottom_sheet: ^2.0.0
+  multi_image_picker: ^4.8.1
   path: ^1.8.0
   permission_handler: ^8.1.1
+  photo_manager: ^1.2.4
   pin_code_fields: ^7.2.0
+  progress_dialog: ^1.2.4
   provider: ^5.0.0
   roundcheckbox: ^2.0.1
   rxdart: ^0.27.1
   shared_preferences: ^2.0.6
+  video_player: ^2.1.6
   websocket_manager: ^0.2.2
 
 dev_dependencies:

@@ -8,7 +8,7 @@ import 'package:hampayam_chat/StateManagement/chatStateManagement/P2pProvider.da
 import 'package:hampayam_chat/StateManagement/chatStateManagement/chatButtonProvide.dart';
 import 'package:provider/provider.dart';
 
-import 'EmojiButton.dart';
+import 'ModelSheetButton.dart';
 
 class BottomBarWidget extends StatelessWidget {
   Animation animation;
@@ -20,9 +20,7 @@ class BottomBarWidget extends StatelessWidget {
   String topic;
   int seq;
   String currentUser;
-  P2pProvider p2pProvider;
-  GrpProvider grpProvider;
-  ChlProvider chlProvider;
+
   BottomBarWidget({
     this.size,
     this.animation,
@@ -34,6 +32,14 @@ class BottomBarWidget extends StatelessWidget {
     this.currentUser,
     this.seq,
   });
+
+  P2pProvider p2pProvider;
+
+  GrpProvider grpProvider;
+
+  ChlProvider chlProvider;
+
+  Sheet_with_horizontal_items item = Sheet_with_horizontal_items();
 
   @override
   build(BuildContext context) {
@@ -59,16 +65,7 @@ class BottomBarWidget extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  IconButton(
-                      icon: Icon(Icons.face),
-                      onPressed: () {
-                        EmojiText(
-                          text: '',
-                          style: TextStyle(fontSize: 20),
-                          emojiFontMultiplier:
-                              Utils.isOnlyEmojis('comment') ? 3 : 1.4,
-                        );
-                      }),
+                  IconButton(icon: Icon(Icons.face), onPressed: () {}),
                   Expanded(
                     child: TextField(
                       controller: textController,
@@ -120,25 +117,26 @@ class BottomBarWidget extends StatelessWidget {
                     ),
                   ),
                 )
-              : Container(
-                  padding: EdgeInsets.all(size / 65),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: new LinearGradient(colors: [
-                      Color(0xFF33D6F2),
-                      Color(0xFF4DAAED),
-                    ]),
-                  ),
-                  child: InkWell(
+              : InkWell(
+                  onTap: () {
+                    item.setData(topic, currentUser);
+                    item.mainBottomSheet4(context);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(size / 65),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: new LinearGradient(colors: [
+                        Color(0xFF33D6F2),
+                        Color(0xFF4DAAED),
+                      ]),
+                    ),
                     child: Icon(
                       Icons.add,
                       color: Colors.white,
                     ),
-                    onTap: () {
-                      //  _showBottom = true;
-                    },
                   ),
-                )
+                ),
         ],
       ),
     );
