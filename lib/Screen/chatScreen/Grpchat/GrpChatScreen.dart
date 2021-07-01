@@ -287,8 +287,16 @@ class _GrpChatScreenState extends State<GrpChatScreen>
           chatListProvider.chatListChange(pres.src);
         }
         if (pres.what == 'acs') {
-          GroupChannelSettings.addTopic(pres.src);
-          chatListProvider.addedDataEn(true);
+          if (pres.GetPresDAcs().mode.isNull) {
+            for (var item in grpProvider.dataSub) {
+              if (item.topic == pres.src) {
+                grpProvider.dataSub.remove(item);
+              }
+            }
+          } else {
+            GroupChannelSettings.addTopic(pres.src);
+            chatListProvider.addedDataEn(true);
+          }
         }
 
         if (pres.what == 'read') {

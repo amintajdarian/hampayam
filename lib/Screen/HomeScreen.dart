@@ -184,6 +184,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
     if (data.type == 'p') {
       JRcvPres pres = JRcvPres.fromJson(data.msg);
+      if (pres.what == 'upd') {
+        GroupChannelSettings.addTopic(pres.src);
+        chatListProvider.updatedEn(true);
+      }
       if (pres.what == 'off') {
         onlieProvider.deleteOnlineUser(pres.src);
       }

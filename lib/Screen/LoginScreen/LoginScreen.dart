@@ -335,13 +335,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 profileProvider
                                     .setPhone(meta.getCredential(0).val);
                                 IORouter.activePage = 'home';
-                                Navigator.pushReplacement<void, void>(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (BuildContext context) =>
-                                        HomeScreen(),
-                                  ),
-                                );
+                                Navigator.popAndPushNamed(context, '+');
                               }
 
                               break;
@@ -640,13 +634,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 loginPageProvider.changeIsVAlidatePhone(true);
                               } else if (ctrl.code == 300) {
                                 profileProvider.setToken(ctrl.params.token);
-                                Navigator.push<void>(
+                                Navigator.pushReplacement<void, void>(
                                   context,
                                   MaterialPageRoute<void>(
-                                    builder: (BuildContext context) =>
-                                        PinCodeVerificationScreen(
-                                            signupPhoneController.text),
-                                  ),
+                                      builder: (BuildContext context) =>
+                                          PinCodeVerificationScreen(
+                                              signupPhoneController.text)),
                                 );
                               }
 

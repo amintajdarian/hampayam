@@ -340,14 +340,19 @@ class HampayamClient {
             print(event.msg);
             if (meta.topic == 'me') {
               if (meta.hasSub()) {
-                if (meta.sub.length > 1) {
-                  meta.sub.sort((a, b) {
-                    if (a.touched != null && b.touched != null) {
-                      print(b.touched);
-                      return b.touched.compareTo(a.touched);
-                    }
-                  });
-                  chatListProvider.listSpliter(meta.sub);
+                if (!chatListProvider.getUpdate) {
+                  if (meta.sub.length > 1) {
+                    meta.sub.sort((a, b) {
+                      if (a.touched != null && b.touched != null) {
+                        print(b.touched);
+                        return b.touched.compareTo(a.touched);
+                      }
+                    });
+                    chatListProvider.listSpliter(meta.sub);
+                  }
+                } else {
+                  chatListProvider.listchangItem(meta.sub);
+                  chatListProvider.updatedEn(false);
                 }
               }
 

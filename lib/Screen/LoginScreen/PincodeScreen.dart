@@ -11,8 +11,6 @@ import 'package:hampayam_chat/StateManagement/loginStateManagement/loginPageProv
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
-import '../HomeScreen.dart';
-
 class PinCodeVerificationScreen extends StatefulWidget {
   final String phoneNumber;
 
@@ -306,12 +304,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
           profileProvider.setPhone(meta.getCredential(0).val);
 
           IORouter.activePage = 'home';
-          Navigator.pushReplacement<void, void>(
-            context,
-            MaterialPageRoute<void>(
-              builder: (BuildContext context) => HomeScreen(),
-            ),
-          );
+          Navigator.popAndPushNamed(context, '+');
           loginPageProvider.reset();
         }
 

@@ -268,9 +268,18 @@ class _ChlChatScreenState extends State<ChlChatScreen>
           notifcation.showNotifications(pres.extra.fn, pres.extra.message);
           chatListProvider.chatListChange(pres.src);
         }
+
         if (pres.what == 'acs') {
-          GroupChannelSettings.addTopic(pres.src);
-          chatListProvider.addedDataEn(true);
+          if (pres.GetPresDAcs().mode.isNull) {
+            for (var item in chlProvider.dataSub) {
+              if (item.topic == pres.src) {
+                chlProvider.dataSub.remove(item);
+              }
+            }
+          } else {
+            GroupChannelSettings.addTopic(pres.src);
+            chatListProvider.addedDataEn(true);
+          }
         }
 
         if (pres.what == 'read') {

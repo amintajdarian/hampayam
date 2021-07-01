@@ -3,6 +3,7 @@ import 'package:hampayam_chat/Model/Primitives/Description.dart';
 import 'package:hampayam_chat/Model/Primitives/PublicData.dart';
 import 'package:hampayam_chat/Model/Primitives/Subscription.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Get.dart';
+import 'package:hampayam_chat/Model/SeserilizedJson/Leave.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/MsgClient.dart';
 import 'package:hampayam_chat/Model/SeserilizedJson/Set.dart';
 
@@ -34,5 +35,13 @@ class GroupChannelSettings {
         sub: subscription);
     MsgClient sendGet = MsgClient(jSndGet: jSndGet);
     IORouter.sendMap(sendGet.toJson());
+  }
+
+  static void leaveSub(String topic) {
+    JSndLeave jSndLeave =
+        JSndLeave(id: IORouter.generateRandomKey(), topic: topic, unSub: true);
+    MsgClient sendLeave = MsgClient(jSndLeave: jSndLeave);
+
+    IORouter.sendMap(sendLeave.toJson());
   }
 }

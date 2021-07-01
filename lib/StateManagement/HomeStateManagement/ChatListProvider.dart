@@ -9,12 +9,14 @@ class ChatListProvider extends ChangeNotifier {
   List<JSubscriptionData> channelList = [];
   List<JSubscriptionData> botList = [];
   bool addedData = false;
+  bool updated = false;
   List<JSubscriptionData> get getSubList => subList;
   List<JSubscriptionData> get getBlockList => blockList;
   List<JSubscriptionData> get getGroupList => groupList;
   List<JSubscriptionData> get getChanelList => channelList;
   List<JSubscriptionData> get getUSerList => userList;
   bool get getAddedData => addedData;
+  bool get getUpdate => updated;
   void listSpliter(List<JSubscriptionData> dataSub) {
     subList = (dataSub);
     if (subList.length > 0) {
@@ -33,8 +35,45 @@ class ChatListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void listchangItem(List<JSubscriptionData> dataSub) {
+    for (var item in dataSub) {
+      if (item.topic.startsWith('usr')) {
+        for (int i = 0; i < userList.length; i++) {
+          if (userList[i].topic == item.topic) {
+            userList[i] = item;
+          }
+        }
+      } else if (item.topic.startsWith('grp')) {
+        for (int i = 0; i < groupList.length; i++) {
+          if (groupList[i].topic == item.topic) {
+            groupList[i] = item;
+          }
+        }
+      } else if (item.topic.startsWith('chl')) {
+        for (int i = 0; i < channelList.length; i++) {
+          if (channelList[i].topic == item.topic) {
+            channelList[i] = item;
+          }
+        }
+      } else if (item.topic.startsWith('bot')) {
+        botList.add(item);
+      }
+      for (int i = 0; i < subList.length; i++) {
+        if (subList[i].topic == item.topic) {
+          subList[i] = item;
+        }
+      }
+    }
+    notifyListeners();
+  }
+
   void addedDataEn(bool en) {
     this.addedData = en;
+    notifyListeners();
+  }
+
+  void updatedEn(bool en) {
+    this.updated = en;
     notifyListeners();
   }
 
@@ -262,6 +301,7 @@ class ChatListProvider extends ChangeNotifier {
     subList.clear();
     channelList.clear();
     addedData = false;
+    updated = false;
   }
 
   void deleteItem(String topic) {
