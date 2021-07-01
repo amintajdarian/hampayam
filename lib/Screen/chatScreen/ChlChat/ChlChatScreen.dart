@@ -147,8 +147,7 @@ class _ChlChatScreenState extends State<ChlChatScreen>
                               return ItemChatList(
                                   value1.chatList[index],
                                   profileProvider.getUserName,
-                                  profileProvider.fn +
-                                      value1.chatList[index].seq.toString(),
+                                  profileProvider.fn,
                                   value1.getTopicData.public.fn,
                                   _sizeH,
                                   context,

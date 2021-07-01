@@ -28,8 +28,8 @@ class SendMsg {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 7,
-                          blurRadius: 7,
+                          spreadRadius: 1,
+                          blurRadius: 1,
                           offset: Offset(0, 3), // changes position of shadow
                         ),
                       ],
@@ -45,7 +45,9 @@ class SendMsg {
             ),
             SizedBox(width: 15),
             Text(
-              msg.ts,
+              DateTime.parse(msg.ts).toLocal().hour.toString() +
+                  ':' +
+                  DateTime.parse(msg.ts).toLocal().minute.toString(),
               style: Theme.of(context)
                   .textTheme
                   .bodyText2

@@ -54,17 +54,24 @@ class WidgetSelector extends StatelessWidget {
                     )
                   ],
                 ),
-                Text(pubContent.ent[0].data.name)
+                Text(
+                  pubContent.ent[0].data.name,
+                )
               ],
             ),
           ),
         );
       }
     } else {
-      return Text(msg.content,
-          style: Theme.of(context).textTheme.bodyText1.apply(
-                color: Colors.black87,
-              ));
+      return Container(
+        width: size / 3,
+        child: Text(msg.content,
+            maxLines: 15,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodyText1.apply(
+                  color: Colors.black87,
+                )),
+      );
     }
   }
 }

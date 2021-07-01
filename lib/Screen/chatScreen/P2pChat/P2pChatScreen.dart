@@ -135,8 +135,7 @@ class _P2pChatScreenState extends State<P2pChatScreen>
                           return ItemChatList(
                               value1.chatList[index],
                               profileProvider.getUserName,
-                              profileProvider.fn +
-                                  value1.chatList[index].seq.toString(),
+                              profileProvider.fn,
                               value1.dataSub.public.fn,
                               _sizeH,
                               context,

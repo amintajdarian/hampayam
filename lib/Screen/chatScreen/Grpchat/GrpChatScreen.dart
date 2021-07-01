@@ -145,12 +145,12 @@ class _GrpChatScreenState extends State<GrpChatScreen>
                           reverse: true,
                           itemCount: value1.chatList.length,
                           itemBuilder: (context, index) {
-                            if (index != value1.chatList.length - 1) {
+                            if (index <= value1.chatList.length - 1 ||
+                                value1.chatList.length == 1) {
                               return ItemChatList(
                                   value1.chatList[index],
                                   profileProvider.getUserName,
-                                  profileProvider.fn +
-                                      value1.chatList[index].seq.toString(),
+                                  profileProvider.fn,
                                   value1.getTopicData.public.fn,
                                   _sizeH,
                                   context,
@@ -163,16 +163,6 @@ class _GrpChatScreenState extends State<GrpChatScreen>
                               return Container(
                                 child: SpinKitCircle(color: Colors.blue),
                               );
-                            } else {
-                              return ItemChatList(
-                                  value1.chatList[index],
-                                  profileProvider.getUserName,
-                                  profileProvider.fn +
-                                      value1.chatList[index].seq.toString(),
-                                  value1.getTopicData.public.fn,
-                                  _sizeH,
-                                  context,
-                                  profileProvider.getToken);
                             }
                           }),
                       flex: 1,
