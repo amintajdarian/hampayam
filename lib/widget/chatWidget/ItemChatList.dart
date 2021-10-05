@@ -19,7 +19,7 @@ class ItemChatList extends StatelessWidget {
     if (item.from == currentUser) {
       return SendMsg.sendMsgMode(size, item, currentUserName, context, token);
     } else {
-      return ReceivesMsg.rcvMsgMode(size, item, userName, context);
+      return ReceivesMsg.rcvMsgMode(size, item, userName, context, token);
     }
   }
 }

@@ -68,8 +68,6 @@ class BottomBarWidget extends StatelessWidget {
                   IconButton(icon: Icon(Icons.face), onPressed: () {}),
                   Expanded(
                     child: TextField(
-                      minLines: 2,
-                      maxLines: 5,
                       keyboardType: TextInputType.multiline,
                       controller: textController,
                       focusNode: focusNode,
